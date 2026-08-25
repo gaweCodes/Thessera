@@ -1,0 +1,52 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GaWeCodes.Thessera.Application/GaWeCodes.Thessera.Application.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Core/GaWeCodes.Thessera.Core.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Domain/GaWeCodes.Thessera.Domain.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Messaging.RabbitMq/GaWeCodes.Thessera.Messaging.RabbitMq.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Persistence.EfCore/GaWeCodes.Thessera.Persistence.EfCore.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Persistence.EfCore.Postgres/GaWeCodes.Thessera.Persistence.EfCore.Postgres.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Persistence.Marten/GaWeCodes.Thessera.Persistence.Marten.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Npgsql/GaWeCodes.Thessera.Npgsql.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Testing/GaWeCodes.Thessera.Testing.csproj" />
+    <Project Path="src/GaWeCodes.Thessera.Wolverine/GaWeCodes.Thessera.Wolverine.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GaWeCodes.Thessera.Application.Tests/GaWeCodes.Thessera.Application.Tests.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Core.Tests/GaWeCodes.Thessera.Core.Tests.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Domain.Tests/GaWeCodes.Thessera.Domain.Tests.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Messaging.RabbitMq.Tests/GaWeCodes.Thessera.Messaging.RabbitMq.Tests.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Tests.PackageConventions/GaWeCodes.Thessera.Tests.PackageConventions.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Persistence.EfCore.Postgres.Tests/GaWeCodes.Thessera.Persistence.EfCore.Postgres.Tests.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Persistence.EfCore.Tests/GaWeCodes.Thessera.Persistence.EfCore.Tests.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Persistence.Marten.Tests/GaWeCodes.Thessera.Persistence.Marten.Tests.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Testing.Tests/GaWeCodes.Thessera.Testing.Tests.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Wolverine.Tests/GaWeCodes.Thessera.Wolverine.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Support/">
+    <Project Path="tests/GaWeCodes.Thessera.Tests.Containers/GaWeCodes.Thessera.Tests.Containers.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Tests.EfCore/GaWeCodes.Thessera.Tests.EfCore.csproj" />
+    <Project Path="tests/GaWeCodes.Thessera.Tests.Support/GaWeCodes.Thessera.Tests.Support.csproj" />
+  </Folder>
+  <Folder Name="/tests/ExternalAssemblies/">
+    <Project Path="tests/ExternalAssemblies/AmbiguousRequestsFixture/AmbiguousRequestsFixture.csproj" />
+    <Project Path="tests/ExternalAssemblies/ConflictingHandlersFixture/ConflictingHandlersFixture.csproj" />
+    <Project Path="tests/ExternalAssemblies/DeadLetterFixture/DeadLetterFixture.csproj" />
+    <Project Path="tests/ExternalAssemblies/HullFixture/HullFixture.csproj" />
+    <Project Path="tests/ExternalAssemblies/OrphanRequestsFixture/OrphanRequestsFixture.csproj" />
+    <Project Path="tests/ExternalAssemblies/SchemaFixture/SchemaFixture.csproj" />
+    <Project Path="tests/ExternalAssemblies/SchemaGapFixture/SchemaGapFixture.csproj" />
+    <Project Path="tests/ExternalAssemblies/ValidHandlersFixture/ValidHandlersFixture.csproj" />
+  </Folder>
+  <Folder Name="/tests/MatrixHosts/">
+    <Project Path="tests/MatrixHosts/BareHost/BareHost.csproj" />
+    <Project Path="tests/MatrixHosts/ContractsHost/ContractsHost.csproj" />
+    <Project Path="tests/MatrixHosts/DomainOnlyHost/DomainOnlyHost.csproj" />
+    <Project Path="tests/MatrixHosts/EventsBusHost/EventsBusHost.csproj" />
+    <Project Path="tests/MatrixHosts/EventsHost/EventsHost.csproj" />
+    <Project Path="tests/MatrixHosts/ForeignBrokerHost/ForeignBrokerHost.csproj" />
+    <Project Path="tests/MatrixHosts/ForeignStoreHost/ForeignStoreHost.csproj" />
+    <Project Path="tests/MatrixHosts/StateBusHost/StateBusHost.csproj" />
+    <Project Path="tests/MatrixHosts/StateHost/StateHost.csproj" />
+  </Folder>
+</Solution>

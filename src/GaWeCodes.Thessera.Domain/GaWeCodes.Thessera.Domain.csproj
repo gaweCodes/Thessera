@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Tactical DDD building blocks - aggregates, entities, domain events, typed identifiers and business rules - written so the same domain model can later be stored as state (EF Core) or as an event stream (Marten). The base of the Thessera family: no store choice, and no dependency beyond the BCL.</Description>
+    <PackageTags>ddd;domain-driven-design;aggregate;domain-events;value-objects;typed-ids</PackageTags>
+  </PropertyGroup>
+
+</Project>

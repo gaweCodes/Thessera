@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>The Thessera composition root and runtime: AddThessera, the CQRS dispatcher, domain-event delivery, projections, integration-event mapping and startup checks - with no Wolverine in the dependency graph. Add one of the two store choices on top: Persistence.EfCore.Postgres for state, or Persistence.Marten for an event stream.</Description>
+    <PackageTags>cqrs;event-sourcing;outbox;dispatcher;persistence;projections;wolverine</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GaWeCodes.Thessera.Application\GaWeCodes.Thessera.Application.csproj" />
+    <ProjectReference Include="..\GaWeCodes.Thessera.Domain\GaWeCodes.Thessera.Domain.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Stores Thessera aggregates as state in PostgreSQL through EF Core, with the domain events going into a transactional outbox in the same commit. One of the two Thessera store choices; the other is GaWeCodes.Thessera.Persistence.Marten, which stores the same aggregates as an event stream. Pick exactly one per service.</Description>
+    <PackageTags>efcore;entity-framework;postgres;postgresql;persistence</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="WolverineFx.Postgresql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GaWeCodes.Thessera.Persistence.EfCore\GaWeCodes.Thessera.Persistence.EfCore.csproj" />
+    <ProjectReference Include="..\GaWeCodes.Thessera.Npgsql\GaWeCodes.Thessera.Npgsql.csproj" />
+  </ItemGroup>
+
+</Project>

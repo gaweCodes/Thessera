@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\GaWeCodes.Thessera.Application\GaWeCodes.Thessera.Application.csproj" />
+    <ProjectReference Include="..\DomainOnlyHost\DomainOnlyHost.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="GaWeCodes.Thessera.Application.Cqrs" />
+    <Using Include="GaWeCodes.Thessera.Application.Persistence" />
+    <Using Include="GaWeCodes.Thessera.Application.Results" />
+    <Using Include="DomainOnlyHost" />
+  </ItemGroup>
+
+</Project>

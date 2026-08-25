@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\GaWeCodes.Thessera.Domain\GaWeCodes.Thessera.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="GaWeCodes.Thessera.Domain.Aggregates" />
+    <Using Include="GaWeCodes.Thessera.Domain.Entities" />
+    <Using Include="GaWeCodes.Thessera.Domain.Events" />
+    <Using Include="GaWeCodes.Thessera.Domain.Naming" />
+    <Using Include="GaWeCodes.Thessera.Domain.Rules" />
+  </ItemGroup>
+
+</Project>

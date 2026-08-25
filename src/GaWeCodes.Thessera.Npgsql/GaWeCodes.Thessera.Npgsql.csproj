@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>The PostgreSQL error knowledge both Thessera stores share: transient-fault detection, and translation of a unique-constraint violation into a conflict failure instead of an escaping exception. Not a store choice - both store packages already contain it.</Description>
+    <PackageTags>postgres;postgresql;npgsql;readiness-check;health-checks</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GaWeCodes.Thessera.Core\GaWeCodes.Thessera.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>The contracts a Thessera application layer talks to: commands, queries and their handlers, pipeline behaviours, Result and Failure, repository and unit of work, projection handlers and integration events. Contracts only - no dispatcher, no runtime, no store choice.</Description>
+		<PackageTags>cqrs;mediator;result-pattern;application-layer</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\GaWeCodes.Thessera.Domain\GaWeCodes.Thessera.Domain.csproj" />
+	</ItemGroup>
+</Project>

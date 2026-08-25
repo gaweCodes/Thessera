@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <RootNamespace>GaWeCodes.Thessera.Tests</RootNamespace>
+    <NoWarn>$(NoWarn);CA2007</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Persistence.EfCore.Postgres\GaWeCodes.Thessera.Persistence.EfCore.Postgres.csproj" />
+    <ProjectReference Include="..\GaWeCodes.Thessera.Tests.EfCore\GaWeCodes.Thessera.Tests.EfCore.csproj" />
+    <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Persistence.Marten\GaWeCodes.Thessera.Persistence.Marten.csproj" />
+    <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Messaging.RabbitMq\GaWeCodes.Thessera.Messaging.RabbitMq.csproj" />
+    <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Testing\GaWeCodes.Thessera.Testing.csproj" />
+    <ProjectReference Include="..\GaWeCodes.Thessera.Tests.Containers\GaWeCodes.Thessera.Tests.Containers.csproj" />
+    <ProjectReference Include="..\MatrixHosts\BareHost\BareHost.csproj" />
+    <ProjectReference Include="..\MatrixHosts\ContractsHost\ContractsHost.csproj" />
+    <ProjectReference Include="..\MatrixHosts\DomainOnlyHost\DomainOnlyHost.csproj" />
+    <ProjectReference Include="..\MatrixHosts\EventsBusHost\EventsBusHost.csproj" />
+    <ProjectReference Include="..\MatrixHosts\EventsHost\EventsHost.csproj" />
+    <ProjectReference Include="..\MatrixHosts\ForeignBrokerHost\ForeignBrokerHost.csproj" />
+    <ProjectReference Include="..\MatrixHosts\ForeignStoreHost\ForeignStoreHost.csproj" />
+    <ProjectReference Include="..\MatrixHosts\StateBusHost\StateBusHost.csproj" />
+    <ProjectReference Include="..\MatrixHosts\StateHost\StateHost.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\ContainerCollections.cs" Link="ContainerCollections.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

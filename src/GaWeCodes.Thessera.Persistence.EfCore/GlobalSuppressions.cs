@@ -1,0 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
+[assembly: SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Activated via dependency injection or reflection-based runtime wiring", Scope = "type", Target = "~T:GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCoreRepository`2")]
+[assembly: SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Activated via dependency injection or reflection-based runtime wiring", Scope = "type", Target = "~T:GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCoreFaultTranslator")]
+[assembly: SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Activated via dependency injection or reflection-based runtime wiring", Scope = "type", Target = "~T:GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCoreUnitOfWork`1")]
+[assembly: SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Activated via dependency injection or reflection-based runtime wiring", Scope = "type", Target = "~T:GaWeCodes.Thessera.Persistence.EfCore.EntityKeyValueConverter`2")]
+[assembly: SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Activated via dependency injection or reflection-based runtime wiring", Scope = "type", Target = "~T:GaWeCodes.Thessera.Persistence.EfCore.StateStored.AggregateStateModelCheck`1")]
+[assembly: SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Activated via dependency injection or reflection-based runtime wiring", Scope = "type", Target = "~T:GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCoreAggregateTracker")]

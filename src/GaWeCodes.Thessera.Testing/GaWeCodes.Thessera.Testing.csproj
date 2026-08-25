@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Test helpers for a Thessera domain: aggregate convention checks that move the runtime rules into your build, projection metadata built with the runtime's own formatter, and an approval snapshot of the persisted event schema. Depends on no test framework.</Description>
+    <PackageTags>testing;ddd;aggregate;domain-events;convention-tests;approval-tests;snapshot-testing</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GaWeCodes.Thessera.Application\GaWeCodes.Thessera.Application.csproj" />
+    <ProjectReference Include="..\GaWeCodes.Thessera.Core\GaWeCodes.Thessera.Core.csproj" />
+    <ProjectReference Include="..\GaWeCodes.Thessera.Domain\GaWeCodes.Thessera.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

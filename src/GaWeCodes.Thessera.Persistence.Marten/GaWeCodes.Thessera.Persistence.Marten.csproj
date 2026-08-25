@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Stores Thessera aggregates as an event stream in PostgreSQL through Marten, with the domain events going into a transactional outbox in the same commit. One of the two Thessera store choices; the other is GaWeCodes.Thessera.Persistence.EfCore.Postgres, which stores the same aggregates as state. Pick exactly one per service.</Description>
+    <PackageTags>marten;event-sourcing;postgres;postgresql;persistence;wolverine</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Marten" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="WolverineFx.Marten" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GaWeCodes.Thessera.Core\GaWeCodes.Thessera.Core.csproj" />
+    <ProjectReference Include="..\GaWeCodes.Thessera.Npgsql\GaWeCodes.Thessera.Npgsql.csproj" />
+    <ProjectReference Include="..\GaWeCodes.Thessera.Wolverine\GaWeCodes.Thessera.Wolverine.csproj" />
+  </ItemGroup>
+
+</Project>
