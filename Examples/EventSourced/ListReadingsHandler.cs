@@ -11,15 +11,19 @@ public sealed class ListReadingsHandler(IReadingStreamCatalog streamCatalog, IRe
     {
         var streamKeys = await streamCatalog.ListStreamKeysAsync(cancellationToken).ConfigureAwait(false);
 
-        var snapshots = new List<ReadingSnapshot>();
-        foreach (var streamKey in streamKeys.OrderBy(key => key, StringComparer.Ordinal))
+        var parsedIds = new List<int>();
+        foreach (var streamKey in streamKeys)
         {
             var rawId = streamKey[EventSourcedApplication.StreamKeyPrefix.Length..];
-            if (!int.TryParse(rawId, out var value))
+            if (int.TryParse(rawId, out var value))
             {
-                continue;
+                parsedIds.Add(value);
             }
+        }
 
+        var snapshots = new List<ReadingSnapshot>();
+        foreach (var value in parsedIds.Order())
+        {
             var reading = await repository.GetByIdAsync(new ReadingId(value), cancellationToken).ConfigureAwait(false);
             if (reading is not null && !reading.IsDeleted)
             {

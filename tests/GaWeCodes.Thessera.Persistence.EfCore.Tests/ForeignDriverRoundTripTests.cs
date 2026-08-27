@@ -48,6 +48,20 @@ public sealed class ForeignDriverRoundTripTests : IDisposable
         await host.StopAsync(TestContext.Current.CancellationToken);
     }
 
+    [Fact]
+    public async Task GetByIdAsync_WithEmptyIdentity_ReturnsNull()
+    {
+        using var host = await StartHostAsync();
+        using var scope = host.Services.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<IRepository<Crate, CrateId>>();
+
+        var reloaded = await repository.GetByIdAsync(new CrateId(Guid.Empty), TestContext.Current.CancellationToken);
+
+        Assert.Null(reloaded);
+
+        await host.StopAsync(TestContext.Current.CancellationToken);
+    }
+
     public void Dispose()
     {
         try

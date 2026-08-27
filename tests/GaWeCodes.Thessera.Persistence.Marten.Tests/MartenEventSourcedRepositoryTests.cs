@@ -128,6 +128,22 @@ public sealed class MartenEventSourcedRepositoryTests(PostgreSqlFixture fixture)
         await host.StopAsync(TestContext.Current.CancellationToken);
     }
 
+    [Fact]
+    public async Task GetByIdAsync_WithEmptyIdentity_ReturnsNull()
+    {
+        Assert.SkipUnless(fixture.Available, fixture.SkipReason);
+
+        using var host = await StartHostAsync();
+        using var scope = host.Services.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<IRepository<Counter, CounterId>>();
+
+        var reloaded = await repository.GetByIdAsync(new CounterId(Guid.Empty), TestContext.Current.CancellationToken);
+
+        Assert.Null(reloaded);
+
+        await host.StopAsync(TestContext.Current.CancellationToken);
+    }
+
     private async Task<IHost> StartHostAsync()
     {
         var builder = Host.CreateApplicationBuilder();

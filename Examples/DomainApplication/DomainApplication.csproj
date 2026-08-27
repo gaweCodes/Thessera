@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GaWeCodes.Thessera.Domain" Version="0.0.0-alpha.0.3" />
-    <PackageReference Include="GaWeCodes.Thessera.Application" Version="0.0.0-alpha.0.3" />
+    <PackageReference Include="GaWeCodes.Thessera.Domain" Version="[0.0.0-alpha.0.5]" />
+    <PackageReference Include="GaWeCodes.Thessera.Application" Version="[0.0.0-alpha.0.5]" />
   </ItemGroup>
 </Project>

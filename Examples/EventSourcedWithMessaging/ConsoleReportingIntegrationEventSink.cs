@@ -11,7 +11,6 @@ public sealed class ConsoleReportingIntegrationEventSink(
 {
     public async Task PublishAsync(IIntegrationEvent integrationEvent, CancellationToken cancellationToken)
     {
-        reporter.Report(integrationEvent);
         await emitter.PublishAsync(
             integrationEvent,
             new Dictionary<string, string>(StringComparer.Ordinal)
@@ -19,5 +18,7 @@ public sealed class ConsoleReportingIntegrationEventSink(
                 [IntegrationEventSourceContext.HeaderName] = sourceContext,
             },
             cancellationToken).ConfigureAwait(false);
+
+        reporter.Report(integrationEvent);
     }
 }

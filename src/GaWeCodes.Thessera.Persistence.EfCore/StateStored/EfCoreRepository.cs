@@ -19,6 +19,11 @@ internal sealed class EfCoreRepository<TAggregate, TKey>(
 
     public async Task<TAggregate?> GetByIdAsync(TKey id, CancellationToken cancellationToken)
     {
+        if (id.IsEmpty)
+        {
+            return null;
+        }
+
         var aggregate = CreateEmpty(out var stateOwner);
 
         var state = await _context

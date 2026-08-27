@@ -6,5 +6,5 @@ namespace StateStoredWithMessaging;
 public sealed class SentIntegrationEventReporter
 {
     public void Report(IIntegrationEvent integrationEvent) =>
-        Console.WriteLine($"Event sent: {JsonSerializer.Serialize(integrationEvent, StateStoredWithMessagingJson.Options)}");
+        Console.WriteLine($"event sent: {JsonSerializer.Serialize(integrationEvent, StateStoredWithMessagingJson.Options)}");
 }

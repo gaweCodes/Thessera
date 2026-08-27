@@ -14,6 +14,11 @@ internal sealed class MartenEventSourcedRepository<TAggregate, TKey>(IDocumentSe
 {
     public async Task<TAggregate?> GetByIdAsync(TKey id, CancellationToken cancellationToken)
     {
+        if (id.IsEmpty)
+        {
+            return null;
+        }
+
         var aggregateName = EntityKeyFormatter.GetAggregateName(typeof(TAggregate));
         var streamKey = EntityKeyFormatter.GetStreamKey(aggregateName, EntityKeyFormatter.GetKeyValue(id));
         var stream = await session.Events.FetchStreamAsync(streamKey, token: cancellationToken).ConfigureAwait(false);

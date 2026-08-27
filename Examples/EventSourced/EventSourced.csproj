@@ -6,11 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GaWeCodes.Thessera.Domain" Version="0.0.0-alpha.0.3" />
-    <PackageReference Include="GaWeCodes.Thessera.Application" Version="0.0.0-alpha.0.3" />
-    <PackageReference Include="GaWeCodes.Thessera.Core" Version="0.0.0-alpha.0.3" />
-    <PackageReference Include="GaWeCodes.Thessera.Wolverine" Version="0.0.0-alpha.0.3" />
-    <PackageReference Include="GaWeCodes.Thessera.Persistence.Marten" Version="0.0.0-alpha.0.3" />
+    <PackageReference Include="GaWeCodes.Thessera.Domain" Version="[0.0.0-alpha.0.5]" />
+    <PackageReference Include="GaWeCodes.Thessera.Application" Version="[0.0.0-alpha.0.5]" />
+    <PackageReference Include="GaWeCodes.Thessera.Core" Version="[0.0.0-alpha.0.5]" />
+    <PackageReference Include="GaWeCodes.Thessera.Wolverine" Version="[0.0.0-alpha.0.5]" />
+    <PackageReference Include="GaWeCodes.Thessera.Persistence.Marten" Version="[0.0.0-alpha.0.5]" />
     <PackageReference Include="Marten" Version="9.22.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
   </ItemGroup>
