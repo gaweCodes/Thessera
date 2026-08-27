@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="GaWeCodes.Thessera.Domain" Version="0.0.0-alpha.0.3" />
+    <PackageReference Include="GaWeCodes.Thessera.Application" Version="0.0.0-alpha.0.3" />
+    <PackageReference Include="GaWeCodes.Thessera.Core" Version="0.0.0-alpha.0.3" />
+    <PackageReference Include="GaWeCodes.Thessera.Wolverine" Version="0.0.0-alpha.0.3" />
+    <PackageReference Include="GaWeCodes.Thessera.Persistence.EfCore.Postgres" Version="0.0.0-alpha.0.3" />
+    <PackageReference Include="GaWeCodes.Thessera.Messaging.RabbitMq" Version="0.0.0-alpha.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.2" />
+  </ItemGroup>
+</Project>

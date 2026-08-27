@@ -1,0 +1,10 @@
+using System.Text.Json;
+using GaWeCodes.Thessera.Application.IntegrationEvents;
+
+namespace StateStoredWithMessaging;
+
+public sealed class SentIntegrationEventReporter
+{
+    public void Report(IIntegrationEvent integrationEvent) =>
+        Console.WriteLine($"Event sent: {JsonSerializer.Serialize(integrationEvent, StateStoredWithMessagingJson.Options)}");
+}

@@ -3,7 +3,7 @@ using System.Xml.Linq;
 namespace GaWeCodes.Thessera.Tests;
 
 /// <summary>
-/// Keeps Thessera.slnx in step with the projects that actually exist.
+/// Keeps the repository solution files in step with the projects that actually exist.
 /// </summary>
 /// <remarks>
 /// A project missing from the solution still builds, because whatever references it drags it in.
@@ -14,7 +14,7 @@ namespace GaWeCodes.Thessera.Tests;
 public sealed class SolutionCompletenessTests
 {
     [Fact]
-    public void EveryProjectUnderSrcAndTests_IsListedInTheSolution()
+    public void EveryProjectUnderTheRepository_IsListedInOneOfTheSolutions()
     {
         var root = ThesseraLayout.Root;
 
@@ -30,7 +30,7 @@ public sealed class SolutionCompletenessTests
     }
 
     [Fact]
-    public void TheSolutionNamesNoProjectThatIsGone()
+    public void NoSolutionNamesAProjectThatIsGone()
     {
         var root = ThesseraLayout.Root;
 
@@ -43,8 +43,9 @@ public sealed class SolutionCompletenessTests
 
     private static string[] ListedProjects(string root) =>
     [
-        .. XDocument.Load(Path.Combine(root, "Thessera.slnx"))
-            .Descendants("Project")
-            .Select(project => project.Attribute("Path")!.Value),
+        .. Directory.EnumerateFiles(root, "*.slnx", SearchOption.TopDirectoryOnly)
+            .SelectMany(path => XDocument.Load(path)
+                .Descendants("Project")
+                .Select(project => project.Attribute("Path")!.Value)),
     ];
 }

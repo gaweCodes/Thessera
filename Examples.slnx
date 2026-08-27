@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Examples/">
+    <Project Path="Examples/DomainOnly/DomainOnly.csproj" />
+    <Project Path="Examples/DomainApplication/DomainApplication.csproj" />
+    <Project Path="Examples/StateStored/StateStored.csproj" />
+    <Project Path="Examples/EventSourced/EventSourced.csproj" />
+    <Project Path="Examples/StateStoredWithMessaging/StateStoredWithMessaging.csproj" />
+    <Project Path="Examples/EventSourcedWithMessaging/EventSourcedWithMessaging.csproj" />
+  </Folder>
+  <Folder Name="/Examples/Tests/">
+    <Project Path="Examples/DomainOnly.Tests/DomainOnly.Tests.csproj" />
+    <Project Path="Examples/DomainApplication.Tests/DomainApplication.Tests.csproj" />
+    <Project Path="Examples/StateStored.Tests/StateStored.Tests.csproj" />
+    <Project Path="Examples/EventSourced.Tests/EventSourced.Tests.csproj" />
+    <Project Path="Examples/StateStoredWithMessaging.Tests/StateStoredWithMessaging.Tests.csproj" />
+    <Project Path="Examples/EventSourcedWithMessaging.Tests/EventSourcedWithMessaging.Tests.csproj" />
+  </Folder>
+</Solution>
