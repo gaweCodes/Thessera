@@ -53,15 +53,29 @@ Thessera/
 │   ├── GaWeCodes.Thessera.Tests.EfCore/                 shared EF Core test infrastructure
 │   ├── GaWeCodes.Thessera.Tests.Support/                shared test support
 │   ├── MatrixHosts/                                     minimal hosts used by the persistence/broker test matrix
-│   ├── ExternalAssemblies/                               fixtures referenced from outside the assembly under test
+│   ├── ExternalAssemblies/                              fixtures referenced from outside the assembly under test
 │   └── Shared/
-
+├── Examples/                                            standalone consumer examples and their tests
+├── Examples.slnx                                        separate solution for the examples only
 ├── CHANGELOG.md
 └── README.md
 ```
 
 Each package has its own `README.md` describing what it is, when to use it (and when not to), and
 a runnable example.
+
+`Examples/` is a consumer-facing six-step adoption ladder that intentionally does not participate in
+the main solution. `Examples.slnx` contains six standalone console applications and six companion
+test projects. The projects under `Examples/` do not reference one another, reset MSBuild strictness
+with `Examples/Directory.Build.props`, and consume Thessera packages through explicit
+`PackageReference`s from a local folder feed at `C:\temp\thessera-local-feed`, populated with
+`dotnet pack -c Release -o C:\temp\thessera-local-feed`.
+
+Each example is an interactive CRUD console app. The ladder starts with a hand-written
+domain-and-list implementation, then hand-written application handlers against
+`GaWeCodes.Thessera.Application` contracts, then the EF Core/Postgres and Marten persistence
+packages, and finally both persistence options again with RabbitMQ publishing enabled. Every example
+owns its own domain model and tests only its own code.
 
 ## Conventions in force in this repository
 
@@ -70,7 +84,8 @@ a runnable example.
   `GaWeCodes.Thessera.<Package>.Tests` (mirrors exactly one package) or
   `GaWeCodes.Thessera.Tests.<X>` (mirrors none, e.g. `Tests.PackageConventions`). Fixtures under
   `tests/ExternalAssemblies/` and hosts under `tests/MatrixHosts/` intentionally do **not** carry
-  the family prefix.
+  the family prefix. Projects under `Examples/` intentionally do **not** carry the family prefix
+  either, for the same reason: they are consumer examples, not shipped family packages.
 - **No `InternalsVisibleTo`.** No package uses it; tests assert through the public surface only.
 - **No FluentAssertions.** Test projects use xUnit v3 built-in asserts.
 - **Central package management.** Every dependency version lives in `Directory.Packages.props`;
