@@ -76,7 +76,7 @@ a runnable example.
 - **Central package management.** Every dependency version lives in `Directory.Packages.props`;
   the SDK pin in `global.json` is the only version kept outside of it.
 
-    ## When contributing
+## When contributing
 
 1. Add or update tests, and make sure they pass.
 2. Check the `*.md` files your change affects and update them — including this file, whenever you
@@ -84,9 +84,10 @@ a runnable example.
 3. Match existing style; respect `.editorconfig`, `Directory.Build.props`, `Directory.Packages.props`.
 4. **Always work on `main`** — never a separate branch, and never ask which branch to use.
 5. Never assume anything. If you need more information always **ask a human**!
-6. Ask **always** in the chat, as plain prose.\*\* Never open a dialog, prompt, or
+6. Ask **always** in the chat, as plain prose. Never open a dialog, prompt, or
    multiple-choice picker; do not use a question tool. Write the question and its options as normal
    text in your answer and then stop and wait.
 7. **Never answer with a table.** Not in chat, not in plan or notes documents you write. Use a
    heading with a short list underneath instead, and say what each item _means_ rather than only
-   what it measures. Existing tables in the repository docs stay as they are. 10. Never commit yourself.
+   what it measures. Existing tables in the repository docs stay as they are.
+8. Never commit yourself.
