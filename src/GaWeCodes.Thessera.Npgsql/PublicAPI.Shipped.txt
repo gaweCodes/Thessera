@@ -1,0 +1,6 @@
+﻿#nullable enable
+GaWeCodes.Thessera.Npgsql.PostgresFaultTranslator
+GaWeCodes.Thessera.Npgsql.PostgresFaultTranslator.PostgresFaultTranslator() -> void
+GaWeCodes.Thessera.Npgsql.PostgresFaultTranslator.TryTranslate(System.Exception! exception, out GaWeCodes.Thessera.Application.Results.Failure? failure) -> bool
+GaWeCodes.Thessera.Npgsql.PostgresTransientFaults
+static GaWeCodes.Thessera.Npgsql.PostgresTransientFaults.IsTransient(System.Exception! exception) -> bool

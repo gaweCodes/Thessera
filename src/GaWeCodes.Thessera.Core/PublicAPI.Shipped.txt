@@ -1,0 +1,186 @@
+﻿#nullable enable
+abstract GaWeCodes.Thessera.Core.Startup.SynchronousStartupCheck.Phase.get -> GaWeCodes.Thessera.Core.Startup.StartupPhase
+abstract GaWeCodes.Thessera.Core.Startup.SynchronousStartupCheck.Run() -> void
+const GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.ExceptionToResultBehaviorOrder = 100 -> int
+const GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.LoggingBehaviorOrder = 0 -> int
+const GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.UnitOfWorkBehaviorOrder = 300 -> int
+const GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.IntegrationEventSourceContext.HeaderName = "thessera.source-context" -> string!
+const GaWeCodes.Thessera.Core.Persistence.EntityKeyFormatter.StreamKeySeparator = '/' -> char
+const GaWeCodes.Thessera.Core.Persistence.PersistenceFailureCodes.ConcurrencyConflict = "persistence.concurrency_conflict" -> string!
+const GaWeCodes.Thessera.Core.Persistence.PersistenceFailureCodes.UniqueViolation = "persistence.unique_violation" -> string!
+const GaWeCodes.Thessera.Core.ReadModels.ReadModelRebuildWriter.BatchSize = 500 -> int
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IRuntimeActivator
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IRuntimeActivator.Activate(Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot! wiring) -> void
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot.IsTransientFault(System.Exception! exception) -> bool
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot.PersistenceSelected.get -> bool
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot.ProvisionsInfrastructure.get -> bool
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot.RequiresRuntime.get -> bool
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot.Subscription.get -> GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription?
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot.Transport.get -> GaWeCodes.Thessera.Core.Messaging.Transport.IMessagingTransportAdapter?
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation.Activator.get -> GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IRuntimeActivator?
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation.GetOrAdd<TActivator>(System.Func<TActivator!>! create) -> TActivator!
+GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation.RuntimeActivation() -> void
+GaWeCodes.Thessera.Core.DependencyInjection.InfrastructureProvisioning
+GaWeCodes.Thessera.Core.DependencyInjection.InfrastructureProvisioning.AtStartup = 1 -> GaWeCodes.Thessera.Core.DependencyInjection.InfrastructureProvisioning
+GaWeCodes.Thessera.Core.DependencyInjection.InfrastructureProvisioning.Never = 0 -> GaWeCodes.Thessera.Core.DependencyInjection.InfrastructureProvisioning
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.AddDomainEventsFrom(System.Reflection.Assembly! assembly) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.AddHandlersFrom(System.Reflection.Assembly! assembly) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.AddPipelineBehavior(System.Type! openGenericBehavior, int order) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.ProvisionInfrastructure(GaWeCodes.Thessera.Core.DependencyInjection.InfrastructureProvisioning provisioning) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.Runtime.get -> GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.SubscribeToIntegrationEvents(string! endpointName, System.Reflection.Assembly! consumerAssembly, params string![]! topicPatterns) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.UseMessagingTransport(GaWeCodes.Thessera.Core.Messaging.Transport.IMessagingTransportAdapter! adapter) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.UseNoPersistence() -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.UsePersistence(GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter! adapter) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.WithoutEventHistory() -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.<Clone>$() -> GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription!
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.ConsumerAssembly.get -> System.Reflection.Assembly!
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.ConsumerAssembly.init -> void
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.Deconstruct(out string! EndpointName, out System.Collections.Generic.IReadOnlyList<string!>! TopicPatterns, out System.Reflection.Assembly! ConsumerAssembly) -> void
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.EndpointName.get -> string!
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.EndpointName.init -> void
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.Equals(GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription? other) -> bool
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.IntegrationEventSubscription(string! EndpointName, System.Collections.Generic.IReadOnlyList<string!>! TopicPatterns, System.Reflection.Assembly! ConsumerAssembly) -> void
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.TopicPatterns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.TopicPatterns.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.<Clone>$() -> GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.AggregateId.get -> string!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.AggregateId.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.AggregateName.get -> string!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.AggregateName.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.Deconstruct(out string! EventName, out string! Payload, out System.Guid EventId, out string! AggregateName, out string! AggregateId, out long Version, out System.DateTimeOffset OccurredAt) -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.DomainEventEnvelope(string! EventName, string! Payload, System.Guid EventId, string! AggregateName, string! AggregateId, long Version, System.DateTimeOffset OccurredAt) -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.Equals(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope? other) -> bool
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.EventId.get -> System.Guid
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.EventId.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.EventName.get -> string!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.EventName.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.OccurredAt.get -> System.DateTimeOffset
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.OccurredAt.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.Payload.get -> string!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.Payload.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.Version.get -> long
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.Version.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelopeSerializer
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelopeSerializer.DomainEventEnvelopeSerializer(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry! registry) -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelopeSerializer.Unwrap(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope! envelope) -> GaWeCodes.Thessera.Domain.Events.IDomainEvent!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelopeSerializer.Wrap(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent, System.Guid eventId, string! aggregateName, string! aggregateId, long version, System.DateTimeOffset occurredAt) -> GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventMetadataFactory
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.DomainEventTypeRegistry(System.Collections.Generic.IEnumerable<System.Reflection.Assembly!>! assemblies) -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.NameOf(System.Type! domainEventType) -> string!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.NamesByType.get -> System.Collections.Generic.IReadOnlyDictionary<System.Type!, string!>!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.Resolve(string! eventName) -> System.Type!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.<Clone>$() -> GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.Deconstruct(out GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope! Event) -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.Equals(GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope? other) -> bool
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.Event.get -> GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.Event.init -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.ProjectionEnvelope(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope! Event) -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionRunner
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionRunner.ProjectionRunner(System.IServiceProvider! serviceProvider) -> void
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionRunner.RunAsync(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent, GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata! metadata, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.IIntegrationEventSinkFactory
+GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.IIntegrationEventSinkFactory.Create(GaWeCodes.Thessera.Core.Messaging.Transport.IMessageEmitter! emitter) -> GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventSink!
+GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.IntegrationEventSourceContext
+GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.IntegrationEventSourceContext.IntegrationEventSourceContext(string! name) -> void
+GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.IntegrationEventSourceContext.Name.get -> string!
+GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.TopicPatternMatcher
+GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.TopicResolver
+GaWeCodes.Thessera.Core.Messaging.Transport.IMessageEmitter
+GaWeCodes.Thessera.Core.Messaging.Transport.IMessageEmitter.PublishAsync(object! message, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Core.Messaging.Transport.IMessagingTransportAdapter
+GaWeCodes.Thessera.Core.Messaging.Transport.IMessagingTransportAdapter.ContextName.get -> string!
+GaWeCodes.Thessera.Core.Messaging.Transport.IMessagingTransportAdapter.Description.get -> string!
+GaWeCodes.Thessera.Core.Messaging.Transport.IMessagingTransportAdapter.Register(GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext! context) -> void
+GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext
+GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext.MessagingTransportRegistrationContext(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Func<bool>! provisionsInfrastructure, System.Func<GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription?>! subscription, GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation! runtime) -> void
+GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext.ProvisionsInfrastructure.get -> bool
+GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext.Subscription.get -> GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription?
+GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext.UseRuntime<TActivator>(System.Func<TActivator!>! create) -> TActivator!
+GaWeCodes.Thessera.Core.Persistence.AggregateFactory
+GaWeCodes.Thessera.Core.Persistence.AggregateStyle
+GaWeCodes.Thessera.Core.Persistence.AggregateStyle.EventSourced = 1 -> GaWeCodes.Thessera.Core.Persistence.AggregateStyle
+GaWeCodes.Thessera.Core.Persistence.AggregateStyle.StateStored = 0 -> GaWeCodes.Thessera.Core.Persistence.AggregateStyle
+GaWeCodes.Thessera.Core.Persistence.AggregateTracker<TEntry>
+GaWeCodes.Thessera.Core.Persistence.AggregateTracker<TEntry>.Add(TEntry! entry) -> void
+GaWeCodes.Thessera.Core.Persistence.AggregateTracker<TEntry>.AggregateTracker() -> void
+GaWeCodes.Thessera.Core.Persistence.AggregateTracker<TEntry>.ClearDomainEvents() -> void
+GaWeCodes.Thessera.Core.Persistence.AggregateTracker<TEntry>.Entries.get -> System.Collections.Generic.IReadOnlyList<TEntry!>!
+GaWeCodes.Thessera.Core.Persistence.DomainEventEnvelopeFactory
+GaWeCodes.Thessera.Core.Persistence.DomainEventEnvelopeFactory.DomainEventEnvelopeFactory(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelopeSerializer! serializer, GaWeCodes.Thessera.Domain.IClock! clock) -> void
+GaWeCodes.Thessera.Core.Persistence.DomainEventEnvelopeFactory.WrapUncommitted(System.Collections.Generic.IEnumerable<GaWeCodes.Thessera.Core.Persistence.ITrackedAggregate!>! entries) -> System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope!>!
+GaWeCodes.Thessera.Core.Persistence.EntityKeyActivator
+GaWeCodes.Thessera.Core.Persistence.EntityKeyFormatter
+GaWeCodes.Thessera.Core.Persistence.EntityKeyJsonOptions
+GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter
+GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter.AggregateStyle.get -> GaWeCodes.Thessera.Core.Persistence.AggregateStyle
+GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter.Description.get -> string!
+GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter.IsTransientFault(System.Exception! exception) -> bool
+GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter.Register(GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext! context) -> void
+GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter.WriteConnectionString.get -> string!
+GaWeCodes.Thessera.Core.Persistence.IPersistenceFaultTranslator
+GaWeCodes.Thessera.Core.Persistence.IPersistenceFaultTranslator.TryTranslate(System.Exception! exception, out GaWeCodes.Thessera.Application.Results.Failure? failure) -> bool
+GaWeCodes.Thessera.Core.Persistence.ITrackedAggregate
+GaWeCodes.Thessera.Core.Persistence.ITrackedAggregate.Aggregate.get -> GaWeCodes.Thessera.Domain.Events.IDomainEventOwner!
+GaWeCodes.Thessera.Core.Persistence.ITrackedAggregate.AggregateId.get -> string!
+GaWeCodes.Thessera.Core.Persistence.ITrackedAggregate.AggregateName.get -> string!
+GaWeCodes.Thessera.Core.Persistence.ITrackedAggregate.CurrentVersion.get -> long
+GaWeCodes.Thessera.Core.Persistence.PersistenceFailureCodes
+GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext
+GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.PersistenceRegistrationContext(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Func<bool>! provisionsInfrastructure, GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation! runtime) -> void
+GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.ProvisionsInfrastructure.get -> bool
+GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.UseRuntime<TActivator>(System.Func<TActivator!>! create) -> TActivator!
+GaWeCodes.Thessera.Core.ReadModels.ReadModelRebuildWriter
+GaWeCodes.Thessera.Core.ReadModels.ReadModelRebuildWriter.ClearAsync<TAggregate, TKey>(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Core.ReadModels.ReadModelRebuildWriter.ReadModelRebuildWriter(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory) -> void
+GaWeCodes.Thessera.Core.ReadModels.ReadModelRebuildWriter.WriteAsync<TAggregate, TKey>(System.Collections.Generic.IReadOnlyList<TAggregate!>! batch, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Core.Startup.IStartupCheck
+GaWeCodes.Thessera.Core.Startup.IStartupCheck.Phase.get -> GaWeCodes.Thessera.Core.Startup.StartupPhase
+GaWeCodes.Thessera.Core.Startup.IStartupCheck.RunAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Core.Startup.StartupPhase
+GaWeCodes.Thessera.Core.Startup.StartupPhase.AfterHostedServicesStarted = 1 -> GaWeCodes.Thessera.Core.Startup.StartupPhase
+GaWeCodes.Thessera.Core.Startup.StartupPhase.BeforeHostedServicesStart = 0 -> GaWeCodes.Thessera.Core.Startup.StartupPhase
+GaWeCodes.Thessera.Core.Startup.SynchronousStartupCheck
+GaWeCodes.Thessera.Core.Startup.SynchronousStartupCheck.RunAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Core.Startup.SynchronousStartupCheck.SynchronousStartupCheck() -> void
+GaWeCodes.Thessera.HostApplicationBuilderExtensions
+GaWeCodes.Thessera.ServiceCollectionExtensions
+override GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.GetHashCode() -> int
+override GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.ToString() -> string!
+override GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.GetHashCode() -> int
+override GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.ToString() -> string!
+override GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.GetHashCode() -> int
+override GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.ToString() -> string!
+static GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.operator !=(GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription? left, GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription? right) -> bool
+static GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription.operator ==(GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription? left, GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription? right) -> bool
+static GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.operator !=(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope? left, GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope? right) -> bool
+static GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope.operator ==(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope? left, GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope? right) -> bool
+static GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventMetadataFactory.From(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope! envelope) -> GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata!
+static GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.operator !=(GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope? left, GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope? right) -> bool
+static GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.operator ==(GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope? left, GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope? right) -> bool
+static GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.TopicPatternMatcher.Matches(string! pattern, string! topic) -> bool
+static GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.TopicResolver.ContextOf(string! topic) -> string!
+static GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.TopicResolver.For(System.Type! integrationEventType) -> string!
+static GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.TopicResolver.For(System.Type! integrationEventType, string! contextName) -> string!
+static GaWeCodes.Thessera.Core.Persistence.AggregateFactory.CreateEmpty<TAggregate>() -> TAggregate!
+static GaWeCodes.Thessera.Core.Persistence.EntityKeyActivator.Create<TKey, TValue>(TValue value) -> TKey
+static GaWeCodes.Thessera.Core.Persistence.EntityKeyFormatter.GetAggregateName(System.Type! aggregateType) -> string!
+static GaWeCodes.Thessera.Core.Persistence.EntityKeyFormatter.GetKeyValue(object! key) -> string!
+static GaWeCodes.Thessera.Core.Persistence.EntityKeyFormatter.GetStreamKey(string! aggregateName, string! keyValue) -> string!
+static GaWeCodes.Thessera.Core.Persistence.EntityKeyFormatter.GetStreamKeyPrefix(string! aggregateName) -> string!
+static GaWeCodes.Thessera.Core.Persistence.EntityKeyJsonOptions.Apply(System.Text.Json.JsonSerializerOptions! options) -> void
+static GaWeCodes.Thessera.Core.Persistence.EntityKeyJsonOptions.Create() -> System.Text.Json.JsonSerializerOptions!
+static GaWeCodes.Thessera.HostApplicationBuilderExtensions.AddThessera<TBuilder>(this TBuilder builder, System.Action<GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!>! configure) -> TBuilder
+static GaWeCodes.Thessera.ServiceCollectionExtensions.AddThessera(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

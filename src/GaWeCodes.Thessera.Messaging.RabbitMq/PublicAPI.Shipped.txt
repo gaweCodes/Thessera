@@ -1,0 +1,3 @@
+﻿#nullable enable
+GaWeCodes.Thessera.RabbitMqMessagingExtensions
+static GaWeCodes.Thessera.RabbitMqMessagingExtensions.UseWolverineMessaging(this GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions! options, System.Uri! rabbitMqUri, string! exchangeName, string! contextName) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!

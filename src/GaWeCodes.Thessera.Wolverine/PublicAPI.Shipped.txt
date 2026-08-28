@@ -1,0 +1,26 @@
+﻿#nullable enable
+GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator
+GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.Activate(Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot! wiring) -> void
+GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.AddOutboxDurability(GaWeCodes.Thessera.Wolverine.Persistence.IOutboxDurabilityConfigurator! configurator) -> void
+GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.Customize(System.Action<Wolverine.WolverineOptions!>! customize) -> void
+GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.WolverineRuntimeActivator() -> void
+GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeRegistration
+GaWeCodes.Thessera.Wolverine.Diagnostics.DeadLetterHealthCheckRegistration
+GaWeCodes.Thessera.Wolverine.Messaging.DomainEvents.DomainEventEnvelopeHandler
+GaWeCodes.Thessera.Wolverine.Messaging.DomainEvents.DomainEventEnvelopeHandler.DomainEventEnvelopeHandler(GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventPublisher! publisher, GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelopeSerializer! serializer, GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.IIntegrationEventSinkFactory! sinkFactory) -> void
+GaWeCodes.Thessera.Wolverine.Messaging.DomainEvents.DomainEventEnvelopeHandler.Handle(GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope! envelope, Wolverine.IMessageContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Wolverine.Messaging.DomainEvents.ProjectionEnvelopeHandler
+GaWeCodes.Thessera.Wolverine.Messaging.DomainEvents.ProjectionEnvelopeHandler.Handle(GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope! envelope, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Wolverine.Messaging.DomainEvents.ProjectionEnvelopeHandler.ProjectionEnvelopeHandler(GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionRunner! projectionRunner, GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelopeSerializer! serializer) -> void
+GaWeCodes.Thessera.Wolverine.Messaging.IntegrationEvents.OwnContextIntegrationEventFilter
+GaWeCodes.Thessera.Wolverine.Messaging.Transport.IWolverineMessagingTransport
+GaWeCodes.Thessera.Wolverine.Messaging.Transport.IWolverineMessagingTransport.Configure(Wolverine.WolverineOptions! options, bool provisionInfrastructure) -> void
+GaWeCodes.Thessera.Wolverine.Messaging.Transport.IWolverineMessagingTransport.ConfigureSubscription(Wolverine.WolverineOptions! options, GaWeCodes.Thessera.Core.DependencyInjection.Wiring.IntegrationEventSubscription! subscription) -> void
+GaWeCodes.Thessera.Wolverine.Persistence.IOutboxDurabilityConfigurator
+GaWeCodes.Thessera.Wolverine.Persistence.IOutboxDurabilityConfigurator.Configure(Wolverine.WolverineOptions! options) -> void
+GaWeCodes.Thessera.WolverineRuntimeOptionsExtensions
+static GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeRegistration.UseWolverineRuntime(this GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext! context) -> GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator!
+static GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeRegistration.UseWolverineRuntime(this GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext! context) -> GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator!
+static GaWeCodes.Thessera.Wolverine.Diagnostics.DeadLetterHealthCheckRegistration.Register(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+static GaWeCodes.Thessera.Wolverine.Messaging.IntegrationEvents.OwnContextIntegrationEventFilter.Before(Wolverine.Envelope! envelope, GaWeCodes.Thessera.Core.Messaging.IntegrationEvents.IntegrationEventSourceContext! source, Microsoft.Extensions.Logging.ILogger! logger) -> Wolverine.HandlerContinuation
+static GaWeCodes.Thessera.WolverineRuntimeOptionsExtensions.CustomizeWolverine(this GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions! options, System.Action<Wolverine.WolverineOptions!>! customize) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!

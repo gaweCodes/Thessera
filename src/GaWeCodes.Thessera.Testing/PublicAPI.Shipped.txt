@@ -1,0 +1,8 @@
+﻿#nullable enable
+GaWeCodes.Thessera.Testing.AggregateConventions
+GaWeCodes.Thessera.Testing.PersistedSchema
+GaWeCodes.Thessera.Testing.TestMetadata
+static GaWeCodes.Thessera.Testing.AggregateConventions.Verify(System.Collections.Generic.IEnumerable<System.Reflection.Assembly!>! assemblies) -> void
+static GaWeCodes.Thessera.Testing.PersistedSchema.Render(System.Collections.Generic.IEnumerable<System.Reflection.Assembly!>! assemblies) -> string!
+static GaWeCodes.Thessera.Testing.PersistedSchema.Verify(string! approvedFilePath, System.Collections.Generic.IEnumerable<System.Reflection.Assembly!>! assemblies) -> void
+static GaWeCodes.Thessera.Testing.TestMetadata.For<TAggregate>(GaWeCodes.Thessera.Domain.Entities.IEntityKey! aggregateId, long version, System.Guid? eventId = null, System.DateTimeOffset? occurredAt = null) -> GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata!

@@ -1,0 +1,106 @@
+﻿#nullable enable
+GaWeCodes.Thessera.Application.Cqrs.ICommand
+GaWeCodes.Thessera.Application.Cqrs.ICommand<TResult>
+GaWeCodes.Thessera.Application.Cqrs.ICommandHandler<TCommand, TResult>
+GaWeCodes.Thessera.Application.Cqrs.ICommandHandler<TCommand, TResult>.HandleAsync(TCommand command, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<GaWeCodes.Thessera.Application.Results.Result<TResult>!>!
+GaWeCodes.Thessera.Application.Cqrs.ICommandHandler<TCommand>
+GaWeCodes.Thessera.Application.Cqrs.ICommandHandler<TCommand>.HandleAsync(TCommand command, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<GaWeCodes.Thessera.Application.Results.Result!>!
+GaWeCodes.Thessera.Application.Cqrs.IPipelineBehavior<TRequest, TResponse>
+GaWeCodes.Thessera.Application.Cqrs.IPipelineBehavior<TRequest, TResponse>.HandleAsync(TRequest request, GaWeCodes.Thessera.Application.Cqrs.RequestPipeline<TResponse>! pipeline, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TResponse>!
+GaWeCodes.Thessera.Application.Cqrs.IQuery<TResult>
+GaWeCodes.Thessera.Application.Cqrs.IQueryHandler<TQuery, TResult>
+GaWeCodes.Thessera.Application.Cqrs.IQueryHandler<TQuery, TResult>.HandleAsync(TQuery query, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<GaWeCodes.Thessera.Application.Results.Result<TResult>!>!
+GaWeCodes.Thessera.Application.Cqrs.ISender
+GaWeCodes.Thessera.Application.Cqrs.ISender.SendAsync(GaWeCodes.Thessera.Application.Cqrs.ICommand! command, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<GaWeCodes.Thessera.Application.Results.Result!>!
+GaWeCodes.Thessera.Application.Cqrs.ISender.SendAsync<TResult>(GaWeCodes.Thessera.Application.Cqrs.ICommand<TResult>! command, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<GaWeCodes.Thessera.Application.Results.Result<TResult>!>!
+GaWeCodes.Thessera.Application.Cqrs.ISender.SendAsync<TResult>(GaWeCodes.Thessera.Application.Cqrs.IQuery<TResult>! query, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<GaWeCodes.Thessera.Application.Results.Result<TResult>!>!
+GaWeCodes.Thessera.Application.Cqrs.RequestPipeline<TResponse>
+GaWeCodes.Thessera.Application.Cqrs.RequestPipeline<TResponse>.Failed(GaWeCodes.Thessera.Application.Results.Failure! failure) -> TResponse
+GaWeCodes.Thessera.Application.Cqrs.RequestPipeline<TResponse>.Failed(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>! failures) -> TResponse
+GaWeCodes.Thessera.Application.Cqrs.RequestPipeline<TResponse>.NextAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TResponse>!
+GaWeCodes.Thessera.Application.Cqrs.RequestPipeline<TResponse>.RequestPipeline(GaWeCodes.Thessera.Application.Cqrs.RequestPipelineContinuation<TResponse>! continuation, System.Func<System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>!, TResponse>! failed) -> void
+GaWeCodes.Thessera.Application.Cqrs.RequestPipelineContinuation<TResponse>
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.<Clone>$() -> GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata!
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.AggregateId.get -> string!
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.AggregateId.init -> void
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.AggregateName.get -> string!
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.AggregateName.init -> void
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.Deconstruct(out System.Guid EventId, out string! AggregateName, out string! AggregateId, out long Version, out System.DateTimeOffset OccurredAt) -> void
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.DomainEventMetadata(System.Guid EventId, string! AggregateName, string! AggregateId, long Version, System.DateTimeOffset OccurredAt) -> void
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.Equals(GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata? other) -> bool
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.EventId.get -> System.Guid
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.EventId.init -> void
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.OccurredAt.get -> System.DateTimeOffset
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.OccurredAt.init -> void
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.Version.get -> long
+GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.Version.init -> void
+GaWeCodes.Thessera.Application.DomainEvents.IProjectionHandler<TDomainEvent>
+GaWeCodes.Thessera.Application.DomainEvents.IProjectionHandler<TDomainEvent>.HandleAsync(TDomainEvent domainEvent, GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata! metadata, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEvent
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEvent.EventId.get -> System.Guid
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEvent.OccurredAt.get -> System.DateTimeOffset
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventMapper<TDomainEvent>
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventMapper<TDomainEvent>.Map(TDomainEvent domainEvent, GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata! metadata) -> System.Collections.Generic.IReadOnlyCollection<GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEvent!>!
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventPublisher
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventPublisher.PublishAsync(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent, GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata! metadata, GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventSink! integrationEventSink, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventSink
+GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEventSink.PublishAsync(GaWeCodes.Thessera.Application.IntegrationEvents.IIntegrationEvent! integrationEvent, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Application.IntegrationEvents.IntegrationEventTopicAttribute
+GaWeCodes.Thessera.Application.IntegrationEvents.IntegrationEventTopicAttribute.IntegrationEventTopicAttribute(string! topic) -> void
+GaWeCodes.Thessera.Application.IntegrationEvents.IntegrationEventTopicAttribute.Topic.get -> string!
+GaWeCodes.Thessera.Application.Persistence.IRepository<TAggregate, TKey>
+GaWeCodes.Thessera.Application.Persistence.IRepository<TAggregate, TKey>.AddAsync(TAggregate! aggregate, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Application.Persistence.IRepository<TAggregate, TKey>.GetByIdAsync(TKey id, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TAggregate?>!
+GaWeCodes.Thessera.Application.Persistence.IUnitOfWork
+GaWeCodes.Thessera.Application.Persistence.IUnitOfWork.CommitAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Application.ReadModels.IReadModelRebuilder<TAggregate, TKey>
+GaWeCodes.Thessera.Application.ReadModels.IReadModelRebuilder<TAggregate, TKey>.ClearAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Application.ReadModels.IReadModelRebuilder<TAggregate, TKey>.RebuildAsync(TAggregate! aggregate, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Application.Results.Failure
+GaWeCodes.Thessera.Application.Results.Failure.<Clone>$() -> GaWeCodes.Thessera.Application.Results.Failure!
+GaWeCodes.Thessera.Application.Results.Failure.Category.get -> GaWeCodes.Thessera.Application.Results.FailureCategory
+GaWeCodes.Thessera.Application.Results.Failure.Code.get -> string!
+GaWeCodes.Thessera.Application.Results.Failure.Equals(GaWeCodes.Thessera.Application.Results.Failure? other) -> bool
+GaWeCodes.Thessera.Application.Results.Failure.Failure(string! code, string! message, GaWeCodes.Thessera.Application.Results.FailureCategory category) -> void
+GaWeCodes.Thessera.Application.Results.Failure.Message.get -> string!
+GaWeCodes.Thessera.Application.Results.Failure.Target.get -> string?
+GaWeCodes.Thessera.Application.Results.Failure.Target.init -> void
+GaWeCodes.Thessera.Application.Results.FailureCategory
+GaWeCodes.Thessera.Application.Results.FailureCategory.BusinessRule = 1 -> GaWeCodes.Thessera.Application.Results.FailureCategory
+GaWeCodes.Thessera.Application.Results.FailureCategory.Conflict = 3 -> GaWeCodes.Thessera.Application.Results.FailureCategory
+GaWeCodes.Thessera.Application.Results.FailureCategory.Forbidden = 4 -> GaWeCodes.Thessera.Application.Results.FailureCategory
+GaWeCodes.Thessera.Application.Results.FailureCategory.NotFound = 2 -> GaWeCodes.Thessera.Application.Results.FailureCategory
+GaWeCodes.Thessera.Application.Results.FailureCategory.Validation = 0 -> GaWeCodes.Thessera.Application.Results.FailureCategory
+GaWeCodes.Thessera.Application.Results.Result
+GaWeCodes.Thessera.Application.Results.Result.Failures.get -> System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>!
+GaWeCodes.Thessera.Application.Results.Result.IsFailure.get -> bool
+GaWeCodes.Thessera.Application.Results.Result.IsSuccess.get -> bool
+GaWeCodes.Thessera.Application.Results.Result<TResult>
+GaWeCodes.Thessera.Application.Results.Result<TResult>.Value.get -> TResult
+override GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.GetHashCode() -> int
+override GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.ToString() -> string!
+override GaWeCodes.Thessera.Application.Results.Failure.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Application.Results.Failure.GetHashCode() -> int
+override GaWeCodes.Thessera.Application.Results.Failure.ToString() -> string!
+static GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.operator !=(GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata? left, GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata? right) -> bool
+static GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata.operator ==(GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata? left, GaWeCodes.Thessera.Application.DomainEvents.DomainEventMetadata? right) -> bool
+static GaWeCodes.Thessera.Application.Results.Failure.BusinessRule(string! code, string! message) -> GaWeCodes.Thessera.Application.Results.Failure!
+static GaWeCodes.Thessera.Application.Results.Failure.Conflict(string! code, string! message) -> GaWeCodes.Thessera.Application.Results.Failure!
+static GaWeCodes.Thessera.Application.Results.Failure.Forbidden(string! code, string! message) -> GaWeCodes.Thessera.Application.Results.Failure!
+static GaWeCodes.Thessera.Application.Results.Failure.NotFound(string! code, string! message) -> GaWeCodes.Thessera.Application.Results.Failure!
+static GaWeCodes.Thessera.Application.Results.Failure.operator !=(GaWeCodes.Thessera.Application.Results.Failure? left, GaWeCodes.Thessera.Application.Results.Failure? right) -> bool
+static GaWeCodes.Thessera.Application.Results.Failure.operator ==(GaWeCodes.Thessera.Application.Results.Failure? left, GaWeCodes.Thessera.Application.Results.Failure? right) -> bool
+static GaWeCodes.Thessera.Application.Results.Failure.Validation(string! code, string! message) -> GaWeCodes.Thessera.Application.Results.Failure!
+static GaWeCodes.Thessera.Application.Results.Result.Failed(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result!
+static GaWeCodes.Thessera.Application.Results.Result.Failed(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>! failures) -> GaWeCodes.Thessera.Application.Results.Result!
+static GaWeCodes.Thessera.Application.Results.Result.implicit operator GaWeCodes.Thessera.Application.Results.Result!(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result!
+static GaWeCodes.Thessera.Application.Results.Result.Success() -> GaWeCodes.Thessera.Application.Results.Result!
+static GaWeCodes.Thessera.Application.Results.Result.Success<TResult>(TResult value) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
+static GaWeCodes.Thessera.Application.Results.Result<TResult>.Failed(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
+static GaWeCodes.Thessera.Application.Results.Result<TResult>.Failed(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>! failures) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
+static GaWeCodes.Thessera.Application.Results.Result<TResult>.implicit operator GaWeCodes.Thessera.Application.Results.Result<TResult>!(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
+static GaWeCodes.Thessera.Application.Results.Result<TResult>.implicit operator GaWeCodes.Thessera.Application.Results.Result<TResult>!(TResult value) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
+static GaWeCodes.Thessera.Application.Results.Result<TResult>.Success(TResult value) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
+virtual GaWeCodes.Thessera.Application.Cqrs.RequestPipelineContinuation<TResponse>.Invoke(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TResponse>!

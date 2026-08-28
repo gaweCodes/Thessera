@@ -1,0 +1,25 @@
+﻿#nullable enable
+~GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.<Clone>$() -> GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>!
+~GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.Equals(GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>? other) -> bool
+~static GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.operator !=(GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>? left, GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>? right) -> bool
+~static GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.operator ==(GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>? left, GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>? right) -> bool
+GaWeCodes.Thessera.Persistence.EfCore.EntityKeyModelBuilderExtensions
+GaWeCodes.Thessera.Persistence.EfCore.ReadModels.StateStoredReadModelRebuildRunner<TContext>
+GaWeCodes.Thessera.Persistence.EfCore.ReadModels.StateStoredReadModelRebuildRunner<TContext>.RebuildAsync<TAggregate, TKey, TState>(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+GaWeCodes.Thessera.Persistence.EfCore.ReadModels.StateStoredReadModelRebuildRunner<TContext>.StateStoredReadModelRebuildRunner(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory) -> void
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.AggregateStyle.get -> GaWeCodes.Thessera.Core.Persistence.AggregateStyle
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.Description.get -> string!
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.EfCorePersistenceAdapter(GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver! driver, string! writeConnectionString, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>? configureContext = null) -> void
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.IsTransientFault(System.Exception! exception) -> bool
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.Register(GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext! context) -> void
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.WriteConnectionString.get -> string!
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.ConfigureContext(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! builder, string! connectionString) -> void
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.FaultTranslators.get -> System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Core.Persistence.IPersistenceFaultTranslator!>!
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.IsTransientFault(System.Exception! exception) -> bool
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.PersistMessages(Wolverine.WolverineOptions! options, string! connectionString) -> void
+override GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.GetHashCode() -> int
+override GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.ToString() -> string!
+static GaWeCodes.Thessera.Persistence.EfCore.EntityKeyModelBuilderExtensions.ApplyEntityKeyConversions(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> Microsoft.EntityFrameworkCore.ModelBuilder!

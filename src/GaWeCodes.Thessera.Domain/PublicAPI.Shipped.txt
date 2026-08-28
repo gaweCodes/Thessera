@@ -1,0 +1,138 @@
+﻿#nullable enable
+~abstract GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.<Clone>$() -> GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>!
+~abstract GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.<Clone>$() -> GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>!
+~GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.AggregateState(GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>! original) -> void
+~GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.EntityState(GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>! original) -> void
+~static GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.operator !=(GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>? left, GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>? right) -> bool
+~static GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.operator ==(GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>? left, GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>? right) -> bool
+~static GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.operator !=(GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>? left, GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>? right) -> bool
+~static GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.operator ==(GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>? left, GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>? right) -> bool
+~virtual GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.Equals(GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>? other) -> bool
+~virtual GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.Equals(GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>? other) -> bool
+abstract GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.Apply(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent) -> TSelf!
+abstract GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.Id.get -> TKey
+abstract GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.Id.init -> void
+abstract GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>.Id.get -> TKey
+abstract GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.Apply(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent) -> TSelf!
+abstract GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.Id.get -> TKey
+abstract GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.Id.init -> void
+abstract GaWeCodes.Thessera.Domain.Events.DomainEvent.<Clone>$() -> GaWeCodes.Thessera.Domain.Events.DomainEvent!
+const GaWeCodes.Thessera.Domain.Rules.BusinessRuleViolationException.FallbackCode = "domain.business_rule" -> string!
+const GaWeCodes.Thessera.Domain.Rules.DomainValidationException.FallbackCode = "domain.validation" -> string!
+GaWeCodes.Thessera.Domain.Aggregates.AggregateRoot<TKey, TState>
+GaWeCodes.Thessera.Domain.Aggregates.AggregateRoot<TKey, TState>.AggregateRoot(TState! initialState) -> void
+GaWeCodes.Thessera.Domain.Aggregates.AggregateRoot<TKey, TState>.DomainEvents.get -> System.Collections.Generic.IReadOnlyCollection<GaWeCodes.Thessera.Domain.Events.IDomainEvent!>!
+GaWeCodes.Thessera.Domain.Aggregates.AggregateRoot<TKey, TState>.RaiseEvent(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent) -> void
+GaWeCodes.Thessera.Domain.Aggregates.AggregateRoot<TKey, TState>.State.get -> TState!
+GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>
+GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.AggregateState() -> void
+GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.Version.get -> long
+GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.Version.init -> void
+GaWeCodes.Thessera.Domain.Aggregates.EventSourcedAggregateRoot<TKey, TState>
+GaWeCodes.Thessera.Domain.Aggregates.EventSourcedAggregateRoot<TKey, TState>.EventSourcedAggregateRoot(TState! initialState) -> void
+GaWeCodes.Thessera.Domain.Aggregates.IAggregateRoot<TKey>
+GaWeCodes.Thessera.Domain.Aggregates.IEventSourcedAggregateRoot<TKey>
+GaWeCodes.Thessera.Domain.Aggregates.IEventSourcedAggregateRoot<TKey>.LoadFromHistory(System.Collections.Generic.IEnumerable<GaWeCodes.Thessera.Domain.Events.IDomainEvent!>! history) -> void
+GaWeCodes.Thessera.Domain.Aggregates.IStateOwner
+GaWeCodes.Thessera.Domain.Aggregates.IStateOwner.Restore(object! state) -> void
+GaWeCodes.Thessera.Domain.Aggregates.IStateOwner.State.get -> object!
+GaWeCodes.Thessera.Domain.Aggregates.IStateOwner.StateType.get -> System.Type!
+GaWeCodes.Thessera.Domain.Aggregates.IStateOwner.Version.get -> long
+GaWeCodes.Thessera.Domain.Entities.Entity<TKey, TState>
+GaWeCodes.Thessera.Domain.Entities.Entity<TKey, TState>.Entity(GaWeCodes.Thessera.Domain.Entities.IChildOwner<TKey, TState!>! owner, TKey id) -> void
+GaWeCodes.Thessera.Domain.Entities.Entity<TKey, TState>.GetCurrentState() -> TState!
+GaWeCodes.Thessera.Domain.Entities.Entity<TKey, TState>.RaiseEvent(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent) -> void
+GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>
+GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>.Equals(GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>? other) -> bool
+GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>
+GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.EntityState() -> void
+GaWeCodes.Thessera.Domain.Entities.IChildOwner<TChildKey, TChildState>
+GaWeCodes.Thessera.Domain.Entities.IChildOwner<TChildKey, TChildState>.FindChild(TChildKey childId) -> TChildState?
+GaWeCodes.Thessera.Domain.Entities.IEntity<TKey>
+GaWeCodes.Thessera.Domain.Entities.IEntity<TKey>.Id.get -> TKey
+GaWeCodes.Thessera.Domain.Entities.IEntityKey
+GaWeCodes.Thessera.Domain.Entities.IEntityKey.IsEmpty.get -> bool
+GaWeCodes.Thessera.Domain.Entities.IEntityKey<TValue>
+GaWeCodes.Thessera.Domain.Entities.IEntityKey<TValue>.Value.get -> TValue
+GaWeCodes.Thessera.Domain.Events.DomainEvent
+GaWeCodes.Thessera.Domain.Events.DomainEvent.DomainEvent() -> void
+GaWeCodes.Thessera.Domain.Events.DomainEvent.DomainEvent(GaWeCodes.Thessera.Domain.Events.DomainEvent! original) -> void
+GaWeCodes.Thessera.Domain.Events.IDomainEvent
+GaWeCodes.Thessera.Domain.Events.IDomainEventOwner
+GaWeCodes.Thessera.Domain.Events.IDomainEventOwner.ClearDomainEvents() -> void
+GaWeCodes.Thessera.Domain.Events.IDomainEventRaiser
+GaWeCodes.Thessera.Domain.Events.IDomainEventRaiser.Raise(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent) -> void
+GaWeCodes.Thessera.Domain.Events.IHasDomainEvents
+GaWeCodes.Thessera.Domain.Events.IHasDomainEvents.DomainEvents.get -> System.Collections.Generic.IReadOnlyCollection<GaWeCodes.Thessera.Domain.Events.IDomainEvent!>!
+GaWeCodes.Thessera.Domain.IClock
+GaWeCodes.Thessera.Domain.IClock.Now.get -> System.DateTimeOffset
+GaWeCodes.Thessera.Domain.Naming.AggregateNameAttribute
+GaWeCodes.Thessera.Domain.Naming.AggregateNameAttribute.AggregateNameAttribute(string! name) -> void
+GaWeCodes.Thessera.Domain.Naming.AggregateNameAttribute.Name.get -> string!
+GaWeCodes.Thessera.Domain.Naming.EventNameAttribute
+GaWeCodes.Thessera.Domain.Naming.EventNameAttribute.EventNameAttribute(string! name) -> void
+GaWeCodes.Thessera.Domain.Naming.EventNameAttribute.Name.get -> string!
+GaWeCodes.Thessera.Domain.Naming.NameSegment
+GaWeCodes.Thessera.Domain.Rules.BusinessRuleViolationException
+GaWeCodes.Thessera.Domain.Rules.BusinessRuleViolationException.BusinessRuleViolationException() -> void
+GaWeCodes.Thessera.Domain.Rules.BusinessRuleViolationException.BusinessRuleViolationException(string! message) -> void
+GaWeCodes.Thessera.Domain.Rules.BusinessRuleViolationException.BusinessRuleViolationException(string! message, System.Exception! innerException) -> void
+GaWeCodes.Thessera.Domain.Rules.BusinessRuleViolationException.BusinessRuleViolationException(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Domain.Rules.RuleViolation!>! violations) -> void
+GaWeCodes.Thessera.Domain.Rules.BusinessRuleViolationException.Violations.get -> System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Domain.Rules.RuleViolation!>!
+GaWeCodes.Thessera.Domain.Rules.DomainValidationException
+GaWeCodes.Thessera.Domain.Rules.DomainValidationException.DomainValidationException() -> void
+GaWeCodes.Thessera.Domain.Rules.DomainValidationException.DomainValidationException(string! message) -> void
+GaWeCodes.Thessera.Domain.Rules.DomainValidationException.DomainValidationException(string! message, System.Exception! innerException) -> void
+GaWeCodes.Thessera.Domain.Rules.DomainValidationException.DomainValidationException(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Domain.Rules.RuleViolation!>! violations) -> void
+GaWeCodes.Thessera.Domain.Rules.DomainValidationException.Violations.get -> System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Domain.Rules.RuleViolation!>!
+GaWeCodes.Thessera.Domain.Rules.IBusinessRule
+GaWeCodes.Thessera.Domain.Rules.IBusinessRule.Code.get -> string!
+GaWeCodes.Thessera.Domain.Rules.IBusinessRule.IsBroken() -> bool
+GaWeCodes.Thessera.Domain.Rules.IBusinessRule.Message.get -> string!
+GaWeCodes.Thessera.Domain.Rules.IDomainValidationRule
+GaWeCodes.Thessera.Domain.Rules.IDomainValidationRule.Code.get -> string!
+GaWeCodes.Thessera.Domain.Rules.IDomainValidationRule.IsInvalid() -> bool
+GaWeCodes.Thessera.Domain.Rules.IDomainValidationRule.Message.get -> string!
+GaWeCodes.Thessera.Domain.Rules.IDomainValidationRule.Target.get -> string?
+GaWeCodes.Thessera.Domain.Rules.RuleChecker
+GaWeCodes.Thessera.Domain.Rules.RuleViolation
+GaWeCodes.Thessera.Domain.Rules.RuleViolation.<Clone>$() -> GaWeCodes.Thessera.Domain.Rules.RuleViolation!
+GaWeCodes.Thessera.Domain.Rules.RuleViolation.Code.get -> string!
+GaWeCodes.Thessera.Domain.Rules.RuleViolation.Equals(GaWeCodes.Thessera.Domain.Rules.RuleViolation? other) -> bool
+GaWeCodes.Thessera.Domain.Rules.RuleViolation.Message.get -> string!
+GaWeCodes.Thessera.Domain.Rules.RuleViolation.RuleViolation(string! code, string? target, string! message) -> void
+GaWeCodes.Thessera.Domain.Rules.RuleViolation.Target.get -> string?
+override GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.GetHashCode() -> int
+override GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.ToString() -> string!
+override GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.GetHashCode() -> int
+override GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.ToString() -> string!
+override GaWeCodes.Thessera.Domain.Events.DomainEvent.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Domain.Events.DomainEvent.GetHashCode() -> int
+override GaWeCodes.Thessera.Domain.Events.DomainEvent.ToString() -> string!
+override GaWeCodes.Thessera.Domain.Rules.RuleViolation.Equals(object? obj) -> bool
+override GaWeCodes.Thessera.Domain.Rules.RuleViolation.GetHashCode() -> int
+override GaWeCodes.Thessera.Domain.Rules.RuleViolation.ToString() -> string!
+override sealed GaWeCodes.Thessera.Domain.Aggregates.AggregateRoot<TKey, TState>.Id.get -> TKey
+override sealed GaWeCodes.Thessera.Domain.Entities.Entity<TKey, TState>.Id.get -> TKey
+override sealed GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>.Equals(object? obj) -> bool
+override sealed GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>.GetHashCode() -> int
+static GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>.operator !=(GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>? left, GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>? right) -> bool
+static GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>.operator ==(GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>? left, GaWeCodes.Thessera.Domain.Entities.EntityBase<TKey>? right) -> bool
+static GaWeCodes.Thessera.Domain.Events.DomainEvent.operator !=(GaWeCodes.Thessera.Domain.Events.DomainEvent? left, GaWeCodes.Thessera.Domain.Events.DomainEvent? right) -> bool
+static GaWeCodes.Thessera.Domain.Events.DomainEvent.operator ==(GaWeCodes.Thessera.Domain.Events.DomainEvent? left, GaWeCodes.Thessera.Domain.Events.DomainEvent? right) -> bool
+static GaWeCodes.Thessera.Domain.Naming.NameSegment.IsValid(string! segment) -> bool
+static GaWeCodes.Thessera.Domain.Rules.RuleChecker.CheckAllBusinessRules(params GaWeCodes.Thessera.Domain.Rules.IBusinessRule![]! rules) -> void
+static GaWeCodes.Thessera.Domain.Rules.RuleChecker.CheckAllValidationRules(params GaWeCodes.Thessera.Domain.Rules.IDomainValidationRule![]! rules) -> void
+static GaWeCodes.Thessera.Domain.Rules.RuleChecker.CheckBusinessRule(GaWeCodes.Thessera.Domain.Rules.IBusinessRule! rule) -> void
+static GaWeCodes.Thessera.Domain.Rules.RuleChecker.CheckValidationRule(GaWeCodes.Thessera.Domain.Rules.IDomainValidationRule! rule) -> void
+static GaWeCodes.Thessera.Domain.Rules.RuleViolation.operator !=(GaWeCodes.Thessera.Domain.Rules.RuleViolation? left, GaWeCodes.Thessera.Domain.Rules.RuleViolation? right) -> bool
+static GaWeCodes.Thessera.Domain.Rules.RuleViolation.operator ==(GaWeCodes.Thessera.Domain.Rules.RuleViolation? left, GaWeCodes.Thessera.Domain.Rules.RuleViolation? right) -> bool
+virtual GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.EqualityContract.get -> System.Type!
+virtual GaWeCodes.Thessera.Domain.Aggregates.AggregateState<TSelf, TKey>.PrintMembers(System.Text.StringBuilder! builder) -> bool
+virtual GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.EqualityContract.get -> System.Type!
+virtual GaWeCodes.Thessera.Domain.Entities.EntityState<TSelf, TKey>.PrintMembers(System.Text.StringBuilder! builder) -> bool
+virtual GaWeCodes.Thessera.Domain.Events.DomainEvent.EqualityContract.get -> System.Type!
+virtual GaWeCodes.Thessera.Domain.Events.DomainEvent.Equals(GaWeCodes.Thessera.Domain.Events.DomainEvent? other) -> bool
+virtual GaWeCodes.Thessera.Domain.Events.DomainEvent.PrintMembers(System.Text.StringBuilder! builder) -> bool
