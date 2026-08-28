@@ -1,0 +1,77 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      THESSERA_REQUIRE_CONTAINERS: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Thessera.slnx
+
+      - name: Report vulnerable dependencies
+        run: |
+          dotnet list Thessera.slnx package --vulnerable --include-transitive | tee vulnerable-packages.log
+          if grep -q "has the following vulnerable packages" vulnerable-packages.log; then
+            echo "::error::Vulnerable transitive or direct dependencies detected, see the log above."
+            exit 1
+          fi
+
+      - name: Build
+        run: dotnet build Thessera.slnx --no-restore --configuration Release
+
+      - name: Test
+        run: >
+          dotnet test Thessera.slnx --no-build --configuration Release
+          -- --report-xunit-trx --report-xunit-trx-filename test-results.trx
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: "**/TestResults/**/test-results.trx"
+          retention-days: 14
+
+      - name: Pack
+        run: dotnet pack Thessera.slnx --no-build --configuration Release --output ./artifacts
+
+      - name: Resolve package version
+        id: version
+        run: |
+          version=$(dotnet msbuild src/GaWeCodes.Thessera.Domain/GaWeCodes.Thessera.Domain.csproj -t:Build -getProperty:PackageVersion -verbosity:quiet)
+          echo "Resolved package version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Refuse an untagged release build
+        if: startsWith(github.ref, 'refs/tags/v') && startsWith(steps.version.outputs.version, '0.0.0')
+        run: |
+          echo "::error::Tag ${{ github.ref_name }} resolved to package version ${{ steps.version.outputs.version }}, the MinVer fallback used when no reachable tag is found. Refusing to produce packages for publishing from this build."
+          exit 1
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: ./artifacts/*.nupkg
+          retention-days: 14

@@ -1,0 +1,82 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
+    env:
+      THESSERA_REQUIRE_CONTAINERS: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Thessera.slnx
+
+      - name: Build
+        run: dotnet build Thessera.slnx --no-restore --configuration Release
+
+      - name: Test
+        run: >
+          dotnet test Thessera.slnx --no-build --configuration Release
+          -- --report-xunit-trx --report-xunit-trx-filename test-results.trx
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-test-results
+          path: "**/TestResults/**/test-results.trx"
+          retention-days: 14
+
+      - name: Pack
+        run: dotnet pack Thessera.slnx --no-build --configuration Release --output ./artifacts
+
+      - name: Resolve package version
+        id: version
+        run: |
+          version=$(dotnet msbuild src/GaWeCodes.Thessera.Domain/GaWeCodes.Thessera.Domain.csproj -t:Build -getProperty:PackageVersion -verbosity:quiet)
+          echo "Resolved package version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Refuse a tag that does not resolve to itself
+        if: github.ref_name != format('v{0}', steps.version.outputs.version)
+        run: |
+          echo "::error::Tag ${{ github.ref_name }} resolved to package version ${{ steps.version.outputs.version }} instead of matching itself. This happens when the tag is unreachable (shallow clone, wrong prefix) and MinVer falls back to 0.0.0-alpha.0. Refusing to publish."
+          exit 1
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-packages
+          path: ./artifacts/*.nupkg
+          retention-days: 90
+
+      - name: NuGet login (OIDC to short-lived API key)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push packages to nuget.org
+        run: >
+          dotnet nuget push ./artifacts/*.nupkg
+          --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate

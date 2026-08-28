@@ -3,29 +3,20 @@ namespace GaWeCodes.Thessera.Tests;
 public sealed class ContainerRequirementTests
 {
     [Fact]
-    public void RecognizesTheCurrentVariable()
+    public void ThrowsWhenTheVariableIsSet()
     {
-        var requiring = ContainerRequirement.RequiringVariable(
-            name => name == ContainerRequirement.EnvironmentVariable ? "1" : null);
+        Environment.SetEnvironmentVariable(ContainerRequirement.EnvironmentVariable, "1");
 
-        Assert.Equal(ContainerRequirement.EnvironmentVariable, requiring);
-    }
-
-    [Fact]
-    public void StillRecognizesTheLegacyVariable()
-    {
-        var requiring = ContainerRequirement.RequiringVariable(
-            name => name == ContainerRequirement.LegacyEnvironmentVariable ? "1" : null);
-
-        Assert.Equal(ContainerRequirement.LegacyEnvironmentVariable, requiring);
-    }
-
-    [Fact]
-    public void PrefersTheCurrentVariableOverTheLegacyOne()
-    {
-        var requiring = ContainerRequirement.RequiringVariable(_ => "1");
-
-        Assert.Equal(ContainerRequirement.EnvironmentVariable, requiring);
+        try
+        {
+            Assert.True(ContainerRequirement.ContainersRequired);
+            Assert.Throws<InvalidOperationException>(
+                () => ContainerRequirement.ThrowIfRequired("Postgres", new InvalidOperationException("boom")));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(ContainerRequirement.EnvironmentVariable, null);
+        }
     }
 
     [Theory]
@@ -37,8 +28,16 @@ public sealed class ContainerRequirementTests
     [InlineData("FALSE")]
     public void TreatsDisablingValuesAsUnset(string? value)
     {
-        var requiring = ContainerRequirement.RequiringVariable(_ => value);
+        Environment.SetEnvironmentVariable(ContainerRequirement.EnvironmentVariable, value);
 
-        Assert.Null(requiring);
+        try
+        {
+            Assert.False(ContainerRequirement.ContainersRequired);
+            ContainerRequirement.ThrowIfRequired("Postgres", new InvalidOperationException("boom"));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(ContainerRequirement.EnvironmentVariable, null);
+        }
     }
 }
