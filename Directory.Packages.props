@@ -33,14 +33,14 @@
     <PackageVersion Include="Testcontainers.RabbitMq" Version="4.14.0" />
     <PackageVersion Include="WolverineFx.EntityFrameworkCore" Version="[6.30.2, 7.0.0)" />
     <PackageVersion Include="WolverineFx.Kafka" Version="6.30.2" />
-    <PackageVersion Include="WolverineFx.Marten" Version="[6.25.3,7.0)" />
+    <PackageVersion Include="WolverineFx.Marten" Version="[6.30.2, 7.0.0)" />
     <PackageVersion Include="WolverineFx.Postgresql" Version="[6.30.2, 7.0.0)" />
     <PackageVersion Include="WolverineFx.RabbitMQ" Version="[6.30.2, 7.0.0)" />
     <PackageVersion Include="WolverineFx.RuntimeCompilation" Version="[6.30.2, 7.0.0)" />
     <PackageVersion Include="WolverineFx.Sqlite" Version="6.30.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3" Version="3.2.2" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
   </ItemGroup>
 
 </Project>
