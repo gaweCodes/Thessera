@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-preview.1] - 2026-08-28
+
 ### Added
 
 - Initial implementation of the Thessera package family.
@@ -32,4 +34,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - No `InternalsVisibleTo` is used by any package.
 
-[Unreleased]: https://github.com/GaWeCodes/Thessera/commits/main
+[Unreleased]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.1...main
+[1.0.0-preview.1]: https://github.com/GaWeCodes/Thessera/commits/v1.0.0-preview.1
