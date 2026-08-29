@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PostgreSQL support and database-specific error translation.
 - Optional RabbitMQ transport for integration events.
 - Testing utilities and convention checks.
-- XML documentation, symbol packages (`snupkg`), and SourceLink for all packages.
+- Symbol packages (`snupkg`) and SourceLink for all packages.
 
 ### Changed
 

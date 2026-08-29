@@ -57,6 +57,8 @@ Thessera/
 │   └── Shared/
 ├── Examples/                                            standalone consumer examples and their tests
 ├── Examples.slnx                                        separate solution for the examples only
+├── docs/                                                documentation for maintainers, not shipped in any package
+│   └── architecture/                                    architecture decision records (ADRs)
 ├── CHANGELOG.md
 └── README.md
 ```
