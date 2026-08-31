@@ -47,7 +47,8 @@ store choice.
 ## Contributing
 
 Issues and pull requests are welcome. See [`docs/architecture/`](docs/architecture) for the
-architecture decisions (ADRs) behind the design.
+architecture decisions (ADRs) behind the design, and [`docs/glossary.md`](docs/glossary.md) for the
+vocabulary those decisions, the package READMEs and the XML documentation share.
 
 ## License
 
