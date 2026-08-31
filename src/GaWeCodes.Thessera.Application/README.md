@@ -8,7 +8,7 @@ choice. It depends on `GaWeCodes.Thessera.Domain` and on nothing else.
 **Why not just Wolverine?** Wolverine can already dispatch a message and give you an outbox. What it
 does not give you is an application layer that compiles against a repository over _your_ aggregate,
 a uniform failure channel your API can map to status codes, and a projection contract that survives
-a switch between state store and event stream. Those are the contracts in this package — and none of
+a switch between state store and event store. Those are the contracts in this package — and none of
 them drags a runtime into your use-case project.
 
 ## When you need this package
@@ -81,70 +81,25 @@ to choose Thessera.
 
 ### Cross-cutting behaviour
 
-```csharp
-public sealed class TimingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-{
-    public async Task<TResponse> HandleAsync(
-        TRequest request,
-        RequestPipeline<TResponse> pipeline,
-        CancellationToken cancellationToken)
-    {
-        var started = Stopwatch.GetTimestamp();
-        try
-        {
-            return await pipeline.NextAsync(cancellationToken).ConfigureAwait(false);
-        }
-        finally
-        {
-            Log(typeof(TRequest).Name, Stopwatch.GetElapsedTime(started));
-        }
-    }
-}
-```
-
-Register it with `options.AddPipelineBehavior(typeof(TimingBehavior<,>), order)` inside
-`AddThessera`. Lower order runs further out; the built-in behaviours sit at
+A pipeline behaviour is an `IPipelineBehavior<TRequest, TResponse>` wrapped around every dispatched
+command and query, registered with `options.AddPipelineBehavior(typeof(YourBehavior<,>), order)`
+inside `AddThessera`. Lower order runs further out; the built-in behaviours sit at
 `ThesseraOptions.LoggingBehaviorOrder` (0), `ExceptionToResultBehaviorOrder` (100) and
-`UnitOfWorkBehaviorOrder` (300), so you can place yours relative to them by name.
-
-A behaviour that wants to stop the request calls `pipeline.Failed(failure)` instead of
-`pipeline.NextAsync(...)` — that produces the correctly typed failed response without the behaviour
-having to know whether `TResponse` is `Result` or `Result<T>`.
+`UnitOfWorkBehaviorOrder` (300). A behaviour that wants to stop the request calls
+`pipeline.Failed(failure)` instead of `pipeline.NextAsync(...)`. See the
+[`GaWeCodes.Thessera.Core` README](../GaWeCodes.Thessera.Core/README.md) for a worked example and
+the registration wiring.
 
 ### Projections and integration events
 
-```csharp
-public sealed class ReadingProjection(ReadDbContext context) : IProjectionHandler<ReadingRecorded>
-{
-    public Task HandleAsync(
-        ReadingRecorded domainEvent,
-        DomainEventMetadata metadata,
-        CancellationToken cancellationToken)
-    {
-        // metadata.Version is the aggregate version. Use it as a watermark and ignore anything not
-        // newer, so a redelivered event cannot move the read model backwards.
-        ...
-    }
-}
-
-[IntegrationEventTopic("readings.reading-recorded")]
-public sealed record ReadingRecordedIntegrationEvent(
-    Guid ReadingId,
-    int Value,
-    Guid EventId,
-    DateTimeOffset OccurredAt) : IIntegrationEvent;
-
-public sealed class ReadingMapper : IIntegrationEventMapper<ReadingRecorded>
-{
-    public IReadOnlyCollection<IIntegrationEvent> Map(ReadingRecorded domainEvent, DomainEventMetadata metadata) =>
-        [new ReadingRecordedIntegrationEvent(
-            domainEvent.ReadingId.Value, domainEvent.Value, metadata.EventId, metadata.OccurredAt)];
-}
-```
-
-Handlers, projections and mappers are discovered by assembly scanning; you hand the assemblies to
-`AddThessera`. Delivery is at-least-once, so write projections idempotently — the `Version`
-watermark above is the intended way.
+An `IProjectionHandler<TDomainEvent>` writes one domain event into a read model; an
+`IIntegrationEventMapper<TDomainEvent>` turns one into the `[IntegrationEventTopic]`-tagged
+`IIntegrationEvent`s other services should see. Both are discovered by assembly scanning and driven
+by `GaWeCodes.Thessera.Core`. Delivery is at-least-once, so write projections idempotently using the
+`Version` watermark on `DomainEventMetadata`. See
+[`Examples/EventSourced`](../../Examples/EventSourced/README.md) for projections and
+[`Examples/EventSourcedWithMessaging`](../../Examples/EventSourcedWithMessaging/README.md) for
+integration events end to end.
 
 ## Two contracts worth reading before you depend on them
 
@@ -161,6 +116,21 @@ first segment names the owning bounded context and is checked at publish time ag
 name the host registered — a service cannot publish under a foreign context. Consumers bind to
 patterns such as `readings.*`, so the value is a contract with everyone who has ever subscribed,
 and it is deliberately independent of the CLR type the attribute happens to sit on.
+
+## What this package promises, and what the runtime adds
+
+- Exactly one handler per command or query, and pipeline behaviour ordering: enforced by a startup
+  check, only when the host is composed via `AddThessera` (`GaWeCodes.Thessera.Core`).
+- The transaction that commits also writes the outbox: a property of the shipped `IUnitOfWork`
+  implementations, which pair a persistence store with `GaWeCodes.Thessera.Wolverine`. A custom
+  `IUnitOfWork` need not have an outbox at all.
+- A unique-constraint violation or concurrency conflict arrives as `Failure.Conflict`: translated
+  by the fault translators in `GaWeCodes.Thessera.Npgsql`, wired in by whichever store package you
+  picked.
+- Projections run on their own durable queue: a property of `GaWeCodes.Thessera.Wolverine`, not of
+  `IProjectionHandler` itself.
+- An integration-event topic's context segment is checked against the host's registered context:
+  only once a messaging transport has called `UseTransport` (`GaWeCodes.Thessera.Core`).
 
 ## Limits
 
