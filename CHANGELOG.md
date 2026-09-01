@@ -33,7 +33,7 @@ prints at startup, and the lower bounds of the dependencies the packages declare
 ### Changed
 
 - The lower bound of several declared dependencies moved up: Entity Framework Core and the
-  `Microsoft.Extensions.*` packages to 10.0.11, and Wolverine to 6.30.3. The upper bounds are
+  `Microsoft.Extensions.*` packages to 10.0.11, and Wolverine to 6.32.0. The upper bounds are
   unchanged, so a consuming host that already resolves a newer patch is unaffected.
 - The package READMEs now describe dependency pins and file counts rather than quoting them, so
   they cannot go stale on the next version bump.
