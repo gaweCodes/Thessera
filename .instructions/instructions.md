@@ -4,7 +4,9 @@
 
 Tactical DDD, CQRS and selective event sourcing building blocks for .NET. The same domain model
 runs either state-stored (EF Core) or event-stored (Marten) — switching is a wiring decision, not
-a rewrite.
+a rewrite. [`README.md`](../README.md) lists the ten packages;
+[`docs/architecture/README.md`](../docs/architecture/README.md) describes the shape they form and
+how a command travels through it.
 
 ## Build, test
 
@@ -13,46 +15,27 @@ dotnet build
 dotnet test
 ```
 
-Solution file: `Thessera.slnx`. SDK pinned in `global.json` (`10.0.302`, `rollForward:
-latestFeature`).
+Solution file: `Thessera.slnx`. The SDK pin in `global.json` is the only version number kept
+outside `Directory.Packages.props`, which carries every dependency version — a `.csproj` therefore
+writes `<PackageReference Include="..." />` with no `Version`.
 
-`Directory.Build.props` applies solution-wide: `net10.0`, nullable + implicit usings enabled,
-`LangVersion latest`, `AnalysisLevel latest-all`, `AnalysisMode All`, `EnableNETAnalyzers`,
-`TreatWarningsAsErrors` and `CodeAnalysisTreatWarningsAsErrors` both true, `WarningLevel 9999`.
-
-Package versions are managed centrally in `Directory.Packages.props`
-(`ManagePackageVersionsCentrally`, `CentralPackageTransitivePinningEnabled`): a `.csproj` carries
-`<PackageReference Include="..." />` with no `Version`.
-
-Analyzer relaxations found in the repository:
-
-- `src/GaWeCodes.Thessera.Domain/.editorconfig` — `CA1033` off.
-- `src/GaWeCodes.Thessera.Application/.editorconfig` — `CA1000` off.
-- `tests/.editorconfig` — `CA1707`, `CA1515`, `CA1711`, `CA1031`, `CA1859`, `CA1812` off.
-- No other project under `src` has an `.editorconfig` override.
+`Directory.Build.props` is authoritative for the solution-wide compiler and analyzer settings; read
+it rather than trusting a summary. What matters when working here is that the build is strict:
+warnings are errors, analysis runs at the highest level, and a rule is only ever relaxed in a
+scoped `.editorconfig` — one under `tests/`, and one each in the `Domain` and `Application`
+packages. No other project under `src` overrides anything.
 
 `CS1591` (missing XML documentation) is **not** relaxed anywhere. Every package under `src`
-generates a documentation file, and `TreatWarningsAsErrors` turns an undocumented public member
-into a build error — so documentation cannot fall behind the public surface without the build
-saying so.
+generates a documentation file, and warnings-as-errors turns an undocumented public member into a
+build error — so documentation cannot fall behind the public surface without the build saying so.
 
 ## Repository map
 
 ```text
 Thessera/
-├── src/
-│   ├── GaWeCodes.Thessera.Domain/                       aggregates, entities, domain events, typed keys, rules
-│   ├── GaWeCodes.Thessera.Application/                  CQRS and integration-event contracts, Result/Failure
-│   ├── GaWeCodes.Thessera.Core/                         composition root, dispatcher, projections, startup checks
-│   ├── GaWeCodes.Thessera.Wolverine/                    runtime that owns the outbox
-│   ├── GaWeCodes.Thessera.Persistence.EfCore/           database-agnostic half of the EF Core state store
-│   ├── GaWeCodes.Thessera.Persistence.EfCore.Postgres/  aggregates as state in PostgreSQL
-│   ├── GaWeCodes.Thessera.Persistence.Marten/           aggregates as an event stream in PostgreSQL
-│   ├── GaWeCodes.Thessera.Npgsql/                       PostgreSQL error translation
-│   ├── GaWeCodes.Thessera.Messaging.RabbitMq/           opt-in transport for integration events
-│   └── GaWeCodes.Thessera.Testing/                      convention checks and test helpers
+├── src/                                                 ten packages, one directory each
 ├── tests/
-│   ├── GaWeCodes.Thessera.<Package>.Tests/              one test project per package above
+│   ├── GaWeCodes.Thessera.<Package>.Tests/              one test project per package
 │   ├── GaWeCodes.Thessera.Tests.PackageConventions/     package/project naming and packaging conventions
 │   ├── GaWeCodes.Thessera.Tests.Containers/             Testcontainers-backed tests
 │   ├── GaWeCodes.Thessera.Tests.EfCore/                 shared EF Core test infrastructure
@@ -69,31 +52,29 @@ Thessera/
 └── README.md
 ```
 
-Each package has its own `README.md` describing what it is, when to use it (and when not to), and
-a runnable example.
+The ten packages under `src` are listed in [`README.md`](../README.md), each with its own
+`README.md` describing what it is, when to use it (and when not to), and a runnable example.
 
-`Examples/` is a consumer-facing six-step adoption ladder that intentionally does not participate in
-the main solution. `Examples.slnx` contains six standalone console applications and six companion
-test projects. The projects under `Examples/` do not reference one another, reset MSBuild strictness
-with `Examples/Directory.Build.props`, and consume Thessera packages through explicit
-`PackageReference`s from a local folder feed at `C:\temp\thessera-local-feed`, populated with
-`dotnet pack -c Release -o C:\temp\thessera-local-feed`.
-
-Each example is an interactive CRUD console app. The ladder starts with a hand-written
-domain-and-list implementation, then hand-written application handlers against
-`GaWeCodes.Thessera.Application` contracts, then the EF Core/Postgres and Marten persistence
-packages, and finally both persistence options again with RabbitMQ publishing enabled. Every example
-owns its own domain model and tests only its own code.
+`Examples/` is a consumer-facing six-step adoption ladder, described in
+[`Examples/README.md`](../Examples/README.md). Two things about it are not visible from there: it
+deliberately does not participate in the main solution, and it resets MSBuild strictness with its
+own `Examples/Directory.Build.props`. The examples consume Thessera through `PackageReference`s
+from a local folder feed, never through project references, and each one owns its domain model and
+tests only its own code.
 
 ## Conventions in force in this repository
+
+Each of these is decided in an ADR; [`docs/architecture/README.md`](../docs/architecture/README.md)
+indexes them under "How the repository is kept honest" and says why each one was chosen. What
+follows is only what you have to *do*.
 
 - **Project naming.** A project under `src` carries the family prefix `GaWeCodes.Thessera.<Name>`
   and its `.csproj` name matches its directory. A test project is named either
   `GaWeCodes.Thessera.<Package>.Tests` (mirrors exactly one package) or
   `GaWeCodes.Thessera.Tests.<X>` (mirrors none, e.g. `Tests.PackageConventions`). Fixtures under
   `tests/ExternalAssemblies/`, hosts under `tests/MatrixHosts/` and the projects under `Examples/`
-  intentionally do **not** carry the family prefix.
-  ([ADR 0009](../docs/architecture/0009-project-names-are-tested.md))
+  intentionally do **not** carry the family prefix. A test enforces all of this
+  ([ADR 0009](../docs/architecture/0009-project-names-are-tested.md)).
 - **The public surface is tracked.** Every package under `src` carries `PublicAPI.Shipped.txt` and
   `PublicAPI.Unshipped.txt`; a new public member goes into the unshipped file in the same change.
   ([ADR 0008](../docs/architecture/0008-public-surface-is-a-tracked-file.md))
@@ -101,8 +82,7 @@ owns its own domain model and tests only its own code.
   ([ADR 0007](../docs/architecture/0007-no-internals-visible-to.md))
 - **No assertion library.** Test projects use xUnit v3 built-in asserts.
   ([ADR 0012](../docs/architecture/0012-xunit-built-in-asserts.md))
-- **Central package management.** Every dependency version lives in `Directory.Packages.props`;
-  the SDK pin in `global.json` is the only version kept outside of it.
+- **Central package management**, transitive pinning included.
   ([ADR 0011](../docs/architecture/0011-central-package-management.md))
 - **One version, from Git tags.** No version number is written in the repository; MinVer derives
   it, and `release.yml` is the only path to nuget.org — see [`RELEASING.md`](../RELEASING.md).
