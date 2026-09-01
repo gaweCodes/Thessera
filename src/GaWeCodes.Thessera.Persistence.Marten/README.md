@@ -120,19 +120,33 @@ convention changes and makes every existing stream unreachable.
 The same holds for `[EventName]`: it is the event type name in the database. Renaming the C# type is
 free; changing the attribute value orphans every event already written under the old one.
 
+## What it checks at startup
+
+- The chosen **aggregate style matches the store**. Every aggregate a registered handler asks for
+  through `IRepository<TAggregate, TKey>` is checked before the host finishes starting, by name: a
+  plain `AggregateRoot` aggregate selected with this store has no history to replay and is refused —
+  there is no `WithoutEventHistory()` for this direction, unlike the mirror case on the state store.
+  This is the same check either store registers; only the direction of the mismatch differs.
+- Schema is applied only when `ProvisionInfrastructure(InfrastructureProvisioning.AtStartup)` was
+  selected; a service that did not select it never touches schema, whatever Marten changes are
+  pending.
+
+## Failures you get back as `Result`, not exceptions
+
+A concurrency conflict becomes `Failure.Conflict` with the code from `PersistenceFailureCodes`. A
+unique-constraint violation on the underlying PostgreSQL tables becomes a conflict failure too, and
+transient Npgsql faults are retried with a cooldown before anything reaches the error queue — the
+same translators the state store uses.
+
 ## Limits
 
 - **`net10.0` only.** No multi-targeting.
 - **PostgreSQL only** — that is Marten, not a restriction added here.
-- **Only event-sourced aggregates.** An aggregate that is not an `EventSourcedAggregateRoot` cannot
-  be loaded from a stream at all, so this store refuses it and the container will not build the
-  repository. The mirror case — an event-sourced aggregate on the state store — is a *warning*, not
-  a wall, and can be waived with `WithoutEventHistory()`.
 - **Not trim-safe and not AOT-safe.** Domain events and handlers are discovered by scanning, typed
   keys are read reflectively, and repository types are built with `MakeGenericType`. Publish without
   `PublishTrimmed` and without `PublishAot`.
-- Marten is pinned to `[9.22.5,10.0)` and WolverineFx to `[6.25.3,7.0)`: this package configures both
-  through APIs that are not application-level contracts.
+- Marten and WolverineFx are both pinned below their next major version: this package configures
+  both through APIs that are not application-level contracts.
 
 ## The family
 

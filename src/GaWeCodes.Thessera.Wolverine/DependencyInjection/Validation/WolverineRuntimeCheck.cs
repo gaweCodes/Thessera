@@ -21,9 +21,9 @@ internal sealed class WolverineRuntimeCheck(
         if (serviceProvider.GetService<IWolverineRuntime>() is null)
         {
             throw new InvalidOperationException(
-                "The selected Building Block capabilities (persistence and/or integration-event messaging) require " +
-                "Wolverine, but no Wolverine runtime is registered. Register through the host-builder overload â€” " +
-                "builder.AddThessera(...) â€” which calls UseWolverine() and applies the Building Block " +
+                "The selected Thessera capabilities (persistence and/or integration-event messaging) require " +
+                "Wolverine, but no Wolverine runtime is registered. Register through the host-builder overload — " +
+                "builder.AddThessera(...) — which calls UseWolverine() and applies the Thessera " +
                 "configuration itself. A host that deliberately wires Wolverine on top of the IServiceCollection " +
                 "overload calls UseWolverine() on the host builder instead.");
         }

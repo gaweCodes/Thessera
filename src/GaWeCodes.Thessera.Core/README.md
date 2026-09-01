@@ -11,10 +11,10 @@ dependencies are `Microsoft.Extensions.*.Abstractions`.
 **Why not just Wolverine?** Because that question has two halves and this package answers only one
 of them honestly. Wolverine is the message engine, and from the store packages upwards Thessera runs
 on it, openly and by name. What Wolverine does not give you is an aggregate, business rules, typed
-identifiers, domain events with stable persisted names, or a switch between state and event stream.
-This package is the wiring that connects that domain model to a runtime — and it is deliberately
-buildable **without** the runtime, so a host that only dispatches commands never restores Wolverine
-at all.
+identifiers, domain events with stable persisted names, or a switch between state store and event
+store. This package is the wiring that connects that domain model to a runtime — and it is
+deliberately buildable **without** the runtime, so a host that only dispatches commands never
+restores Wolverine at all.
 
 ## When you need this package
 
@@ -153,7 +153,7 @@ Typed keys serialize as their bare value; apply `EntityKeyJsonOptions.Apply(...)
 ## Extending it
 
 The seams below are the whole contract for a store or transport author. They were measured against a
-throwaway EF Core adapter for SQLite and SQL Server and a throwaway Kafka transport, both written
+throwaway EF Core adapter for SQLite and a throwaway Kafka transport, both written
 strictly against the public API and both compiled against exactly these types.
 
 - `IPersistenceAdapter` + `PersistenceRegistrationContext` — announce a store, register its services.
@@ -170,6 +170,20 @@ practice reference `GaWeCodes.Thessera.Wolverine` and, through it, WolverineFx �
 an immutable record: a tracker that keeps the object it loaded, rather than the object the aggregate
 holds *after* the events were applied, will store the old state and report success. Track the
 aggregate, read `IStateOwner.State` at save time.
+
+## What this package promises, and what the runtime adds
+
+- Domain events ending up in an outbox, written in the same transaction as the aggregate's state:
+  this package builds the envelopes and tracks the aggregates; writing them durably is done by
+  whichever store's `IUnitOfWork` pairs with `GaWeCodes.Thessera.Wolverine`.
+- A domain-event or projection queue being durable, so a crash between commit and delivery does not
+  lose the message: also `GaWeCodes.Thessera.Wolverine`'s `UseDurableInbox()`, not this package.
+- `BusinessRuleViolationException` and `DomainValidationException` being turned into a failed result
+  in the `BusinessRule`/`Validation` category: this package's `ExceptionToResultBehavior`, but only
+  once it is registered — which happens for every host that calls `AddThessera`.
+- The startup checks named in "What runs at startup" above (handler registration, aggregate style,
+  state self-binding, mapper reachability, unit-of-work presence): all of them run because
+  `AddThessera` registers them; a host that composed the pieces itself without it would not get them.
 
 ## Limits
 

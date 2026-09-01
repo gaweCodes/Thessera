@@ -100,12 +100,12 @@ write `DbContext` has to be scoped. Both failures are otherwise silent until the
 ## Limits
 
 - **`net10.0` only.** No multi-targeting.
-- **State-stored, mostly.** Thirteen of the sixteen files sit under `StateStored/`, but the typed-key
+- **State-stored, mostly.** Nearly every file here sits under `StateStored/`, but the typed-key
   converters are style-neutral and useful on a read context of an event-sourced service too.
 - **Not trim-safe and not AOT-safe.** The adapter reflects over aggregate state, typed keys and
   child collections to build the model and to rehydrate an aggregate; EF Core itself is not fully
   trim-compatible either. Publish without `PublishTrimmed` and without `PublishAot`.
-- EF Core is pinned to `[10.0.10,11.0)` on purpose: the state reconciliation reads EF Core
+- EF Core is pinned below its next major version on purpose: the state reconciliation reads EF Core
   **metadata** APIs, which are not a stable application-level contract, so a major upgrade is not
   taken sight-unseen.
 

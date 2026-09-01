@@ -63,7 +63,7 @@ or directly as an enumerable `IPersistenceFaultTranslator` singleton in your ada
 - **`net10.0` only.** No multi-targeting.
 - Two error cases are covered — unique violation and transient faults. Everything else falls through
   to the next translator and, failing that, to the runtime's generic handling.
-- Npgsql is pinned to `[10.0.3,11.0)`.
+- Npgsql is pinned below its next major version.
 - The family is **not trim-safe and not AOT-safe**. Publish without `PublishTrimmed` and without
   `PublishAot`.
 

@@ -43,7 +43,7 @@ internal sealed class IntegrationEventSubscriptionCheck(
             {
                 problems.Add(
                     $"'{messageType.FullName}' publishes under '{topic}', which belongs to this very context " +
-                    $"('{messaging.ContextName}'). A context does not consume its own integration events â€” such a " +
+                    $"('{messaging.ContextName}'). A context does not consume its own integration events — such a " +
                     "message is discarded on arrival, so the handler would never run. Call the domain directly " +
                     "instead of going through the broker.");
                 continue;

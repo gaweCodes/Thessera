@@ -3,11 +3,29 @@ using System.Reflection;
 
 namespace GaWeCodes.Thessera.Testing;
 
+/// <summary>
+/// Pins the persisted shape of a domain model — stream key formats, event names, and the serialized
+/// name and type of every property — against an approved snapshot.
+/// </summary>
+/// <remarks>
+/// These names leave the process and are permanent: renaming a C# member is free, but changing what
+/// it is written as orphans everything already stored. Nothing in the compiler notices, which is why
+/// the shape is compared against a file a human approved.
+/// </remarks>
 public static class PersistedSchema
 {
     private const string ApprovedSuffix = ".approved.txt";
     private const string ReceivedSuffix = ".received.txt";
 
+    /// <summary>
+    /// Renders the persisted shape as text, for driving the comparison yourself.
+    /// </summary>
+    /// <param name="assemblies">The assemblies holding the domain model.</param>
+    /// <returns>
+    /// One block per aggregate stream and per domain or integration event, with each property's
+    /// serialized name and type.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="assemblies"/> is <see langword="null"/>.</exception>
     [RequiresUnreferencedCode(TrimmingMessages.AssemblyScanning)]
     [RequiresDynamicCode(TrimmingMessages.DynamicGenerics)]
     public static string Render(IEnumerable<Assembly> assemblies)
@@ -17,6 +35,27 @@ public static class PersistedSchema
         return PersistedSchemaRenderer.Render(assemblies);
     }
 
+    /// <summary>
+    /// Compares the current persisted shape against an approved snapshot and fails when they differ.
+    /// </summary>
+    /// <param name="approvedFilePath">
+    /// The baseline file. Must end in <c>.approved.txt</c>, so that a failing run can write its
+    /// rendering beside it as <c>.received.txt</c>.
+    /// </param>
+    /// <param name="assemblies">The assemblies holding the domain model.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="assemblies"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="approvedFilePath"/> is empty, blank, or does not end in <c>.approved.txt</c>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// The rendering differs from the baseline — or there is no baseline yet, which counts as a
+    /// difference so that the first run has to be approved deliberately.
+    /// </exception>
+    /// <remarks>
+    /// On a mismatch the current rendering is written next to the baseline, so reviewing the change
+    /// is a file comparison and accepting an intended one is a file rename. The received file is
+    /// deleted again as soon as a run matches.
+    /// </remarks>
     [RequiresUnreferencedCode(TrimmingMessages.AssemblyScanning)]
     [RequiresDynamicCode(TrimmingMessages.DynamicGenerics)]
     public static void Verify(string approvedFilePath, IEnumerable<Assembly> assemblies)

@@ -58,7 +58,7 @@ internal sealed class AggregatePersistenceMatchCheck(
                 : $"{adapter.Description} keeps only the current state of an aggregate, but these aggregates " +
                     "derive from EventSourcedAggregateRoot and therefore declare their events to be the record " +
                     "of truth: " + $"{Join(mismatched)}. Their state is written and read back correctly and " +
-                    "their events still reach the outbox, so nothing fails at run time â€” what is missing is the " +
+                    "their events still reach the outbox, so nothing fails at run time — what is missing is the " +
                     "stream. No event is ever stored, so the aggregate can never be replayed, audited, or " +
                     "inspected as of an earlier point in time, and that loss is silent and permanent. Select " +
                     "UseMartenEventStore(writeConnectionString) to keep the history, derive them from " +

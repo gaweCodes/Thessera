@@ -5,10 +5,27 @@ using GaWeCodes.Thessera.Domain.Aggregates;
 
 namespace GaWeCodes.Thessera.Core.Persistence;
 
+/// <summary>
+/// Creates the empty aggregate hull a repository fills from the store.
+/// </summary>
+/// <remarks>
+/// Loading an aggregate does not go through its named factory — that factory exists to enforce the
+/// rules for <em>creating</em> one, and a stored aggregate has already been created. The hull is
+/// built through the private parameterless constructor and then restored or replayed into.
+/// </remarks>
 public static class AggregateFactory
 {
     private static readonly ConcurrentDictionary<Type, ConstructorInfo> Constructors = new();
 
+    /// <summary>
+    /// Creates an empty instance of an aggregate, ready to be filled.
+    /// </summary>
+    /// <typeparam name="TAggregate">The aggregate to create.</typeparam>
+    /// <returns>An instance with no state applied yet.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// The type has no parameterless constructor, so no repository can reconstitute it. Add one and
+    /// keep it private, so the named factory stays the only public way to create the aggregate.
+    /// </exception>
     [RequiresUnreferencedCode(TrimmingMessages.AssemblyScanning)]
     public static TAggregate CreateEmpty<TAggregate>()
         where TAggregate : class =>

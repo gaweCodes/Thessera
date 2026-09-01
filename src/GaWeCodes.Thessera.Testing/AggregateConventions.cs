@@ -12,12 +12,34 @@ namespace GaWeCodes.Thessera.Testing;
 /// Checks the rules an aggregate has to follow for the runtime to be able to store and rebuild it.
 /// </summary>
 /// <remarks>
-/// The host verifies most of this at startup, which is too late to be cheap: the break shows up in
-/// a deployed service rather than in a pull request. Calling <see cref="Verify(IEnumerable{Assembly})"/>
-/// from one test moves every check into the build.
+/// The runtime catches only some of these, and later than is useful: that an aggregate has a
+/// parameterless constructor is checked while a host is composed, but only for a host that selected
+/// a persistence strategy — a host on <c>UseNoPersistence()</c> never gets it. That a domain event
+/// carries <c>[EventName]</c> is checked unconditionally when the catalogue is built. The constructor
+/// visibility of aggregates and children is not checked at all. Calling
+/// <see cref="Verify(IEnumerable{Assembly})"/> from one test moves the lot into the build, where the
+/// break shows up in a pull request rather than in a deployed service.
 /// </remarks>
 public static class AggregateConventions
 {
+    /// <summary>
+    /// Verifies every aggregate, child entity and domain event found in the given assemblies.
+    /// </summary>
+    /// <param name="assemblies">
+    /// The assemblies holding your domain model — normally one, named through a type in it.
+    /// </param>
+    /// <exception cref="ArgumentNullException"><paramref name="assemblies"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// At least one convention is broken. The message lists <em>every</em> violation of the run, not
+    /// just the first, so one test run is enough to see all of them. It also fails when the
+    /// assemblies contain neither an aggregate nor a domain event: a convention test that finds
+    /// nothing passes every check without asserting anything and stays green forever.
+    /// </exception>
+    /// <remarks>
+    /// Checked here: every aggregate has a parameterless constructor and it is not public; every
+    /// aggregate carries <c>[AggregateName]</c>; every domain event carries <c>[EventName]</c>; and
+    /// child entities keep their constructors internal.
+    /// </remarks>
     [RequiresUnreferencedCode(TrimmingMessages.AssemblyScanning)]
     public static void Verify(IEnumerable<Assembly> assemblies)
     {

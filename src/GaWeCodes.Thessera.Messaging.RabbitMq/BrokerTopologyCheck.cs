@@ -71,7 +71,7 @@ internal sealed class BrokerTopologyCheck(
 
         throw new InvalidOperationException(
             $"This host does not provision infrastructure, and {complaint}. Start the host that selects " +
-            "ProvisionInfrastructure(InfrastructureProvisioning.AtStartup) for this context Ã¢â‚¬â€ and let it finish Ã¢â‚¬â€ " +
+            "ProvisionInfrastructure(InfrastructureProvisioning.AtStartup) for this context — and let it finish — " +
             "before starting this one.",
             failure);
     }

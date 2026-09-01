@@ -77,6 +77,6 @@ internal sealed partial class UnitOfWorkPresenceCheck(
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "UseNoPersistence was selected â€” commands are dispatched without a unit of work and nothing is committed.")]
+        Message = "UseNoPersistence was selected — commands are dispatched without a unit of work and nothing is committed.")]
     private static partial void LogNoPersistenceSelected(ILogger logger);
 }

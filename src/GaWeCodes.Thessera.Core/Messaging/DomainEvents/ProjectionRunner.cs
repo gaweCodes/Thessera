@@ -8,10 +8,33 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GaWeCodes.Thessera.Core.Messaging.DomainEvents;
 
+/// <summary>
+/// Dispatches one domain event to every projection handler registered for its type.
+/// </summary>
+/// <param name="serviceProvider">Resolves the handlers for the event being dispatched.</param>
+/// <remarks>
+/// Public so that a runtime adapter can drive it from its own queue handler; a consumer writes
+/// projection handlers rather than calling this.
+/// </remarks>
 public sealed class ProjectionRunner(IServiceProvider serviceProvider)
 {
     private static readonly ConcurrentDictionary<Type, ProjectionInvoker> Invokers = new();
 
+    /// <summary>
+    /// Runs every projection handler registered for this event.
+    /// </summary>
+    /// <param name="domainEvent">The event that happened.</param>
+    /// <param name="metadata">Its context, handed to each handler alongside the event.</param>
+    /// <param name="cancellationToken">Cancels the operation.</param>
+    /// <returns>A task that completes once every handler has run.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="domainEvent"/> or <paramref name="metadata"/> is <see langword="null"/>.
+    /// </exception>
+    /// <remarks>
+    /// Dispatch is by the event's runtime type, so a handler registered for a base type does not see
+    /// a derived event. An event with no handler is not an error: most events are of interest to
+    /// nobody's read model.
+    /// </remarks>
     public Task RunAsync(IDomainEvent domainEvent, DomainEventMetadata metadata, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);

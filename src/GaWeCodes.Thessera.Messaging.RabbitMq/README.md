@@ -11,9 +11,9 @@ work — domain events, projections, read models — keeps running untouched. Ad
 what turns a self-contained service into a participant in a message-driven system.
 
 **Why not just Wolverine?** Wolverine owns the RabbitMQ connection, the queues and the exchange, and
-this package is a thin layer over `WolverineFx.RabbitMQ` — 165 lines, named after what it wraps.
-What it adds is the contract above it: integration events that carry a **declared** topic rather
-than a CLR type name, a bounded-context segment that a service cannot forge, and a self-event filter
+this package is a thin layer over `WolverineFx.RabbitMQ`, named after what it wraps. What it adds
+is the contract above it: integration events that carry a **declared** topic rather than a CLR type
+name, a bounded-context segment that a service cannot forge, and a self-event filter
 so a service does not consume what it just published. The topic routing itself lives in the
 broker-neutral core, so `[IntegrationEventTopic]` works on any transport — that is the part this
 package deliberately does *not* own.
@@ -26,8 +26,9 @@ package deliberately does *not* own.
 
 ## When you don't
 
-- Your bounded context is self-contained. Leave it out; you get a host with no broker, no
-  broker health check and no dead-letter assumptions.
+- Your bounded context is self-contained. Leave it out; you get a host with no broker and no
+  broker-topology check. The dead-letter health check still runs once a store is selected — it
+  has nothing to do with a transport.
 - You are on a different broker. Wolverine supports many; implement `IWolverineMessagingTransport`
   in `GaWeCodes.Thessera.Wolverine` against the same seam. That seam was measured against a working
   Kafka transport, which is about as unlike RabbitMQ as a broker gets.
@@ -122,8 +123,6 @@ actually there rather than letting the host start against a broker that will dro
 - The **durable outbox**: an integration event is committed with the aggregate that caused it, then
   sent. Delivery is at-least-once — consumers must be idempotent.
 - The publishing context in the `thessera.source-context` header.
-- A **dead-letter health check** reported as *degraded*: the host keeps serving, but the work in
-  those messages did not happen.
 
 ## Limits
 
@@ -132,7 +131,8 @@ actually there rather than letting the host start against a broker that will dro
   is Wolverine's achievement, not this family's, and a matrix nobody maintains is worse than none.
   The seam is documented and proven once; further transports happen on demand.
 - **Not trim-safe and not AOT-safe.** Publish without `PublishTrimmed` and without `PublishAot`.
-- `WolverineFx.RabbitMQ` is pinned to `[6.25.3,7.0)`.
+- `WolverineFx.RabbitMQ` is pinned below its next major version; the exact range is on this
+  package's dependency list.
 
 ## The family
 

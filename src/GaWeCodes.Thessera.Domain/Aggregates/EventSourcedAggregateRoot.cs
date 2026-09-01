@@ -3,6 +3,21 @@ using GaWeCodes.Thessera.Domain.Events;
 
 namespace GaWeCodes.Thessera.Domain.Aggregates;
 
+/// <summary>
+/// An aggregate root that can additionally be rebuilt from its stored events.
+/// </summary>
+/// <typeparam name="TKey">The aggregate's typed identity.</typeparam>
+/// <typeparam name="TState">The aggregate's state record.</typeparam>
+/// <param name="initialState">
+/// The empty starting state, from which the first event — or the whole replayed history — is
+/// applied.
+/// </param>
+/// <remarks>
+/// This adds replay and nothing else: the same state record, the same <c>Apply</c>, the same rules
+/// as <see cref="AggregateRoot{TKey, TState}"/>. Choosing it decides how portable the model is —
+/// an aggregate derived from this class runs on both store choices, while a plain
+/// <see cref="AggregateRoot{TKey, TState}"/> runs on a state store only.
+/// </remarks>
 public abstract class EventSourcedAggregateRoot<TKey, TState>(TState initialState)
     : AggregateRoot<TKey, TState>(initialState), IEventSourcedAggregateRoot<TKey>
     where TKey : struct, IEntityKey, IEquatable<TKey>

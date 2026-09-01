@@ -5,10 +5,40 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GaWeCodes.Thessera.Core.ReadModels;
 
+/// <summary>
+/// The half of a read-model rebuild that is the same whatever the store: find the rebuilders, clear
+/// them, and feed them aggregates a batch at a time.
+/// </summary>
+/// <param name="scopeFactory">
+/// Opens a scope per call, so a long rebuild does not hold one open across the whole run.
+/// </param>
+/// <remarks>
+/// A store package supplies the other half — reading state, or replaying streams — and drives this.
+/// Consumers use the runner their store registered rather than this type directly.
+/// </remarks>
 public sealed class ReadModelRebuildWriter(IServiceScopeFactory scopeFactory)
 {
+    /// <summary>
+    /// How many aggregates a store should hand over per call.
+    /// </summary>
+    /// <remarks>
+    /// Large enough that a rebuild is not dominated by scope creation, small enough that a batch and
+    /// its scope stay bounded in memory.
+    /// </remarks>
     public const int BatchSize = 500;
 
+    /// <summary>
+    /// Empties the read models derived from one aggregate type.
+    /// </summary>
+    /// <typeparam name="TAggregate">The aggregate the read models are derived from.</typeparam>
+    /// <typeparam name="TKey">The aggregate's typed identity.</typeparam>
+    /// <param name="cancellationToken">Cancels the operation.</param>
+    /// <returns>A task that completes once every registered rebuilder has cleared.</returns>
+    /// <remarks>
+    /// Every rebuilder registered for the aggregate is cleared, so an aggregate feeding several read
+    /// models rebuilds all of them together. A host with no rebuilder registered clears nothing —
+    /// silently, because having none is a legitimate state.
+    /// </remarks>
     public async Task ClearAsync<TAggregate, TKey>(CancellationToken cancellationToken)
         where TAggregate : class, IAggregateRoot<TKey>
         where TKey : struct, IEntityKey, IEquatable<TKey>
@@ -21,6 +51,17 @@ public sealed class ReadModelRebuildWriter(IServiceScopeFactory scopeFactory)
         }
     }
 
+    /// <summary>
+    /// Feeds one batch of rebuilt aggregates through every registered rebuilder.
+    /// </summary>
+    /// <typeparam name="TAggregate">The aggregate the read models are derived from.</typeparam>
+    /// <typeparam name="TKey">The aggregate's typed identity.</typeparam>
+    /// <param name="batch">
+    /// The aggregates to write, at most <see cref="BatchSize"/> of them.
+    /// </param>
+    /// <param name="cancellationToken">Cancels the operation.</param>
+    /// <returns>A task that completes once the batch has been written.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="batch"/> is <see langword="null"/>.</exception>
     public async Task WriteAsync<TAggregate, TKey>(
         IReadOnlyList<TAggregate> batch,
         CancellationToken cancellationToken)

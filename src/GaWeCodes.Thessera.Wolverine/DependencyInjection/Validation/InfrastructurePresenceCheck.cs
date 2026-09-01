@@ -34,8 +34,8 @@ internal sealed class InfrastructurePresenceCheck(
                 $"not match the configured schema in '{messageStore.Name}'. The outbox is what makes a commit and " +
                 "its integration events one unit, so without those tables this host would accept " +
                 "commands and lose every event they produce. Start the host that selects " +
-                "ProvisionInfrastructure(InfrastructureProvisioning.AtStartup) for this context ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â and let it " +
-                "finish ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â before starting this one.",
+                "ProvisionInfrastructure(InfrastructureProvisioning.AtStartup) for this context — and let it " +
+                "finish — before starting this one.",
                 exception);
         }
     }

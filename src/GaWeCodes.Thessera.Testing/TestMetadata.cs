@@ -16,10 +16,29 @@ namespace GaWeCodes.Thessera.Testing;
 /// </remarks>
 public static class TestMetadata
 {
+    /// <summary>
+    /// Builds the metadata the runtime would hand a projection handler for one event of
+    /// <typeparamref name="TAggregate"/>.
+    /// </summary>
+    /// <typeparam name="TAggregate">
+    /// The aggregate the event belongs to. Its <c>[AggregateName]</c> supplies the name in the
+    /// metadata.
+    /// </typeparam>
     /// <param name="aggregateId">The aggregate's identity. Its <c>[AggregateName]</c> supplies the name.</param>
     /// <param name="version">The version the event carries. Projections use it as their watermark.</param>
     /// <param name="eventId">Defaults to a new value; pass one to test redelivery of the same event.</param>
     /// <param name="occurredAt">Defaults to <see cref="DateTimeOffset.UnixEpoch"/> so tests stay deterministic.</param>
+    /// <returns>Metadata identical in shape to what the runtime produces.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="aggregateId"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="version"/> is zero or negative. A version counts applied events, so the first
+    /// event a handler can see carries 1.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// <typeparamref name="TAggregate"/> has no <c>[AggregateName]</c>, or
+    /// <paramref name="aggregateId"/> is empty or of a key type that has no declared stream-key
+    /// format.
+    /// </exception>
     [RequiresUnreferencedCode(TrimmingMessages.TypedKeyReflection)]
     [RequiresDynamicCode(TrimmingMessages.TypedKeyReflection)]
     public static DomainEventMetadata For<TAggregate>(

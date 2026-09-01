@@ -1,7 +1,7 @@
 # GaWeCodes.Thessera.Testing
 
-Three tools for testing a Thessera domain: a convention check that moves the runtime's aggregate
-rules from startup into your build, a metadata builder so a projection handler can be called
+Three tools for testing a Thessera domain: a convention check that catches the aggregate rules in
+your build instead of in a running host, a metadata builder so a projection handler can be called
 directly, and a snapshot of every persisted name so a rename cannot slip out unnoticed. It makes no
 store choice — the family's two are `GaWeCodes.Thessera.Persistence.EfCore.Postgres` (state) and
 `GaWeCodes.Thessera.Persistence.Marten` (event stream) — and it depends on **no test framework**, so
@@ -15,7 +15,8 @@ request rather than in a deployed service.
 
 ## When you need this package
 
-- You want the aggregate conventions verified by a test instead of discovering the break at startup.
+- You want the aggregate conventions verified by a test instead of discovering the break in a
+  running host.
 - You test projection handlers by calling them directly and need the `DomainEventMetadata` the
   runtime would have handed them.
 - You want the persisted shape — stream key format, event names, serialized property names and

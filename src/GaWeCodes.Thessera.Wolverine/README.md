@@ -10,7 +10,7 @@ each of them brings this package with it.
 **Why not just Wolverine?** You *are* using Wolverine — that is the point of this package, and
 Thessera never pretends otherwise. Wolverine is named in this package's id, in its dependency list
 and in its API. What it does not give you is an aggregate, business rules, typed identifiers, domain
-events with stable persisted names, or a switch between state store and event stream. This package
+events with stable persisted names, or a switch between state store and event store. This package
 is the seam where that domain model meets Wolverine's engine, so that the transactional outbox
 carries *your* domain events and not a hand-rolled equivalent.
 
@@ -78,10 +78,13 @@ of them would each hold half of the delivery guarantees.
   aggregates run in parallel.
 - **The transactional outbox**, when a store is selected: domain events are written in the same
   transaction as the aggregate state.
-- **A seven-day idempotency window and a retry policy** that separates the three cases — a
+- **A retry policy** that separates three cases, regardless of whether a store is selected — a
   malformed message or a broken domain rule goes straight to the error queue, a transient fault
   (defined by the store) is retried with a cooldown, anything else is retried briefly and then
   given up on.
+- **A seven-day idempotency window**, when a store is selected: how long a processed message's
+  identity is kept in the durable message store, so a redelivered copy is recognized and not
+  handled twice.
 - **Integration-event topics** on `Policies.AllSenders`, filtered to `IIntegrationEvent`. This is
   brokerneutral: `[IntegrationEventTopic]` takes effect on **any** transport, and a transport author
   contributes nothing to make it work.
@@ -123,9 +126,9 @@ exchangeable holds only for the case **without** persistence.
 - **Not trim-safe and not AOT-safe.** Wolverine generates and compiles handler code at run time, and
   Thessera discovers handlers and domain events by scanning. Publish without `PublishTrimmed` and
   without `PublishAot`.
-- The dependency on WolverineFx is pinned to `[6.25.3,7.0)`. This package configures Wolverine
-  through APIs that are not an application-level contract, so a major upgrade is deliberately not
-  taken sight-unseen.
+- The dependency on WolverineFx is pinned below its next major version. This package configures
+  Wolverine through APIs that are not an application-level contract, so a major upgrade is
+  deliberately not taken sight-unseen.
 
 ## The family
 

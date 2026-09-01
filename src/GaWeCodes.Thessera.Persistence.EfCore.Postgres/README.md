@@ -29,7 +29,7 @@ context between the two store choices is a change of wiring, not a rewrite of th
   write database, and a commit cannot span two.
 - You need EF Core on a database other than PostgreSQL. Reference
   `GaWeCodes.Thessera.Persistence.EfCore` and implement `IEfCoreDatabaseDriver` — the whole
-  Postgres-specific part of this package is two files.
+  Postgres-specific part of this package is a driver and the extension method that selects it.
 - You want no persistence at all. `GaWeCodes.Thessera.Core` with `UseNoPersistence()` covers it.
 
 ## Install
@@ -148,7 +148,7 @@ too. Transient Npgsql faults are retried with a cooldown before anything reaches
 - **Not trim-safe and not AOT-safe.** The adapter reflects over aggregate state, typed keys and
   child collections to build the model and to rehydrate an aggregate; EF Core itself is not fully
   trim-compatible either. Publish without `PublishTrimmed` and without `PublishAot`.
-- EF Core is pinned to `[10.0.10,11.0)` on purpose: the state reconciliation reads EF Core
+- EF Core is pinned below its next major version on purpose: the state reconciliation reads EF Core
   **metadata** APIs, which are not a stable application-level contract, so a major upgrade is not
   taken sight-unseen.
 
