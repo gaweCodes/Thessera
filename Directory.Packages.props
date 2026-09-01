@@ -9,14 +9,14 @@
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="Marten" Version="[9.30.0, 10.0.0)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="[10.0.10,11.0)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="[10.0.11, 11.0.0)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[10.0.11, 11.0.0)" />
-    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="[10.0.10,11.0)" />
-    <PackageVersion Include="Microsoft.Extensions.Diagnostics.Testing" Version="10.8.0" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="[10.0.11, 11.0.0)" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.Testing" Version="10.9.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="[10.0.11, 11.0.0)" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="[10.0.11, 11.0.0)" />
     <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.9.0" />
@@ -31,16 +31,16 @@
     <PackageVersion Include="Testcontainers.Kafka" Version="4.14.0" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
     <PackageVersion Include="Testcontainers.RabbitMq" Version="4.14.0" />
-    <PackageVersion Include="WolverineFx.EntityFrameworkCore" Version="[6.30.2, 7.0.0)" />
-    <PackageVersion Include="WolverineFx.Kafka" Version="6.30.2" />
-    <PackageVersion Include="WolverineFx.Marten" Version="[6.30.2, 7.0.0)" />
-    <PackageVersion Include="WolverineFx.Postgresql" Version="[6.30.2, 7.0.0)" />
-    <PackageVersion Include="WolverineFx.RabbitMQ" Version="[6.30.2, 7.0.0)" />
-    <PackageVersion Include="WolverineFx.RuntimeCompilation" Version="[6.30.2, 7.0.0)" />
-    <PackageVersion Include="WolverineFx.Sqlite" Version="6.30.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="xunit.v3" Version="3.2.2" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.2" />
+    <PackageVersion Include="WolverineFx.EntityFrameworkCore" Version="[6.32.0, 7.0.0)" />
+    <PackageVersion Include="WolverineFx.Kafka" Version="6.32.0" />
+    <PackageVersion Include="WolverineFx.Marten" Version="[6.32.0, 7.0.0)" />
+    <PackageVersion Include="WolverineFx.Postgresql" Version="[6.32.0, 7.0.0)" />
+    <PackageVersion Include="WolverineFx.RabbitMQ" Version="[6.32.0, 7.0.0)" />
+    <PackageVersion Include="WolverineFx.RuntimeCompilation" Version="[6.32.0, 7.0.0)" />
+    <PackageVersion Include="WolverineFx.Sqlite" Version="6.32.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
+    <PackageVersion Include="xunit.v3" Version="4.0.0" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
   </ItemGroup>
 
 </Project>

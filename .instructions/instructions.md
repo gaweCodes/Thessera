@@ -11,13 +11,21 @@ how a command travels through it.
 ## Build, test
 
 ```bash
-dotnet build
-dotnet test
+dotnet build Thessera.slnx
+dotnet test --solution Thessera.slnx
 ```
 
-Solution file: `Thessera.slnx`. The SDK pin in `global.json` is the only version number kept
-outside `Directory.Packages.props`, which carries every dependency version — a `.csproj` therefore
-writes `<PackageReference Include="..." />` with no `Version`.
+Name the solution in both commands. Two `.slnx` files sit in the repository root — `Thessera.slnx`
+and `Examples.slnx` — so a bare `dotnet build` or `dotnet test` fails rather than picking one. The
+solution is a *named* argument to `dotnet test` because tests run on the Microsoft.Testing.Platform
+mode of `dotnet test`, opted into from `global.json`
+([ADR 0013](../docs/architecture/0013-tests-run-on-mtp-mode.md)). Set
+`THESSERA_REQUIRE_CONTAINERS=1` to make the Testcontainers-backed tests fail rather than skip when
+no Docker daemon is reachable; the workflows always set it.
+
+The SDK pin in `global.json` is the only version number kept outside `Directory.Packages.props`,
+which carries every dependency version — a `.csproj` therefore writes
+`<PackageReference Include="..." />` with no `Version`.
 
 `Directory.Build.props` is authoritative for the solution-wide compiler and analyzer settings; read
 it rather than trusting a summary. What matters when working here is that the build is strict:
@@ -82,6 +90,10 @@ follows is only what you have to *do*.
   ([ADR 0007](../docs/architecture/0007-no-internals-visible-to.md))
 - **No assertion library.** Test projects use xUnit v3 built-in asserts.
   ([ADR 0012](../docs/architecture/0012-xunit-built-in-asserts.md))
+- **Tests run on Microsoft.Testing.Platform.** A test project sets
+  `UseMicrosoftTestingPlatformRunner` and must **not** set `TestingPlatformDotnetTestSupport` — that
+  property re-enables the removed VSTest bridge and breaks the run. The three xUnit packages share
+  one major version. ([ADR 0013](../docs/architecture/0013-tests-run-on-mtp-mode.md))
 - **Central package management**, transitive pinning included.
   ([ADR 0011](../docs/architecture/0011-central-package-management.md))
 - **One version, from Git tags.** No version number is written in the repository; MinVer derives

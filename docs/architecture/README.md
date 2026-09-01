@@ -123,6 +123,8 @@ What the picture is trying to make obvious:
   transitive pinning is part of the decision rather than an extra.
 - [0012 — Built-in asserts, no assertion library](0012-xunit-built-in-asserts.md). The one record
   here whose alternative genuinely reads better.
+- [0013 — Tests run on the MTP mode of `dotnet test`](0013-tests-run-on-mtp-mode.md). Why the
+  VSTest bridge had to go, and why the three xUnit packages move as one.
 
 ## Format
 

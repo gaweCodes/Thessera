@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0-preview.2] - 2026-08-31
+## [1.0.0-preview.2] - 2026-09-02
 
 No public API changed in this release: every `PublicAPI.Shipped.txt` is untouched. What changed is
-what ships alongside it — the documentation inside the packages, and the messages a misconfigured
-host prints at startup.
+what ships alongside it — the documentation inside the packages, the messages a misconfigured host
+prints at startup, and the lower bounds of the dependencies the packages declare.
 
 ### Added
 
@@ -32,6 +32,9 @@ host prints at startup.
 
 ### Changed
 
+- The lower bound of several declared dependencies moved up: Entity Framework Core and the
+  `Microsoft.Extensions.*` packages to 10.0.11, and Wolverine to 6.30.3. The upper bounds are
+  unchanged, so a consuming host that already resolves a newer patch is unaffected.
 - The package READMEs now describe dependency pins and file counts rather than quoting them, so
   they cannot go stale on the next version bump.
 - One wording for one idea across the family: the switch between the two store choices is described
