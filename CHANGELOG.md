@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-preview.3] - 2026-09-02
+
 ### Added
 
 - A new package, `GaWeCodes.Thessera.Analyzers`: six Roslyn analyzers (`THSS0001`–`THSS0006`) that
@@ -15,6 +17,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   entity-state that names the wrong type as itself at build time — the compile-time twin of checks
   `GaWeCodes.Thessera.Testing` and the runtime otherwise perform only in a test or at host startup.
   Ships no runtime code; reference it from every host regardless of store choice.
+- A second `.github/dependabot.yml` entry for `Examples/`, so the third-party package pins there
+  (Entity Framework Core, Marten, `Microsoft.Extensions.Hosting`, RabbitMQ.Client) are kept current
+  the same way the main solution's are, instead of drifting unnoticed because no CI workflow ever
+  builds `Examples.slnx`. The `GaWeCodes.Thessera.*` family is excluded from it: its version is
+  centralized instead (see below), not tracked by Dependabot.
+
+### Changed
+
+- Every `Examples/*.csproj` now pins its `GaWeCodes.Thessera.*` package references to a single
+  `$(ThesseraVersion)` property in `Examples/Directory.Build.props`, instead of repeating the same
+  version string six times. `Examples/README.md` documents the one-line refresh after a local
+  `dotnet pack`.
+
+### Fixed
+
+- Stale third-party lower bounds in `Examples/StateStored`, `EventSourced`,
+  `StateStoredWithMessaging` and `EventSourcedWithMessaging`: `Microsoft.EntityFrameworkCore` and
+  `Microsoft.Extensions.Hosting` still pinned `10.0.10`, and `Marten` still pinned `9.22.5`, below
+  what the packed `GaWeCodes.Thessera.*` packages now require after the `1.0.0-preview.2` dependency
+  bump. A clean restore against a freshly packed local feed failed with `NU1605` until these were
+  raised to match `Directory.Packages.props`.
 
 ## [1.0.0-preview.2] - 2026-09-02
 
@@ -100,6 +123,7 @@ prints at startup, and the lower bounds of the dependencies the packages declare
 
 - No `InternalsVisibleTo` is used by any package.
 
-[Unreleased]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.2...main
+[Unreleased]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.3...main
+[1.0.0-preview.3]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.2...v1.0.0-preview.3
 [1.0.0-preview.2]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.1...v1.0.0-preview.2
 [1.0.0-preview.1]: https://github.com/GaWeCodes/Thessera/commits/v1.0.0-preview.1
