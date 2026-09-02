@@ -2,5 +2,14 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
     <RestoreConfigFile>$(MSBuildThisFileDirectory)nuget.config</RestoreConfigFile>
+    <!--
+      The one place the version every Thessera package reference below pins to is written down.
+      MinVer derives it from the nearest reachable Git tag, and that string changes with every
+      commit once HEAD moves past a tag - so after "dotnet pack .\Thessera.slnx -c Release -o
+      C:\temp\thessera-local-feed", this is the only line that needs updating (see Examples/README.md).
+      Third-party package versions stay literal per project, same as before - only the Thessera
+      family version is centralized, because it is the one that goes stale on every single commit.
+    -->
+    <ThesseraVersion>1.0.0-preview.2</ThesseraVersion>
   </PropertyGroup>
 </Project>

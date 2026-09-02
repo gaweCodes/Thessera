@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/GaWeCodes.Thessera.Analyzers/GaWeCodes.Thessera.Analyzers.csproj" />
     <Project Path="src/GaWeCodes.Thessera.Application/GaWeCodes.Thessera.Application.csproj" />
     <Project Path="src/GaWeCodes.Thessera.Core/GaWeCodes.Thessera.Core.csproj" />
     <Project Path="src/GaWeCodes.Thessera.Domain/GaWeCodes.Thessera.Domain.csproj" />
@@ -12,6 +13,7 @@
     <Project Path="src/GaWeCodes.Thessera.Wolverine/GaWeCodes.Thessera.Wolverine.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/GaWeCodes.Thessera.Analyzers.Tests/GaWeCodes.Thessera.Analyzers.Tests.csproj" />
     <Project Path="tests/GaWeCodes.Thessera.Application.Tests/GaWeCodes.Thessera.Application.Tests.csproj" />
     <Project Path="tests/GaWeCodes.Thessera.Core.Tests/GaWeCodes.Thessera.Core.Tests.csproj" />
     <Project Path="tests/GaWeCodes.Thessera.Domain.Tests/GaWeCodes.Thessera.Domain.Tests.csproj" />

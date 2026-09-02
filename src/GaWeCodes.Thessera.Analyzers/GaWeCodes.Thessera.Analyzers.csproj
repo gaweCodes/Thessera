@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--
+      A Roslyn analyzer is loaded by the compiler itself, not by the consumer's runtime, so it must
+      target netstandard2.0 regardless of what the rest of the family targets - this overrides the
+      net10.0 default from the shared 'src/Directory.Build.props'.
+    -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Compile-time twin of six of Thessera's startup checks: an aggregate without [AggregateName], a domain event without [EventName], an aggregate whose parameterless constructor is not private, a child entity whose constructor is not internal, and an aggregate- or entity-state that names the wrong type as itself are now a build error instead of a message the first affected host prints at boot, or an InvalidCastException on the first applied event. Ships no Thessera runtime code - reference it from every host, regardless of which store it selects.</Description>
+    <PackageTags>analyzer;ddd;aggregate;domain-events;roslyn;static-analysis</PackageTags>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <!--
+      The family default turns on a '.snupkg' symbol package, but that package is built from the
+      same '_GetPackageFiles' item group as the main one and this project deliberately keeps that
+      group empty of anything under 'lib/' - a symbol package with no matching library file fails
+      to pack (NU5017). An analyzer is a build-time tool, not a debuggable runtime dependency, so
+      shipping no symbols for it is correct, not just a workaround.
+    -->
+    <IncludeSymbols>false</IncludeSymbols>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!--
+    The compiled analyzer belongs under 'analyzers/dotnet/cs' in the package, not under 'lib/' - a
+    file under 'lib/' would be offered to the consumer as an ordinary reference assembly and pulled
+    into their build output, which an analyzer must never be. This is the packaging recipe Roslyn
+    analyzer authors use; see the package README for what a consumer's own reference looks like.
+  -->
+  <Target Name="_ThesseraAnalyzerPackFiles" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+  </Target>
+
+</Project>

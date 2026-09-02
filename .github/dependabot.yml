@@ -10,6 +10,27 @@ updates:
         patterns:
           - "*"
 
+  # Examples/*.csproj pin third-party packages (EF Core, Hosting, Marten, RabbitMQ.Client, ...)
+  # literally, separate from Directory.Packages.props, because Examples deliberately does not use
+  # central package management (see Examples/Directory.Build.props). The "/" entry above never
+  # discovers these - Dependabot does not descend past the first nuget project it finds per
+  # directory tree in the way this repo is laid out - so without this entry the Examples pins
+  # drift silently, exactly as they did before this file was updated. The GaWeCodes.Thessera.*
+  # family is excluded here: its version comes from $(ThesseraVersion) in
+  # Examples/Directory.Build.props, refreshed manually after a local "dotnet pack" per
+  # Examples/README.md, not from Dependabot.
+  - package-ecosystem: nuget
+    directory: "/Examples"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      thessera-examples-dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "GaWeCodes.Thessera.*"
+
   - package-ecosystem: github-actions
     directory: "/"
     schedule:

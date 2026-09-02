@@ -6,14 +6,22 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GaWeCodes.Thessera.Domain" Version="[0.0.0-alpha.0.5]" />
-    <PackageReference Include="GaWeCodes.Thessera.Application" Version="[0.0.0-alpha.0.5]" />
-    <PackageReference Include="GaWeCodes.Thessera.Core" Version="[0.0.0-alpha.0.5]" />
-    <PackageReference Include="GaWeCodes.Thessera.Wolverine" Version="[0.0.0-alpha.0.5]" />
-    <PackageReference Include="GaWeCodes.Thessera.Persistence.Marten" Version="[0.0.0-alpha.0.5]" />
-    <PackageReference Include="GaWeCodes.Thessera.Messaging.RabbitMq" Version="[0.0.0-alpha.0.5]" />
-    <PackageReference Include="Marten" Version="9.22.5" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageReference Include="GaWeCodes.Thessera.Domain" Version="[$(ThesseraVersion)]" />
+    <PackageReference Include="GaWeCodes.Thessera.Application" Version="[$(ThesseraVersion)]" />
+    <PackageReference Include="GaWeCodes.Thessera.Core" Version="[$(ThesseraVersion)]" />
+    <PackageReference Include="GaWeCodes.Thessera.Wolverine" Version="[$(ThesseraVersion)]" />
+    <PackageReference Include="GaWeCodes.Thessera.Persistence.Marten" Version="[$(ThesseraVersion)]" />
+    <PackageReference Include="GaWeCodes.Thessera.Messaging.RabbitMq" Version="[$(ThesseraVersion)]" />
+    <PackageReference Include="Marten" Version="9.30.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
     <PackageReference Include="RabbitMQ.Client" Version="7.2.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+      A dev dependency, not a runtime one - it never ships in the published output, only in the
+      build. Every example that defines a Thessera aggregate references it, regardless of which
+      store or broker the tier picks, because the six checks it makes are store-agnostic.
+    -->
+    <PackageReference Include="GaWeCodes.Thessera.Analyzers" Version="[$(ThesseraVersion)]" PrivateAssets="all" />
   </ItemGroup>
 </Project>

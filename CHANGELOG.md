@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A new package, `GaWeCodes.Thessera.Analyzers`: six Roslyn analyzers (`THSS0001`–`THSS0006`) that
+  catch a missing `[AggregateName]`, a missing `[EventName]`, an aggregate whose parameterless
+  constructor is absent or public, a child entity with a public constructor, and an aggregate- or
+  entity-state that names the wrong type as itself at build time — the compile-time twin of checks
+  `GaWeCodes.Thessera.Testing` and the runtime otherwise perform only in a test or at host startup.
+  Ships no runtime code; reference it from every host regardless of store choice.
+
 ## [1.0.0-preview.2] - 2026-09-02
 
 No public API changed in this release: every `PublicAPI.Shipped.txt` is untouched. What changed is

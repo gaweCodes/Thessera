@@ -9,7 +9,7 @@ decision, not a rewrite.
 
 ## Packages
 
-Take as much as you need. Only two of the ten are a real choice; the rest follow from it. Each
+Take as much as you need. Only two of the eleven are a real choice; the rest follow from it. Each
 package's own README has the details — when you need it, when you don't, install, a runnable
 example, and its limits.
 
@@ -32,6 +32,8 @@ example, and its limits.
   transport.
 - [`GaWeCodes.Thessera.Testing`](src/GaWeCodes.Thessera.Testing) — convention checks and test
   helpers.
+- [`GaWeCodes.Thessera.Analyzers`](src/GaWeCodes.Thessera.Analyzers) — the compile-time twin of
+  six of those conventions, in every host.
 
 ## Get started
 

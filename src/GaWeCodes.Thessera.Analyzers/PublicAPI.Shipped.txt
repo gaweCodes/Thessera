@@ -1,0 +1,31 @@
+﻿#nullable enable
+const GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer.DiagnosticId = "THSS0003" -> string!
+const GaWeCodes.Thessera.Analyzers.AggregateNameAnalyzer.DiagnosticId = "THSS0001" -> string!
+const GaWeCodes.Thessera.Analyzers.AggregateStateSelfBindingAnalyzer.DiagnosticId = "THSS0005" -> string!
+const GaWeCodes.Thessera.Analyzers.ChildEntityConstructorAnalyzer.DiagnosticId = "THSS0004" -> string!
+const GaWeCodes.Thessera.Analyzers.ChildEntityStateSelfBindingAnalyzer.DiagnosticId = "THSS0006" -> string!
+const GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer.DiagnosticId = "THSS0002" -> string!
+GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer
+GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer.AggregateConstructorAnalyzer() -> void
+GaWeCodes.Thessera.Analyzers.AggregateNameAnalyzer
+GaWeCodes.Thessera.Analyzers.AggregateNameAnalyzer.AggregateNameAnalyzer() -> void
+GaWeCodes.Thessera.Analyzers.AggregateStateSelfBindingAnalyzer
+GaWeCodes.Thessera.Analyzers.AggregateStateSelfBindingAnalyzer.AggregateStateSelfBindingAnalyzer() -> void
+GaWeCodes.Thessera.Analyzers.ChildEntityConstructorAnalyzer
+GaWeCodes.Thessera.Analyzers.ChildEntityConstructorAnalyzer.ChildEntityConstructorAnalyzer() -> void
+GaWeCodes.Thessera.Analyzers.ChildEntityStateSelfBindingAnalyzer
+GaWeCodes.Thessera.Analyzers.ChildEntityStateSelfBindingAnalyzer.ChildEntityStateSelfBindingAnalyzer() -> void
+GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer
+GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer.DomainEventNameAnalyzer() -> void
+override GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+override GaWeCodes.Thessera.Analyzers.AggregateNameAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override GaWeCodes.Thessera.Analyzers.AggregateNameAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+override GaWeCodes.Thessera.Analyzers.AggregateStateSelfBindingAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override GaWeCodes.Thessera.Analyzers.AggregateStateSelfBindingAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+override GaWeCodes.Thessera.Analyzers.ChildEntityConstructorAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override GaWeCodes.Thessera.Analyzers.ChildEntityConstructorAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+override GaWeCodes.Thessera.Analyzers.ChildEntityStateSelfBindingAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override GaWeCodes.Thessera.Analyzers.ChildEntityStateSelfBindingAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+override GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

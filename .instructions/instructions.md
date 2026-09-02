@@ -4,7 +4,7 @@
 
 Tactical DDD, CQRS and selective event sourcing building blocks for .NET. The same domain model
 runs either state-stored (EF Core) or event-stored (Marten) — switching is a wiring decision, not
-a rewrite. [`README.md`](../README.md) lists the ten packages;
+a rewrite. [`README.md`](../README.md) lists the eleven packages;
 [`docs/architecture/README.md`](../docs/architecture/README.md) describes the shape they form and
 how a command travels through it.
 
@@ -41,7 +41,8 @@ build error — so documentation cannot fall behind the public surface without t
 
 ```text
 Thessera/
-├── src/                                                 ten packages, one directory each
+├── src/                                                 eleven packages, one directory each
+│   └── GaWeCodes.Thessera.Analyzers/                    targets netstandard2.0, not net10.0 - a Roslyn analyzer
 ├── tests/
 │   ├── GaWeCodes.Thessera.<Package>.Tests/              one test project per package
 │   ├── GaWeCodes.Thessera.Tests.PackageConventions/     package/project naming and packaging conventions
@@ -60,7 +61,7 @@ Thessera/
 └── README.md
 ```
 
-The ten packages under `src` are listed in [`README.md`](../README.md), each with its own
+The eleven packages under `src` are listed in [`README.md`](../README.md), each with its own
 `README.md` describing what it is, when to use it (and when not to), and a runnable example.
 
 `Examples/` is a consumer-facing six-step adoption ladder, described in

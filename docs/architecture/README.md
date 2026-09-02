@@ -33,8 +33,11 @@ downwards.
 The graph above `Core` is not a tree — both store packages sit on `Wolverine` *and* on `Npgsql`,
 because an outbox needs the engine and PostgreSQL errors are shared by both stores. `Testing` sits
 beside all of it, on `Domain`, `Application` and `Core`, and belongs in test projects only.
+`Analyzers` sits beside `Testing` rather than on top of anything: it is the one package with no
+Thessera reference at all, resolving `Domain`'s types by metadata name instead — see
+[0014](0014-a-compile-time-analyzer-catches-four-startup-checks.md).
 
-Of the ten, exactly two are a choice: `Persistence.EfCore.Postgres` or `Persistence.Marten`. The
+Of the eleven, exactly two are a choice: `Persistence.EfCore.Postgres` or `Persistence.Marten`. The
 rest follow from that choice or from whether the service talks to a broker.
 
 ### How a command travels
@@ -108,6 +111,12 @@ What the picture is trying to make obvious:
   handler startup check compares nothing with nothing and reports success.
 - [0006 — Persistence failures as `Result`](0006-persistence-failures-as-result.md), not as
   exceptions. How a driver exception becomes a `Failure`, and what deliberately stays an exception.
+- [0014 — A compile-time analyzer catches four of the startup checks](0014-a-compile-time-analyzer-catches-four-startup-checks.md).
+  Which four conventions moved from a running host, or a test nobody was required to write, into
+  `dotnet build` itself — and why the store/aggregate match stayed out.
+- [0015 — Two more analyzer rules catch the aggregate- and entity-state self-binding mistake](0015-two-more-analyzer-rules-catch-self-binding.md).
+  Why 0014's claim that the compiler already prevents a mismatched `TSelf` was wrong, and the two
+  rules that catch what it does not.
 
 ### How the repository is kept honest
 

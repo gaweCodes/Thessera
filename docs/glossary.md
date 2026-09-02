@@ -20,8 +20,12 @@ them as `DomainEvents` until they are cleared at save time.
 
 The immutable record that holds an aggregate's data, derived from `AggregateState<TSelf, TKey>`.
 `TSelf` must be the state's own type, because `Apply` returns a copy of itself; naming a different
-type compiles and then fails as an `InvalidCastException` on the first applied event, which is why a
-startup check verifies it. The distinction that matters at save time: the root is what you track,
+type compiles and then fails as an `InvalidCastException` on the first applied event. A startup
+check verifies it, and so does the `THSS0005` analyzer rule in `GaWeCodes.Thessera.Analyzers` — see
+[ADR 0015](architecture/0015-two-more-analyzer-rules-catch-self-binding.md), which corrects an
+earlier claim in [ADR 0014](architecture/0014-a-compile-time-analyzer-catches-four-startup-checks.md#alternatives-considered)
+that the compiler already prevents this.
+The distinction that matters at save time: the root is what you track,
 `IStateOwner.State` is the object to store, and it is a *different* object after events were
 applied.
 
@@ -261,7 +265,14 @@ A check that turns silent misconfiguration into a message at boot: `IStartupChec
 `BeforeHostedServicesStart` or `AfterHostedServicesStarted`. Five ship with the core: every command
 and query has exactly one handler, the aggregate style matches the store, an aggregate state names
 itself, every integration-event mapper is reachable, and a unit of work exists when commands do.
-Each of them is there because the failure it catches is otherwise invisible until production.
+Each of them is there because the failure it catches is otherwise invisible until production. Six
+conventions move earlier still, into `dotnet build`, via `GaWeCodes.Thessera.Analyzers`: a missing
+`[AggregateName]` or `[EventName]`, an aggregate constructor that is missing or public, a child
+entity with a public constructor, and an aggregate- or entity-state that names the wrong type as
+itself — the last of which is also, for the aggregate-state case, the one analyzer rule that is the
+direct compile-time twin of a startup check above rather than an unrelated convention; see
+[ADR 0014](architecture/0014-a-compile-time-analyzer-catches-four-startup-checks.md) and
+[ADR 0015](architecture/0015-two-more-analyzer-rules-catch-self-binding.md).
 
 ### Infrastructure provisioning
 
