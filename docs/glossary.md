@@ -2,7 +2,8 @@
 
 The vocabulary Thessera uses in its READMEs, its XML documentation, its error messages and its
 architecture decision records. It exists so that a term means the same thing in all four, and so
-that the pairs of terms which are easy to confuse are told apart in one place instead of in ten.
+that the pairs of terms which are easy to confuse are told apart in one place instead of scattered
+across many.
 
 Where the prose in this repository and the name in the code differ, both are given, and the entry
 says which one is the type you will actually see in an IDE.

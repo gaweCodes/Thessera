@@ -86,7 +86,7 @@ of them would each hold half of the delivery guarantees.
   identity is kept in the durable message store, so a redelivered copy is recognized and not
   handled twice.
 - **Integration-event topics** on `Policies.AllSenders`, filtered to `IIntegrationEvent`. This is
-  brokerneutral: `[IntegrationEventTopic]` takes effect on **any** transport, and a transport author
+  broker-neutral: `[IntegrationEventTopic]` takes effect on **any** transport, and a transport author
   contributes nothing to make it work.
 - **A dead-letter health check**, reported as *degraded* rather than *unhealthy* — the host keeps
   serving, but the work in those messages did not happen, and a dead-lettered projection envelope
@@ -145,7 +145,7 @@ Our packages. Exactly two of them are a choice you make; the rest follow from it
 - `GaWeCodes.Thessera.Npgsql` — PostgreSQL error translation, shared by both choices.
 - `GaWeCodes.Thessera.Messaging.RabbitMq` — opt-in transport. Without one, no integration event leaves the service.
 - `GaWeCodes.Thessera.Testing` — convention checks and test helpers for all of the above.
-- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of eight of those conventions, in every host.
+- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of those conventions, in every host.
 
 ## License
 

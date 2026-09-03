@@ -64,7 +64,7 @@ Thessera/
 The packages under `src` are listed in [`README.md`](../README.md), each with its own
 `README.md` describing what it is, when to use it (and when not to), and a runnable example.
 
-`Examples/` is a consumer-facing six-step adoption ladder, described in
+`Examples/` is a consumer-facing adoption ladder, described in
 [`Examples/README.md`](../Examples/README.md). Two things about it are not visible from there: it
 deliberately does not participate in the main solution, and it resets MSBuild strictness with its
 own `Examples/Directory.Build.props`. The examples consume Thessera through `PackageReference`s
@@ -118,7 +118,7 @@ follows is only what you have to *do*.
    find a gap or an ambiguity in the guidance here.
 3. When a change turns on a decision rather than on a detail — a new seam, a rule the runtime
    enforces, a format that gets persisted — record it as an ADR in [`docs/architecture/`](../docs/architecture).
-   Records there are append-only: supersede, never rewrite. The vocabulary they and the READMEs
+   Records in `docs/architecture/` are append-only: supersede, never rewrite. The vocabulary they and the READMEs
    share is defined in [`docs/glossary.md`](../docs/glossary.md).
 4. Match existing style; respect `.editorconfig`, `Directory.Build.props`, `Directory.Packages.props`.
 5. **Always work on `main`** — never a separate branch, and never ask which branch to use.

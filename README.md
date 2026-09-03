@@ -16,25 +16,26 @@ example, and its limits.
 
 - [`GaWeCodes.Thessera.Domain`](src/GaWeCodes.Thessera.Domain) — aggregates, entities, domain
   events, typed keys, rules. BCL only.
-- [`GaWeCodes.Thessera.Application`](src/GaWeCodes.Thessera.Application) — CQRS and
-  integration-event contracts, `Result`/`Failure`.
+- [`GaWeCodes.Thessera.Application`](src/GaWeCodes.Thessera.Application) — CQRS, persistence and
+  integration-event contracts, `Result`/`Failure`. Contracts only, no runtime.
 - [`GaWeCodes.Thessera.Core`](src/GaWeCodes.Thessera.Core) — composition root, dispatcher,
-  projections, startup checks.
+  projections, startup checks. No Wolverine.
 - [`GaWeCodes.Thessera.Wolverine`](src/GaWeCodes.Thessera.Wolverine) — the runtime that owns the
-  outbox.
+  outbox. Arrives with either store.
 - [`GaWeCodes.Thessera.Persistence.EfCore.Postgres`](src/GaWeCodes.Thessera.Persistence.EfCore.Postgres) —
   **store choice 1**: aggregates as state in PostgreSQL.
 - [`GaWeCodes.Thessera.Persistence.Marten`](src/GaWeCodes.Thessera.Persistence.Marten) —
   **store choice 2**: aggregates as an event stream in PostgreSQL.
 - [`GaWeCodes.Thessera.Persistence.EfCore`](src/GaWeCodes.Thessera.Persistence.EfCore) —
-  database-agnostic half of choice 1.
-- [`GaWeCodes.Thessera.Npgsql`](src/GaWeCodes.Thessera.Npgsql) — PostgreSQL error translation.
+  the database-agnostic half of choice 1; write your own driver here.
+- [`GaWeCodes.Thessera.Npgsql`](src/GaWeCodes.Thessera.Npgsql) — PostgreSQL error translation,
+  shared by both choices.
 - [`GaWeCodes.Thessera.Messaging.RabbitMq`](src/GaWeCodes.Thessera.Messaging.RabbitMq) — opt-in
-  transport.
+  transport. Without one, no integration event leaves the service.
 - [`GaWeCodes.Thessera.Testing`](src/GaWeCodes.Thessera.Testing) — convention checks and test
-  helpers.
+  helpers for all of the above.
 - [`GaWeCodes.Thessera.Analyzers`](src/GaWeCodes.Thessera.Analyzers) — the compile-time twin of
-  eight of those conventions, in every host.
+  the compile-time twin of those conventions, in every host.
 
 ## Get started
 

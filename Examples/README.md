@@ -1,6 +1,6 @@
 # Examples
 
-These examples form a six-step adoption ladder for Thessera.
+These examples form an adoption ladder for Thessera.
 
 - [DomainOnly](DomainOnly/README.md) is a plain console CRUD app with a hand-written domain object and an in-memory dictionary.
 - [DomainApplication](DomainApplication/README.md) keeps the in-memory approach but adopts Thessera's application and domain contracts.
@@ -18,9 +18,9 @@ main store and an event-sourced aggregate as an ancillary store side by side, as
 - [MixedPersistenceWithMessaging](MixedPersistence/MixedPersistenceWithMessaging/README.md) adds
   RabbitMQ publishing on top of the same two-store host, mirroring what tiers 5-6 add to tiers 3-4.
 
-Every tier that defines a Thessera aggregate (all six, plus both MixedPersistence examples) also
+Every tier that defines a Thessera aggregate, including both MixedPersistence examples, also
 references `GaWeCodes.Thessera.Analyzers` as a `PrivateAssets="all"` build-time dependency - it turns
-the eight most common misconfigurations (a missing `[AggregateName]` or `[EventName]`, a non-private
+the most common misconfigurations (a missing `[AggregateName]` or `[EventName]`, a non-private
 aggregate constructor, a non-internal child entity constructor, an aggregate- or entity-state that
 names the wrong type as itself, a command handler that depends on more than one aggregate's
 repository, and a command handler that bypasses the unit of work by injecting a raw

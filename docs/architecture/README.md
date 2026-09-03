@@ -37,7 +37,7 @@ beside all of it, on `Domain`, `Application` and `Core`, and belongs in test pro
 Thessera reference at all, resolving `Domain`'s types by metadata name instead — see
 [0014](0014-a-compile-time-analyzer-catches-four-startup-checks.md).
 
-Of the eleven, exactly two are a store package: `Persistence.EfCore.Postgres` or `Persistence.Marten`.
+Exactly two of our packages are a store package: `Persistence.EfCore.Postgres` or `Persistence.Marten`.
 A host picks one of them as its main store; either may also be added a second time, for a named set
 of aggregates, as an ancillary store — see [0016](0016-one-store-per-aggregate-not-per-host.md). The
 rest follow from that choice or from whether the service talks to a broker.

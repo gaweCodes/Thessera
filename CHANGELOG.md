@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NoPublishOnFailedCommitTests`, proving for both stores that a command whose commit fails (loses a
   concurrency race) never publishes that command's domain event — the unit of work's one-transaction
   guarantee held empirically, not just by reading `CommitAsync`.
-- All six `Examples/` projects now demonstrate the read-model-rebuild feature: each list query reads
+- All `Examples/` projects now demonstrate the read-model-rebuild feature: each list query reads
   a small in-memory read model instead of the write store directly, kept in sync by an
   `IReadModelRebuilder<TAggregate, TKey>` and its store's rebuild runner
   (`StateStoredReadModelRebuildRunner<TContext>` or `EventSourcedReadModelRebuildRunner`), rebuilt
@@ -79,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Every `Examples/*.csproj` now pins its `GaWeCodes.Thessera.*` package references to a single
   `$(ThesseraVersion)` property in `Examples/Directory.Build.props`, instead of repeating the same
-  version string six times. `Examples/README.md` documents the one-line refresh after a local
+  version string in each project file. `Examples/README.md` documents the one-line refresh after a local
   `dotnet pack`.
 
 ### Fixed

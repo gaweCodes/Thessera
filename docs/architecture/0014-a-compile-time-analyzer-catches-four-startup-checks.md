@@ -1,7 +1,7 @@
 # 0014 — A compile-time analyzer catches four of the startup checks
 
 - **Status:** Accepted
-- **Date:** 2026-09-01
+- **Date:** 2026-09-02
 
 ## Context
 
@@ -58,8 +58,8 @@ that references none of the above at all.
   that deliberately exercises a *violating* fixture — as several already do, to prove
   `AggregateConventions.Verify` reports it — must not reference this analyzer package, or the fixture
   would fail to compile before the test describing its failure could run.
-- `Examples/` references the package from all six example projects, regardless of which store or
-  broker each one demonstrates, because all six declare aggregates.
+- `Examples/` references the package from every example project, regardless of which store or
+  broker each one demonstrates, because each one declares aggregates.
 - No project under `src` needs to change to satisfy the four rules: every existing aggregate, entity
   and domain event already follows the conventions the analyzer checks, since they are the same
   conventions `AggregateConventions.Verify` already checks in `tests/GaWeCodes.Thessera.Testing.Tests`.

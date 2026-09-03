@@ -43,7 +43,7 @@ exists to leak or to be used from a laptop.
 ## Alternatives considered
 
 **Per-package versions.** More honest per package, and the reason it was rejected is the consumer:
-ten independently moving numbers make "which versions go together" a question somebody has to
+independently moving numbers make "which versions go together" a question somebody has to
 answer, repeatedly, forever.
 
 **A version in a file, bumped by hand.** Simple until the file and the tag disagree, which they do
