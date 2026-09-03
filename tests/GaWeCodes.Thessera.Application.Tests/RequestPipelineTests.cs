@@ -55,8 +55,8 @@ public sealed class RequestPipelineTests
     public void Failed_ProducesTheResponseTypeSuppliedByTheDispatcher()
     {
         var pipeline = new RequestPipeline<Result<int>>(
-            _ => Task.FromResult(Result<int>.Success(1)),
-            Result<int>.Failed);
+            _ => Task.FromResult(Result.Success<int>(1)),
+            Result.Failed<int>);
 
         var result = pipeline.Failed(Failure.NotFound("probe.missing", "Nothing here."));
 

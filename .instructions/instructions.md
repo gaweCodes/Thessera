@@ -30,8 +30,8 @@ which carries every dependency version — a `.csproj` therefore writes
 `Directory.Build.props` is authoritative for the solution-wide compiler and analyzer settings; read
 it rather than trusting a summary. What matters when working here is that the build is strict:
 warnings are errors, analysis runs at the highest level, and a rule is only ever relaxed in a
-scoped `.editorconfig` — one under `tests/`, and one each in the `Domain` and `Application`
-packages. No other project under `src` overrides anything.
+scoped `.editorconfig` — one under `tests/`, and one in the `Domain` package. No other project
+under `src` overrides anything.
 
 `CS1591` (missing XML documentation) is **not** relaxed anywhere. Every package under `src`
 generates a documentation file, and warnings-as-errors turns an undocumented public member into a

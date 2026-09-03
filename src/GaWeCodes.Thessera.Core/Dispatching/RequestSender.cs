@@ -172,7 +172,7 @@ internal sealed class RequestSender(IServiceProvider serviceProvider) : ISender
             var pipeline = BuildPipeline<TCommand, Result<TResult>>(
                 typedCommand,
                 ct => handler.HandleAsync(typedCommand, ct),
-                Result<TResult>.Failed,
+                Result.Failed<TResult>,
                 services);
             return pipeline(cancellationToken);
         }
@@ -195,7 +195,7 @@ internal sealed class RequestSender(IServiceProvider serviceProvider) : ISender
             var pipeline = BuildPipeline<TQuery, Result<TResult>>(
                 typedQuery,
                 ct => handler.HandleAsync(typedQuery, ct),
-                Result<TResult>.Failed,
+                Result.Failed<TResult>,
                 services);
             return pipeline(cancellationToken);
         }

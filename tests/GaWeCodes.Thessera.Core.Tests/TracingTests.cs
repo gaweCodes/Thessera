@@ -240,7 +240,7 @@ public sealed class TracingTests
     private sealed class TracedQueryHandler : IQueryHandler<TracedQuery, int>
     {
         public Task<Result<int>> HandleAsync(TracedQuery query, CancellationToken cancellationToken) =>
-            Task.FromResult(Result<int>.Success(1));
+            Task.FromResult(Result.Success<int>(1));
     }
 
     private sealed class TracedFirstProjection : IProjectionHandler<TracedDomainEvent>

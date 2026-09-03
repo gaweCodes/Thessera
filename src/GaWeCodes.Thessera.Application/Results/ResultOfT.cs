@@ -60,7 +60,8 @@ public sealed class Result<TResult> : Result
     /// <exception cref="InvalidOperationException">
     /// <typeparamref name="TResult"/> is <see cref="Failure"/>.
     /// </exception>
-    public static Result<TResult> Success(TResult value) => new(value);
+    /// <remarks>Called through <see cref="Result.Success{TResult}(TResult)"/>; not a public entry point itself.</remarks>
+    internal static Result<TResult> Success(TResult value) => new(value);
 
     /// <summary>
     /// Creates a failed result with one reason.
@@ -68,7 +69,8 @@ public sealed class Result<TResult> : Result
     /// <param name="failure">The reason.</param>
     /// <returns>A failure.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="failure"/> is <see langword="null"/>.</exception>
-    public static new Result<TResult> Failed(Failure failure)
+    /// <remarks>Called through <see cref="Result.Failed{TResult}(Failure)"/>; not a public entry point itself.</remarks>
+    internal static new Result<TResult> Failed(Failure failure)
     {
         ArgumentNullException.ThrowIfNull(failure);
         return new Result<TResult>([failure]);
@@ -83,7 +85,11 @@ public sealed class Result<TResult> : Result
     /// <paramref name="failures"/> is <see langword="null"/>, or contains a <see langword="null"/> entry.
     /// </exception>
     /// <exception cref="ArgumentException"><paramref name="failures"/> is empty.</exception>
-    public static new Result<TResult> Failed(IReadOnlyList<Failure> failures)
+    /// <remarks>
+    /// Called through <see cref="Result.Failed{TResult}(IReadOnlyList{Failure})"/>; not a public entry
+    /// point itself.
+    /// </remarks>
+    internal static new Result<TResult> Failed(IReadOnlyList<Failure> failures)
     {
         ArgumentNullException.ThrowIfNull(failures);
         return new Result<TResult>(failures);

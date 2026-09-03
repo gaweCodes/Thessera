@@ -128,7 +128,7 @@ public sealed class CommandHandlerRawSessionAnalyzerTests
                 public SampleQueryHandler(SampleDbContext context) { }
 
                 public Task<Result<int>> HandleAsync(SampleQuery query, CancellationToken cancellationToken) =>
-                    Task.FromResult(Result<int>.Success(0));
+                    Task.FromResult(Result.Success<int>(0));
             }
             """;
 

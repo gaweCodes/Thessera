@@ -73,6 +73,29 @@ public class Result
         where TResult : notnull => Result<TResult>.Success(value);
 
     /// <summary>
+    /// Creates a failed result carrying a value type, with one reason.
+    /// </summary>
+    /// <typeparam name="TResult">The value's type.</typeparam>
+    /// <param name="failure">The reason.</param>
+    /// <returns>A failure.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="failure"/> is <see langword="null"/>.</exception>
+    public static Result<TResult> Failed<TResult>(Failure failure)
+        where TResult : notnull => Result<TResult>.Failed(failure);
+
+    /// <summary>
+    /// Creates a failed result carrying a value type, with several reasons.
+    /// </summary>
+    /// <typeparam name="TResult">The value's type.</typeparam>
+    /// <param name="failures">The reasons. Must not be empty or contain <see langword="null"/>.</param>
+    /// <returns>A failure carrying all of them.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="failures"/> is <see langword="null"/>, or contains a <see langword="null"/> entry.
+    /// </exception>
+    /// <exception cref="ArgumentException"><paramref name="failures"/> is empty.</exception>
+    public static Result<TResult> Failed<TResult>(IReadOnlyList<Failure> failures)
+        where TResult : notnull => Result<TResult>.Failed(failures);
+
+    /// <summary>
     /// Creates a failed result with one reason.
     /// </summary>
     /// <param name="failure">The reason.</param>

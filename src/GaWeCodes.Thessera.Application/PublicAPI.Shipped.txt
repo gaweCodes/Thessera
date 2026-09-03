@@ -98,9 +98,6 @@ static GaWeCodes.Thessera.Application.Results.Result.Failed(System.Collections.G
 static GaWeCodes.Thessera.Application.Results.Result.implicit operator GaWeCodes.Thessera.Application.Results.Result!(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result!
 static GaWeCodes.Thessera.Application.Results.Result.Success() -> GaWeCodes.Thessera.Application.Results.Result!
 static GaWeCodes.Thessera.Application.Results.Result.Success<TResult>(TResult value) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
-static GaWeCodes.Thessera.Application.Results.Result<TResult>.Failed(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
-static GaWeCodes.Thessera.Application.Results.Result<TResult>.Failed(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>! failures) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
 static GaWeCodes.Thessera.Application.Results.Result<TResult>.implicit operator GaWeCodes.Thessera.Application.Results.Result<TResult>!(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
 static GaWeCodes.Thessera.Application.Results.Result<TResult>.implicit operator GaWeCodes.Thessera.Application.Results.Result<TResult>!(TResult value) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
-static GaWeCodes.Thessera.Application.Results.Result<TResult>.Success(TResult value) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
 virtual GaWeCodes.Thessera.Application.Cqrs.RequestPipelineContinuation<TResponse>.Invoke(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TResponse>!

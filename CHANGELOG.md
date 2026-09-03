@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `Result<TResult>.Success(...)` and `Result<TResult>.Failed(...)` are no longer public; call
+  `Result.Success<TResult>(...)` and the new `Result.Failed<TResult>(...)` instead. This removes the
+  last suppressed `CA1000` (static members on a generic type) from the package — the non-generic
+  `Result` was already the documented entry point for `Success`, and now is for `Failed` too.
+
 ### Added
 
 - A host may now select more than one persistence store: a call to `UseEfCoreStateStore` or
