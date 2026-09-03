@@ -56,4 +56,22 @@ public sealed class ChildEntityConstructorAnalyzerTests
 
         Assert.Empty(diagnostics);
     }
+
+    [Fact]
+    public async Task AChildEntityWithAProtectedConstructor_IsFlagged()
+    {
+        var source = Prelude + """
+
+            public class Child : Entity<ChildId, ChildState>
+            {
+                protected Child(IChildOwner<ChildId, ChildState> owner, ChildId id) : base(owner, id) { }
+            }
+            """;
+
+        var diagnostics = await AnalyzerTestHarness.GetDiagnosticsAsync(new ChildEntityConstructorAnalyzer(), source);
+
+        var diagnostic = Assert.Single(diagnostics);
+        Assert.Equal(ChildEntityConstructorAnalyzer.DiagnosticId, diagnostic.Id);
+        Assert.Contains("Child", diagnostic.GetMessage(CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
 }

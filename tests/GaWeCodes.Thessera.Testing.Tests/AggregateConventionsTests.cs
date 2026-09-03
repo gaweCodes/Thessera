@@ -51,6 +51,16 @@ public sealed class AggregateConventionsTests
     }
 
     [Fact]
+    public void AChildEntityWithAPublicConstructor_IsReported()
+    {
+        var thrown = Assert.Throws<InvalidOperationException>(
+            () => AggregateConventions.Verify([typeof(ExposedChild).Assembly, typeof(SampleCreated).Assembly]));
+
+        Assert.Contains(nameof(ExposedChild), thrown.Message, StringComparison.Ordinal);
+        Assert.Contains("Keep the constructor internal", thrown.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Verify_WithoutAssemblies_Throws() =>
         Assert.Throws<ArgumentNullException>(() => AggregateConventions.Verify(null!));
 }

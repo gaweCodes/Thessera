@@ -7,9 +7,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace GaWeCodes.Thessera.Analyzers;
 
 /// <summary>
-/// Flags a child entity that exposes a public constructor - the compile-time twin of the check
-/// <c>GaWeCodes.Thessera.Testing.AggregateConventions.Verify</c> performs in a test. Nothing at run
-/// time catches this today.
+/// Flags a child entity that exposes a constructor with broader-than-internal visibility - the
+/// compile-time twin of the check <c>GaWeCodes.Thessera.Testing.AggregateConventions.Verify</c>
+/// performs in a test. Nothing at run time catches this today.
 /// </summary>
 /// <remarks>
 /// A child entity is reached through its aggregate root, never through a repository of its own. A
@@ -25,10 +25,10 @@ public sealed class ChildEntityConstructorAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor Rule = new(
         DiagnosticId,
-        title: "Child entity exposes a public constructor",
-        messageFormat: "Child entity '{0}' exposes a public constructor, so a hull can be built " +
-            "without its aggregate root and would have no channel to raise events through; keep the " +
-            "constructor internal",
+        title: "Child entity exposes a non-internal constructor",
+        messageFormat: "Child entity '{0}' exposes a constructor with broader-than-internal " +
+            "visibility, so a hull can be built without its aggregate root and would have no " +
+            "channel to raise events through; keep the constructor internal",
         category: "Thessera.Design",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
@@ -80,17 +80,17 @@ public sealed class ChildEntityConstructorAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        var publicConstructor = type.InstanceConstructors
-            .FirstOrDefault(static ctor => ctor.DeclaredAccessibility == Accessibility.Public);
+        var nonInternalConstructor = type.InstanceConstructors
+            .FirstOrDefault(static ctor => ctor.DeclaredAccessibility != Accessibility.Internal);
 
-        if (publicConstructor is null)
+        if (nonInternalConstructor is null)
         {
             return;
         }
 
         context.ReportDiagnostic(Diagnostic.Create(
             Rule,
-            publicConstructor.Locations.IsEmpty ? type.Locations.FirstOrDefault() ?? Location.None : publicConstructor.Locations[0],
+            nonInternalConstructor.Locations.IsEmpty ? type.Locations.FirstOrDefault() ?? Location.None : nonInternalConstructor.Locations[0],
             type.Name));
     }
 }

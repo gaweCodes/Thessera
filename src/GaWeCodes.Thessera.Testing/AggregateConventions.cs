@@ -96,11 +96,12 @@ public static class AggregateConventions
                 $"'{domainEvent}' needs an [EventName]. The class name is not a persistence contract.");
         }
 
-        foreach (var child in children.Where(static type => type.GetConstructors().Length != 0))
+        foreach (var child in children.Where(static type => HasNonInternalConstructor(type)))
         {
             violations.Add(
-                $"'{child}' exposes a public constructor, so a child hull can be built without its root and would " +
-                "have no channel to raise through. Keep the constructor internal.");
+                $"'{child}' exposes a constructor with broader-than-internal visibility, so a child " +
+                "hull can be built without its root and would have no channel to raise through. Keep " +
+                "the constructor internal.");
         }
 
         if (violations.Count != 0)
@@ -126,4 +127,8 @@ public static class AggregateConventions
 
         return false;
     }
+
+    private static bool HasNonInternalConstructor(Type type) =>
+        type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Any(static ctor => !ctor.IsAssembly);
 }
