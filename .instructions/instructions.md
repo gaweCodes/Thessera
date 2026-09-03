@@ -71,6 +71,16 @@ own `Examples/Directory.Build.props`. The examples consume Thessera through `Pac
 from a local folder feed, never through project references, and each one owns its domain model and
 tests only its own code.
 
+## Comment style
+
+- **No inline (`//`) comments**, anywhere in `src` or `tests`. 
+- **No comments in `.csproj` files.**
+- **XML documentation comments are added only where the build requires them** — a public member
+  under `src`, where `CS1591` turns a missing one into a build error.
+  - **As short as possible, as long as necessary.** A required XML comment states what a reader
+  cannot already get from the member's name, its signature, or a glance at the code — not what a
+  quick read already tells them. Prefer one clear sentence over a paragraph.
+
 ## Conventions in force in this repository
 
 Each of these is decided in an ADR; [`docs/architecture/README.md`](../docs/architecture/README.md)
