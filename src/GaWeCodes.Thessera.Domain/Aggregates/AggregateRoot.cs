@@ -125,6 +125,15 @@ public abstract class AggregateRoot<TKey, TState> : EntityBase<TKey>, IAggregate
     {
         ArgumentNullException.ThrowIfNull(state);
 
+        if (DomainEvents.Count > 0)
+        {
+            throw new InvalidOperationException(
+                "Restore cannot be called after events have been raised on the aggregate. Restoring at that "
+                + "point would replace the state those events were raised against while leaving them in "
+                + "DomainEvents, so the aggregate's state and its uncommitted events would no longer agree. "
+                + "Restore into a fresh, empty hull instead.");
+        }
+
         if (state is not TState typedState)
         {
             throw new ArgumentException(

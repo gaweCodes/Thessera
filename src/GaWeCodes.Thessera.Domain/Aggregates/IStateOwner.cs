@@ -39,6 +39,11 @@ public interface IStateOwner
     /// The state read from the store. Must be of <see cref="StateType"/> and must carry a non-empty
     /// identity.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    /// The aggregate already has uncommitted domain events. Restoring at that point would replace
+    /// the state those events were raised against while leaving them recorded, so the aggregate's
+    /// state and its events would no longer agree; restore into a fresh hull instead.
+    /// </exception>
     /// <exception cref="ArgumentException">
     /// <paramref name="state"/> is not of <see cref="StateType"/>.
     /// </exception>
