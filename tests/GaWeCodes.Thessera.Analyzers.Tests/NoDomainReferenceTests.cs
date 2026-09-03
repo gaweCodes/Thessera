@@ -31,6 +31,7 @@ public sealed class NoDomainReferenceTests
             new ChildEntityConstructorAnalyzer(),
             new AggregateStateSelfBindingAnalyzer(),
             new ChildEntityStateSelfBindingAnalyzer(),
+            new CommandHandlerSingleStoreAnalyzer(),
         };
 
         foreach (var analyzer in analyzers)

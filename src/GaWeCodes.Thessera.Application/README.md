@@ -157,7 +157,7 @@ Eleven packages. Exactly two of them are a choice you make; the rest follow from
 - `GaWeCodes.Thessera.Npgsql` — PostgreSQL error translation, shared by both choices.
 - `GaWeCodes.Thessera.Messaging.RabbitMq` — opt-in transport. Without one, no integration event leaves the service.
 - `GaWeCodes.Thessera.Testing` — convention checks and test helpers for all of the above.
-- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of six of those conventions, in every host.
+- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of eight of those conventions, in every host.
 
 ## License
 

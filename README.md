@@ -5,7 +5,8 @@
 
 Tactical DDD, CQRS and selective event sourcing building blocks for .NET. The same domain model
 runs either **state-stored** (EF Core) or **event-stored** (Marten) — switching is a wiring
-decision, not a rewrite.
+decision, not a rewrite. The store choice is made per *aggregate*, not per host: one host can keep
+one aggregate event-sourced and another state-stored, each committing through its own store.
 
 ## Packages
 
@@ -33,18 +34,18 @@ example, and its limits.
 - [`GaWeCodes.Thessera.Testing`](src/GaWeCodes.Thessera.Testing) — convention checks and test
   helpers.
 - [`GaWeCodes.Thessera.Analyzers`](src/GaWeCodes.Thessera.Analyzers) — the compile-time twin of
-  six of those conventions, in every host.
+  eight of those conventions, in every host.
 
 ## Get started
 
 ```bash
 dotnet add package GaWeCodes.Thessera.Persistence.EfCore.Postgres
-# or
+# and/or
 dotnet add package GaWeCodes.Thessera.Persistence.Marten
 ```
 
 Requires .NET 10 (`net10.0`). Follow the getting-started section in the package README for your
-store choice.
+store choice — add both to mix event-sourced and state-stored aggregates in the same host.
 
 ## Contributing
 

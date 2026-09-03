@@ -13,7 +13,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Marten" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
@@ -30,6 +32,7 @@
     -->
     <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Analyzers\GaWeCodes.Thessera.Analyzers.csproj" />
     <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Domain\GaWeCodes.Thessera.Domain.csproj" />
+    <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Application\GaWeCodes.Thessera.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
