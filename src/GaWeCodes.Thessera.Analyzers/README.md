@@ -148,6 +148,9 @@ public sealed class RenameReadingHandler(IRepository<Reading, ReadingId> reading
   `net10.0`.
 - Eight rules, deliberately. See "What this deliberately does not check" above for what stays a
   startup check on purpose.
+- **No symbols, no `lib/` assembly.** The compiled analyzer is packed under `analyzers/dotnet/cs`
+  instead, so it is never offered to a consumer as an ordinary reference assembly — an analyzer is a
+  build-time tool, not something to debug into at runtime.
 
 
 ## The family

@@ -2,17 +2,6 @@ using System.Xml.Linq;
 
 namespace GaWeCodes.Thessera.Tests;
 
-/// <summary>
-/// Keeps every package's nuget.org page from going out blank.
-/// </summary>
-/// <remarks>
-/// A package without a README and without a description builds, packs, restores and runs exactly
-/// like one that has both -- the only thing that breaks is the first minute of the first stranger
-/// who finds it, and no build reports that. The same is true one level up: the README can be
-/// present and still never reach the feed, because what puts it there is a packed item and a
-/// <c>PackageReadmeFile</c> in the shared props, not the file lying next to the project. Both
-/// halves are asserted here, because either one alone is a page nobody reads.
-/// </remarks>
 public sealed class PackageReadmeTests
 {
     private const string ReadmeFileName = "README.md";
@@ -88,8 +77,6 @@ public sealed class PackageReadmeTests
     {
         var projects = ThesseraLayout.ProjectFiles(Path.Combine(ThesseraLayout.Root, "src"));
 
-        // Without this, a layout change that finds no project turns all three tests above into
-        // assertions over an empty set: green forever, guarding nothing.
         Assert.NotEmpty(projects);
 
         return projects;

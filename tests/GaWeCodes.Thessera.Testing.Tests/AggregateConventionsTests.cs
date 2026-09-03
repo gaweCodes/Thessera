@@ -31,8 +31,6 @@ public sealed class AggregateConventionsTests
         Assert.Contains("parameterless constructor", thrown.Message, StringComparison.Ordinal);
     }
 
-    // The failure mode that matters most: a check that finds nothing passes forever without
-    // asserting anything. It has to be louder than a real violation, not quieter.
     [Fact]
     public void AnAssemblyWithNoAggregateAndNoDomainEvent_IsReportedInsteadOfPassingVacuously()
     {

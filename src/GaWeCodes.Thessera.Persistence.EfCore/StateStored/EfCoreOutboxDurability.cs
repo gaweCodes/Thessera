@@ -17,9 +17,6 @@ internal sealed class EfCoreOutboxDurability(
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        // Deferred to here (Activate(), once every persistence adapter in the host has already
-        // registered) rather than decided eagerly in Register() - only at this point does the host
-        // know whether Marten already claimed Wolverine's Main message store slot.
         var role = runtime.TryClaimMainMessageStore() ? MessageStoreRole.Main : MessageStoreRole.Ancillary;
         driver.PersistMessages(options, writeConnectionString, role, role == MessageStoreRole.Main ? null : contextType);
         options.UseEntityFrameworkCoreTransactions();

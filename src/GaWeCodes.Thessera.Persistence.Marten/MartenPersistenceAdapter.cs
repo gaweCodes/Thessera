@@ -71,9 +71,6 @@ internal sealed record MartenPersistenceAdapter(string WriteConnectionString) : 
 
                 if (!IsEventSourced(aggregateType, keyType))
                 {
-                    // A mismatched aggregate style closes this repository over a generic constraint it
-                    // does not satisfy - registering it here would throw a raw TypeLoadException instead
-                    // of the descriptive one AggregatePersistenceMatchCheck reports for exactly this case.
                     continue;
                 }
 
@@ -90,10 +87,6 @@ internal sealed record MartenPersistenceAdapter(string WriteConnectionString) : 
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IStartupCheck, MartenSchemaProvisioner>(
             provider => new MartenSchemaProvisioner(provider, () => context.ProvisionsInfrastructure)));
 
-        // Wolverine's plain AddMarten().IntegrateWithWolverine() above is hard-coded to Main - there
-        // is no ancillary option for it, so this is a one-way announcement, not a negotiation. It
-        // only matters when another store shares this host: claiming Main here, before that other
-        // store's outbox durability runs at Activate(), is what makes it self-select Ancillary.
         context.UseWolverineRuntime().TryClaimMainMessageStore();
         DeadLetterHealthCheckRegistration.Register(services);
     }

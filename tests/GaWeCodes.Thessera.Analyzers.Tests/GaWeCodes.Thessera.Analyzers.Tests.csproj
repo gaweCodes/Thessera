@@ -25,11 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--
-      A ProjectReference to the analyzer itself, not a PackageReference under 'analyzers/dotnet/cs' -
-      these tests drive AggregateNameAnalyzer et al. as ordinary Roslyn API consumers, compiling small
-      snippets in-memory and inspecting the reported diagnostics directly.
-    -->
     <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Analyzers\GaWeCodes.Thessera.Analyzers.csproj" />
     <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Domain\GaWeCodes.Thessera.Domain.csproj" />
     <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Application\GaWeCodes.Thessera.Application.csproj" />

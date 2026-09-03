@@ -7,15 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GaWeCodes.Thessera.Core.DependencyInjection.Validation;
 
-/// <summary>
-/// Enforces that one command commits through one store, and builds the routing table
-/// <see cref="UnitOfWorkBehavior{TRequest,TResponse}"/> reads from.
-/// </summary>
-/// <remarks>
-/// A no-op on a host with at most one store — the overwhelming majority — since every command then
-/// commits through that host's single unkeyed <c>IUnitOfWork</c> exactly as before this feature
-/// existed. Only once a second store is selected does this walk every registered command handler.
-/// </remarks>
 internal sealed class CommandStoreRoutingCheck(
     PersistenceSelection persistence,
     IServiceCollection services,
@@ -41,17 +32,6 @@ internal sealed class CommandStoreRoutingCheck(
     private bool HasMoreThanOneStore() =>
         persistence.Choices.Count(static choice => choice.IsSelected) > 1;
 
-    /// <summary>
-    /// Fails loudly instead of silently skipping a command handler this check cannot inspect.
-    /// </summary>
-    /// <remarks>
-    /// Routing a command to the right store requires reading a handler's constructor for the
-    /// repositories it injects, which in turn requires the handler's concrete type. A handler
-    /// registered through a factory delegate (for example <c>AddScoped&lt;TContract&gt;(sp => ...)</c>)
-    /// has no known type until the factory runs, so <see cref="HandlerTypes"/> cannot see it — and a
-    /// command silently routed to the wrong store, or to none, only surfaces as a data-integrity bug
-    /// far from here.
-    /// </remarks>
     private void ThrowForFactoryRegisteredHandlers()
     {
         var uninspectable = services

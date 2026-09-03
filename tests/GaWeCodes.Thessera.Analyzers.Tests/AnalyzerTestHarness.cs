@@ -7,11 +7,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace GaWeCodes.Thessera.Tests;
 
-/// <summary>
-/// Compiles a small C# snippet in memory and runs a single <see cref="DiagnosticAnalyzer"/> over it,
-/// so a test can assert on exactly the diagnostics that analyzer reports - without a dependency on
-/// <c>Microsoft.CodeAnalysis.Testing</c>, which the repository does not otherwise need.
-/// </summary>
 internal static class AnalyzerTestHarness
 {
     private static readonly Lazy<ImmutableArray<MetadataReference>> ReferencesWithDomain = new(() => BuildReferences(includeDomain: true, includeApplication: false, includeStores: false));
@@ -19,27 +14,6 @@ internal static class AnalyzerTestHarness
     private static readonly Lazy<ImmutableArray<MetadataReference>> ReferencesWithApplication = new(() => BuildReferences(includeDomain: true, includeApplication: true, includeStores: false));
     private static readonly Lazy<ImmutableArray<MetadataReference>> ReferencesWithStores = new(() => BuildReferences(includeDomain: true, includeApplication: true, includeStores: true));
 
-    /// <summary>
-    /// Compiles <paramref name="source"/> and returns every diagnostic <paramref name="analyzer"/>
-    /// reports for it.
-    /// </summary>
-    /// <param name="analyzer">The analyzer under test.</param>
-    /// <param name="source">The C# snippet to compile.</param>
-    /// <param name="referenceDomain">
-    /// Whether the compilation references <c>GaWeCodes.Thessera.Domain</c>. Defaults to
-    /// <see langword="true"/>; pass <see langword="false"/> to exercise a rule's no-op path for a
-    /// project that never references it at all.
-    /// </param>
-    /// <param name="referenceApplication">
-    /// Whether the compilation also references <c>GaWeCodes.Thessera.Application</c> (and, with it,
-    /// <c>GaWeCodes.Thessera.Domain</c>). Pass <see langword="true"/> for a rule that reasons about
-    /// <c>ICommandHandler</c> or <c>IRepository</c>.
-    /// </param>
-    /// <param name="referenceStores">
-    /// Whether the compilation also references EF Core (<c>Microsoft.EntityFrameworkCore</c>) and
-    /// Marten, on top of <c>GaWeCodes.Thessera.Application</c>. Pass <see langword="true"/> for a
-    /// rule that reasons about a store's own <c>DbContext</c> or <c>IDocumentSession</c>.
-    /// </param>
     internal static async Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync(
         DiagnosticAnalyzer analyzer,
         string source,
@@ -125,13 +99,6 @@ internal static class AnalyzerTestHarness
         ];
     }
 
-    /// <summary>
-    /// Walks <paramref name="root"/>'s referenced-assembly graph and returns a
-    /// <see cref="MetadataReference"/> for every assembly reached, loading each one on the way -
-    /// EF Core and Marten's own public surface reaches into several of their transitive dependencies
-    /// (for example <c>Microsoft.Extensions.Caching.Memory</c> or <c>Npgsql</c>), and a snippet using
-    /// their types needs all of those resolvable too, not just the two root assemblies themselves.
-    /// </summary>
     private static IEnumerable<MetadataReference> ResolveDependencyClosure(Assembly root)
     {
         var visited = new HashSet<string>(StringComparer.Ordinal);

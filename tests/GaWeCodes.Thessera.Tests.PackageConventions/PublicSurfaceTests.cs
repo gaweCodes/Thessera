@@ -77,8 +77,6 @@ public sealed class PublicSurfaceTests
         "GaWeCodes.Thessera.Wolverine.Persistence.IOutboxDurabilityConfigurator",
     ];
 
-    // What a store author writes against. This was its own package until the store toolkit was
-    // folded into the core; it stays a separate list because it is a distinct promise.
     private static readonly string[] IntendedCoreStoreAuthorApi =
     [
         "GaWeCodes.Thessera.Core.Persistence.AggregateTracker`1",

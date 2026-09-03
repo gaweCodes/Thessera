@@ -3,12 +3,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace GaWeCodes.Thessera.Tests;
 
-/// <summary>
-/// Every rule resolves the Thessera types it reasons about by metadata name and does nothing when
-/// they are not found - this is what keeps the package free of a compile-time dependency on
-/// <c>GaWeCodes.Thessera.Domain</c>. This test exercises that no-op path directly, compiling a
-/// project that never references <c>GaWeCodes.Thessera.Domain</c> at all.
-/// </summary>
 public sealed class NoDomainReferenceTests
 {
     [Fact]

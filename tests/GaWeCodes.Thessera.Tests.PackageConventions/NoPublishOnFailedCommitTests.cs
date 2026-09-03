@@ -12,13 +12,6 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-/// <summary>
-/// The losing side of <see cref="ConcurrencyConflictScenarioTests"/>'s two races never reaches
-/// <c>IUnitOfWork.CommitAsync</c>'s successful return, because the aggregate/stream and its outbox
-/// envelope are staged and flushed together, in one transaction. These tests confirm the other half
-/// of that guarantee directly: the loser's own domain event is never delivered, not merely that the
-/// caller sees a conflict.
-/// </summary>
 [Collection(PostgreSqlCollection.Name)]
 public sealed class NoPublishOnFailedCommitTests(PostgreSqlFixture fixture)
 {
@@ -151,10 +144,6 @@ public sealed class NoPublishOnFailedCommitTests(PostgreSqlFixture fixture)
         options.ApplicationAssembly = typeof(DomainEventEnvelopeHandler).Assembly;
     }
 
-    /// <summary>
-    /// Lets a test wait for a specific, distinguishable payload to be delivered — and, just as
-    /// importantly, wait a bounded time for one that must never arrive, without an indefinite hang.
-    /// </summary>
     private sealed class DeliverySignal<TValue>
         where TValue : notnull
     {

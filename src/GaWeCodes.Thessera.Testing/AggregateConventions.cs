@@ -56,8 +56,6 @@ public static class AggregateConventions
 
         var violations = new List<string>();
 
-        // A run that finds nothing passes every check below without asserting anything. That is the
-        // most expensive failure mode a convention test has, because it stays green forever.
         if (aggregates.Count == 0 && domainEvents.Count == 0)
         {
             violations.Add(

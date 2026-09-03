@@ -9,12 +9,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace GaWeCodes.Thessera.Tests;
 
-/// <summary>
-/// Exercises the "one command, one store" invariant a host with more than one persistence store
-/// enforces at startup - see ADR 0016. Reuses <see cref="Ledger"/> (state-stored) and
-/// <see cref="Journal"/> (event-sourced) from <c>AggregatePersistenceMatchTests</c>, which already
-/// give one aggregate of each style.
-/// </summary>
 public sealed class CommandStoreRoutingTests
 {
     private const string WriteConnectionString = "Host=localhost;Database=routing;Username=test;******";
@@ -22,8 +16,6 @@ public sealed class CommandStoreRoutingTests
     [Fact]
     public async Task AHostWithOneStore_NeverRunsTheRoutingWalk()
     {
-        // A single-store host must stay a no-op: registering a handler that spans both aggregates
-        // would fail the multi-store check below, but must not fail here.
         await RunChecksAsync(
             options => options.UseEfCoreStateStore<RoutingDbContext>(WriteConnectionString),
             services => services
@@ -82,7 +74,6 @@ public sealed class CommandStoreRoutingTests
 
     private sealed class RoutingDbContext(DbContextOptions<RoutingDbContext> options) : DbContext(options);
 
-    /// <summary>A handler injecting repositories for both a state-stored and an event-sourced aggregate.</summary>
     private sealed class CrossStoreJournalHandler(
         IRepository<Ledger, LedgerId> ledgers,
         IRepository<Journal, JournalId> journals) : ICommandHandler<OpenJournal>

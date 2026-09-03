@@ -2,17 +2,18 @@ using GaWeCodes.Thessera.Core.DependencyInjection;
 using GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring;
 using Wolverine;
 
-// Deliberate exception to the package/namespace rule. The composition entry points stay in the
-// shared root namespace so a consumer's Program.cs reaches AddThessera and every Use*
-// call with one using -- the same reason AddConsole() lives in Microsoft.Extensions.Logging
-// and not in Microsoft.Extensions.Logging.Console. Every other type in this package matches
-// its package name, so IDE0130 is suppressed here and nowhere else.
-#pragma warning disable IDE0130 // Namespace does not match folder structure
+#pragma warning disable IDE0130
 namespace GaWeCodes.Thessera;
 #pragma warning restore IDE0130
+
 /// <summary>
 /// Reaches the message engine's own configuration from inside a Thessera host.
 /// </summary>
+/// <remarks>
+/// Declared in the shared <c>GaWeCodes.Thessera</c> namespace rather than this package's own — like
+/// <c>AddConsole()</c> in <c>Microsoft.Extensions.Logging</c> — so a consumer reaches every
+/// <c>Use*</c>/<c>AddThessera</c> call with a single <c>using</c>.
+/// </remarks>
 public static class WolverineRuntimeOptionsExtensions
 {
     /// <summary>

@@ -22,8 +22,6 @@ public sealed class SqliteDatabaseDriver : IEfCoreDatabaseDriver
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        // Every test host wiring this driver up uses exactly one store, so it is always Main; the
-        // ancillary path is exercised by the PostgreSQL driver's own tests instead.
         options.PersistMessagesWithSqlite(connectionString);
     }
 

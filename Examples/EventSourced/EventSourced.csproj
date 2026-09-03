@@ -14,11 +14,6 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
   </ItemGroup>
   <ItemGroup>
-    <!--
-      A dev dependency, not a runtime one - it never ships in the published output, only in the
-      build. Every example that defines a Thessera aggregate references it, regardless of which
-      store or broker the tier picks, because the six checks it makes are store-agnostic.
-    -->
     <PackageReference Include="GaWeCodes.Thessera.Analyzers" Version="[$(ThesseraVersion)]" PrivateAssets="all" />
   </ItemGroup>
 </Project>

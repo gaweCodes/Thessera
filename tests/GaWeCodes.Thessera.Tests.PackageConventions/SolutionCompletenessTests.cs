@@ -2,15 +2,6 @@ using System.Xml.Linq;
 
 namespace GaWeCodes.Thessera.Tests;
 
-/// <summary>
-/// Keeps the repository solution files in step with the projects that actually exist.
-/// </summary>
-/// <remarks>
-/// A project missing from the solution still builds, because whatever references it drags it in.
-/// That is exactly why the gap survives: nothing goes red. It shows up later as a package that no
-/// one opened in the IDE, that no solution-wide analysis covered, and that a solution-scoped
-/// `dotnet build` or `dotnet pack` quietly skipped.
-/// </remarks>
 public sealed class SolutionCompletenessTests
 {
     [Fact]

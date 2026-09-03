@@ -2,18 +2,6 @@ using System.Xml.Linq;
 
 namespace GaWeCodes.Thessera.Tests;
 
-/// <summary>
-/// Keeps a breaking API change visible in the pull request diff instead of only at the consumer.
-/// </summary>
-/// <remarks>
-/// <see cref="PublicSurfaceTests"/> pins the exported <b>type</b> list; it says nothing about a
-/// parameter added, a parameter renamed, a return type widened, or an enum member inserted in the
-/// middle. Those are exactly the changes <c>Microsoft.CodeAnalysis.PublicApiAnalyzers</c> catches,
-/// but only for a project that actually carries both tracking files and actually references the
-/// analyzer -- a project missing either one builds, packs and ships exactly like one that has both,
-/// and no build reports that. Both halves are asserted here, because either one alone lets a
-/// project's public surface drift unnoticed.
-/// </remarks>
 public sealed class PublicApiFilesTests
 {
     private const string ShippedFileName = "PublicAPI.Shipped.txt";
@@ -95,8 +83,6 @@ public sealed class PublicApiFilesTests
     {
         var projects = ThesseraLayout.ProjectFiles(Path.Combine(ThesseraLayout.Root, "src"));
 
-        // Without this, a layout change that finds no project turns every test above into an
-        // assertion over an empty set: green forever, guarding nothing.
         Assert.NotEmpty(projects);
 
         return projects;

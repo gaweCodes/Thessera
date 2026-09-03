@@ -1,18 +1,5 @@
 namespace GaWeCodes.Thessera.Tests;
 
-/// <summary>
-/// Pins the shape of every project name in the family.
-/// </summary>
-/// <remarks>
-/// Three renames have passed over this repository and not one of them could have gone red: a
-/// project name is a file name, so a wrong one still compiles, still runs and still ships. The rule
-/// is short -- a source project is <c>GaWeCodes.Thessera.&lt;Package&gt;</c>; a test project either
-/// mirrors exactly one package as <c>GaWeCodes.Thessera.&lt;Package&gt;.Tests</c> or says that it
-/// mirrors none as <c>GaWeCodes.Thessera.Tests.&lt;Suite&gt;</c>; and the fixtures and matrix hosts
-/// carry no prefix at all, because they stand in for a stranger's code. That last form is the one
-/// worth guarding hardest: prefixing a matrix host would quietly turn the proof that a package can
-/// be consumed from outside into a proof that it can be consumed from inside.
-/// </remarks>
 public sealed class ProjectNamingTests
 {
     private const string Prefix = "GaWeCodes.Thessera.";

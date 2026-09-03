@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using System.Text;
 using GaWeCodes.Thessera.Core.Persistence;
 using GaWeCodes.Thessera.Persistence.EfCore.StateStored;
 using GaWeCodes.Thessera.Npgsql;
@@ -11,6 +13,8 @@ namespace GaWeCodes.Thessera.Persistence.EfCore.Postgres;
 
 internal sealed class PostgresDatabaseDriver : IEfCoreDatabaseDriver
 {
+    private const int PostgresIdentifierMaxLength = 63;
+
     public static PostgresDatabaseDriver Instance { get; } = new();
 
     public IReadOnlyList<IPersistenceFaultTranslator> FaultTranslators { get; } = [new PostgresFaultTranslator()];
@@ -33,16 +37,36 @@ internal sealed class PostgresDatabaseDriver : IEfCoreDatabaseDriver
 
         ArgumentNullException.ThrowIfNull(enrollContextType);
 
-        // Wolverine tags every message store's own tables with its schema, so this store needs one
-        // distinct from whatever schema the Main store (Marten or another EfCore store) already
-        // claimed - otherwise both would fight over the same wolverine_* tables on the same
-        // connection. Deriving it from the enrolled context's own name keeps it deterministic and
-        // collision-free across however many ancillary stores a host ends up with.
-        var schemaName = "wolverine_" + enrollContextType.Name.ToLowerInvariant();
+        var schemaName = SchemaNameFor(enrollContextType);
 
         options.PersistMessagesWithPostgresql(connectionString, schemaName, MessageStoreRole.Ancillary)
             .Enroll(enrollContextType);
     }
 
     public bool IsTransientFault(Exception exception) => PostgresTransientFaults.IsTransient(exception);
+
+    [SuppressMessage(
+        "Globalization",
+        "CA1308:Normalize strings to uppercase",
+        Justification = "PostgreSQL folds unquoted identifiers to lower case; Wolverine requires an all-lower-case " +
+            "schema name here, not a security-sensitive normalization.")]
+    private static string SchemaNameFor(Type enrollContextType)
+    {
+        const string prefix = "wolverine_";
+
+        var qualifiedName = enrollContextType.FullName ?? enrollContextType.Name;
+        var sanitized = new string(Array.ConvertAll(
+            qualifiedName.ToCharArray(),
+            static character => char.IsAsciiLetterOrDigit(character) ? character : '_')).ToLowerInvariant();
+        var schemaName = prefix + sanitized;
+
+        if (schemaName.Length <= PostgresIdentifierMaxLength)
+        {
+            return schemaName;
+        }
+
+        var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(qualifiedName)))[..8].ToLowerInvariant();
+        var truncatedLength = PostgresIdentifierMaxLength - prefix.Length - hash.Length - 1;
+        return $"{prefix}{sanitized[..truncatedLength]}_{hash}";
+    }
 }

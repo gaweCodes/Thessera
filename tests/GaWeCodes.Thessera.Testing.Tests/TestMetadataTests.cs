@@ -12,8 +12,6 @@ public sealed class TestMetadataTests
     public void TheAggregateName_ComesFromTheAttribute_NotTheTypeName() =>
         Assert.Equal("sealed-hull", TestMetadata.For<SealedHull>(Id, 1).AggregateName);
 
-    // The point of the helper: a hand-written stub calling ToString() on the key agrees with the
-    // runtime today and stops agreeing the moment the key's value type changes.
     [Fact]
     public void TheAggregateId_IsFormattedTheWayTheRuntimeFormatsIt() =>
         Assert.Equal(
