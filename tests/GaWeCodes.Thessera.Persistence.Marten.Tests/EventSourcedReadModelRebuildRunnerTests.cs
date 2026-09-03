@@ -3,12 +3,15 @@ using GaWeCodes.Thessera.Application.Persistence;
 using GaWeCodes.Thessera.Application.ReadModels;
 using GaWeCodes.Thessera.Application.Results;
 using GaWeCodes.Thessera.Core.DependencyInjection;
+using GaWeCodes.Thessera.Core.Persistence;
+using GaWeCodes.Thessera.Core.ReadModels;
 using GaWeCodes.Thessera.Domain.Aggregates;
 using GaWeCodes.Thessera.Domain.Entities;
 using GaWeCodes.Thessera.Domain.Events;
 using GaWeCodes.Thessera.Domain.Naming;
 using GaWeCodes.Thessera.Persistence.Marten.ReadModels;
 using GaWeCodes.Thessera.Wolverine.Messaging.DomainEvents;
+using Marten;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wolverine;
@@ -84,6 +87,42 @@ public sealed class EventSourcedReadModelRebuildRunnerTests(PostgreSqlFixture fi
         await host.StopAsync(TestContext.Current.CancellationToken);
     }
 
+    [Fact]
+    public async Task Rebuild_FlushesPeriodicallyInsteadOfHoldingTheWholeRunInOneBatch()
+    {
+        Assert.SkipUnless(fixture.Available, fixture.SkipReason);
+
+        using var host = await StartHostAsync(withRebuilder: true);
+        const int streamCount = ReadModelRebuildWriter.BatchSize + 20;
+
+        await SeedStreamsAsync(host, streamCount);
+        await RunRebuildAsync(host);
+
+        var log = host.Services.GetRequiredService<EventSourcedRebuildLog>();
+
+        Assert.True(log.Rebuilt.Count >= streamCount, "Every seeded stream should have been rebuilt.");
+        Assert.Equal(3, log.ScopeCount);
+
+        await host.StopAsync(TestContext.Current.CancellationToken);
+    }
+
+    private static async Task SeedStreamsAsync(IHost host, int count)
+    {
+        using var scope = host.Services.CreateScope();
+        var store = scope.ServiceProvider.GetRequiredService<IDocumentStore>();
+        await using var session = store.LightweightSession();
+        var aggregateName = EntityKeyFormatter.GetAggregateName(typeof(RebuildProbe));
+
+        for (var i = 0; i < count; i++)
+        {
+            var id = new RebuildProbeId(Guid.NewGuid());
+            var streamKey = EntityKeyFormatter.GetStreamKey(aggregateName, EntityKeyFormatter.GetKeyValue(id));
+            session.Events.StartStream(streamKey, new RebuildProbeStarted(id));
+        }
+
+        await session.SaveChangesAsync(TestContext.Current.CancellationToken);
+    }
+
     private static Task RunRebuildAsync(IHost host) =>
         host.Services.GetRequiredService<EventSourcedReadModelRebuildRunner>()
             .RebuildAsync<RebuildProbe, RebuildProbeId>(TestContext.Current.CancellationToken);
@@ -133,25 +172,37 @@ public sealed class EventSourcedRebuildLog
 
     public int ClearCount { get; private set; }
 
+    public int ScopeCount { get; private set; }
+
     public IReadOnlyList<RebuildProbe> Rebuilt => _rebuilt;
+
+    public void RecordScope() => ScopeCount++;
 
     public void RecordClear() => ClearCount++;
 
     public void Record(RebuildProbe probe) => _rebuilt.Add(probe);
 }
 
-public sealed class RecordingEventSourcedRebuilder(EventSourcedRebuildLog log)
+public sealed class RecordingEventSourcedRebuilder
     : IReadModelRebuilder<RebuildProbe, RebuildProbeId>
 {
+    private readonly EventSourcedRebuildLog _log;
+
+    public RecordingEventSourcedRebuilder(EventSourcedRebuildLog log)
+    {
+        _log = log;
+        _log.RecordScope();
+    }
+
     public Task ClearAsync(CancellationToken cancellationToken)
     {
-        log.RecordClear();
+        _log.RecordClear();
         return Task.CompletedTask;
     }
 
     public Task RebuildAsync(RebuildProbe aggregate, CancellationToken cancellationToken)
     {
-        log.Record(aggregate);
+        _log.Record(aggregate);
         return Task.CompletedTask;
     }
 }

@@ -22,18 +22,24 @@ public sealed class EntityKeyConversionTests
     }
 
     [Fact]
-    public void ApplyEntityKeyConversions_ConfiguresConverterForMappedKeyProperties()
+    public void ApplyEntityKeyConversions_ReusesTheSameConverterInstanceForTheSameKeyType()
     {
         using var context = new SampleContext();
 
-        var converter = context.Model
+        var recipeIdConverter = context.Model
             .FindEntityType(typeof(RecipeRow))!
             .FindProperty(nameof(RecipeRow.Id))!
             .GetValueConverter();
 
-        Assert.NotNull(converter);
-        Assert.Equal(9, Assert.IsType<int>(converter.ConvertToProvider(new RecipeId(9))));
-        Assert.Equal(new RecipeId(9), Assert.IsType<RecipeId>(converter.ConvertFromProvider(9)));
+        var authorUserIdConverter = context.Model
+            .FindEntityType(typeof(SummaryRow))!
+            .FindComplexProperty(nameof(SummaryRow.Author))!
+            .ComplexType
+            .FindProperty(nameof(AuthorInfo.UserId))!
+            .GetValueConverter();
+
+        Assert.NotNull(recipeIdConverter);
+        Assert.Same(recipeIdConverter, authorUserIdConverter);
     }
 
     [Fact]

@@ -129,7 +129,7 @@ public sealed class DeadLetterTests(PostgreSqlFixture postgres, RabbitMqFixture 
 
     private async Task<string?> FindInTheDeadLetterQueueAsync(string name)
     {
-        const int batchSize = 50;
+        const int maxMessagesToInspect = 10_000;
 
         var factory = new ConnectionFactory { Uri = rabbit.ConnectionUri };
         await using var connection = await factory.CreateConnectionAsync(TestContext.Current.CancellationToken);
@@ -141,7 +141,7 @@ public sealed class DeadLetterTests(PostgreSqlFixture postgres, RabbitMqFixture 
 
         try
         {
-            for (var read = 0; read < batchSize; read++)
+            for (var read = 0; read < maxMessagesToInspect; read++)
             {
                 var message = await channel.BasicGetAsync(
                     DeadLetterQueueName,
@@ -156,9 +156,10 @@ public sealed class DeadLetterTests(PostgreSqlFixture postgres, RabbitMqFixture 
                 inspected.Add(message.DeliveryTag);
 
                 var body = Encoding.UTF8.GetString(message.Body.Span);
-                if (found is null && body.Contains(name, StringComparison.Ordinal))
+                if (body.Contains(name, StringComparison.Ordinal))
                 {
                     found = body;
+                    break;
                 }
             }
         }

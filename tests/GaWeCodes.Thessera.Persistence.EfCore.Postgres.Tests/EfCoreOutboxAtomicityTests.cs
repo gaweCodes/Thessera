@@ -15,11 +15,11 @@ namespace GaWeCodes.Thessera.Tests;
 public sealed class EfCoreOutboxAtomicityTests(PostgreSqlFixture fixture)
 {
     [Fact]
-    public async Task AggregateAndOutboxEntry_ArePersistedByOneCommand()
+    public async Task WhenTheOutboxWriteFails_TheAggregateWriteIsRolledBackToo()
     {
         Assert.SkipUnless(fixture.Available, fixture.SkipReason);
 
-        var recorder = new CommandRecorder();
+        var interceptor = new FailingOutboxWriteInterceptor();
 
         var builder = Host.CreateApplicationBuilder();
 
@@ -29,7 +29,7 @@ public sealed class EfCoreOutboxAtomicityTests(PostgreSqlFixture fixture)
                 .ProvisionInfrastructure(InfrastructureProvisioning.AtStartup)
                 .UseEfCoreStateStore<FlushProbeContext>(
                 fixture.ConnectionString,
-                context => context.AddInterceptors(recorder))
+                context => context.AddInterceptors(interceptor))
                 .CustomizeWolverine(wolverine =>
                 {
                     wolverine.Durability.Mode = DurabilityMode.Solo;
@@ -48,61 +48,58 @@ public sealed class EfCoreOutboxAtomicityTests(PostgreSqlFixture fixture)
                 TestContext.Current.CancellationToken);
         }
 
-        recorder.Clear();
+        var probeId = Guid.NewGuid();
+        interceptor.Arm();
 
         using (var scope = host.Services.CreateScope())
         {
             var sender = scope.ServiceProvider.GetRequiredService<ISender>();
-            var result = await sender.SendAsync(
-                new StartFlushProbe(Guid.NewGuid()),
-                TestContext.Current.CancellationToken);
 
-            Assert.True(result.IsSuccess);
+            await Assert.ThrowsAnyAsync<Exception>(
+                () => sender.SendAsync(new StartFlushProbe(probeId), TestContext.Current.CancellationToken));
         }
 
-        var combined = recorder.Commands
-            .Where(sql => sql.Contains("flush_probe_rows", StringComparison.OrdinalIgnoreCase))
-            .Where(sql => sql.Contains("wolverine", StringComparison.OrdinalIgnoreCase))
-            .ToList();
+        using (var scope = host.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<FlushProbeContext>();
+            var persisted = await context.Probes.CountAsync(
+                probe => probe.Id == new FlushProbeId(probeId),
+                TestContext.Current.CancellationToken);
 
-        Assert.True(
-            combined.Count == 1,
-            "The aggregate row and the outbox envelope must be written by a single command so they share one " +
-            $"transaction. Commands touching both: {combined.Count}. All recorded commands:{Environment.NewLine}" +
-            string.Join(Environment.NewLine + "---" + Environment.NewLine, recorder.Commands));
+            Assert.Equal(
+                0,
+                persisted);
+        }
 
         await host.StopAsync(TestContext.Current.CancellationToken);
     }
 
-    private sealed class CommandRecorder : DbCommandInterceptor
+    private sealed class FailingOutboxWriteInterceptor : DbCommandInterceptor
     {
-        private readonly ConcurrentQueue<string> _commands = new();
+        private bool _armed;
 
-        public IReadOnlyList<string> Commands => [.. _commands];
-
-        public void Clear() => _commands.Clear();
-
-        public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
-            DbCommand command,
-            CommandEventData eventData,
-            InterceptionResult<DbDataReader> result,
-            CancellationToken cancellationToken = default)
-        {
-            Record(command);
-            return base.ReaderExecutingAsync(command, eventData, result, cancellationToken);
-        }
+        public void Arm() => _armed = true;
 
         public override ValueTask<InterceptionResult<int>> NonQueryExecutingAsync(
             DbCommand command,
             CommandEventData eventData,
             InterceptionResult<int> result,
-            CancellationToken cancellationToken = default)
-        {
-            Record(command);
-            return base.NonQueryExecutingAsync(command, eventData, result, cancellationToken);
-        }
+            CancellationToken cancellationToken = default) =>
+            ShouldFail(command)
+                ? throw new InvalidOperationException("Simulated outbox write failure for the atomicity test.")
+                : base.NonQueryExecutingAsync(command, eventData, result, cancellationToken);
 
-        private void Record(DbCommand command) => _commands.Enqueue(command.CommandText);
+        public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
+            DbCommand command,
+            CommandEventData eventData,
+            InterceptionResult<DbDataReader> result,
+            CancellationToken cancellationToken = default) =>
+            ShouldFail(command)
+                ? throw new InvalidOperationException("Simulated outbox write failure for the atomicity test.")
+                : base.ReaderExecutingAsync(command, eventData, result, cancellationToken);
+
+        private bool ShouldFail(DbCommand command) =>
+            _armed && command.CommandText.Contains("wolverine_", StringComparison.OrdinalIgnoreCase);
     }
 }
 
