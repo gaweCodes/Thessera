@@ -117,6 +117,16 @@ What the picture is trying to make obvious:
 - [0015 — Two more analyzer rules catch the aggregate- and entity-state self-binding mistake](0015-two-more-analyzer-rules-catch-self-binding.md).
   Why 0014's claim that the compiler already prevents a mismatched `TSelf` was wrong, and the two
   rules that catch what it does not.
+- [0016 — One store per aggregate, not one store per host](0016-one-store-per-aggregate-not-per-host.md).
+  Why 0004's single-transaction guarantee only ever needed one store per *command*, how a host now
+  claims aggregates for an ancillary store, and the `THSS0007` compile-time twin of the routing check.
+- [0017 — Wolverine's own Main/Ancillary message store, mapped from ours](0017-wolverine-main-ancillary-message-store.md).
+  The second, independent main/ancillary split 0016 did not cover: Wolverine allows exactly one
+  message store tagged Main per host, Marten cannot be anything else, and every EF Core store now
+  self-selects Main or Ancillary at `Activate()` time.
+- [0018 — An analyzer rule catches a handler bypassing the unit of work](0018-analyzer-catches-unit-of-work-bypass.md).
+  Why a command handler injecting a raw `DbContext` or Marten `IDocumentSession` is a silent hole in
+  the one-transaction guarantee, and the `THSS0008` compile-time rule that now catches it.
 
 ### How the repository is kept honest
 

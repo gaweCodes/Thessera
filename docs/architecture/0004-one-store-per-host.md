@@ -1,6 +1,8 @@
 # 0004 — One store per host
 
-- **Status:** Accepted
+- **Status:** Superseded by [0016](0016-one-store-per-aggregate-not-per-host.md) for a host that
+  claims aggregates for more than one store; unchanged for the single-store host, which remains the
+  common case.
 - **Date:** 2026-08-29
 
 ## Context
