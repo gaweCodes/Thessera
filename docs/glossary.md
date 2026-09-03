@@ -175,8 +175,9 @@ the error queue.
 
 What a store package hands to `UsePersistence` to announce itself: `IPersistenceAdapter` names its
 `AggregateStyle`, its `Description` and its `WriteConnectionString`, decides `IsTransientFault`, and
-registers its services through `Register(PersistenceRegistrationContext)`. Exactly one may be
-selected per host.
+registers its services through `Register(PersistenceRegistrationContext)`. A host selects one as its
+main store; either package may be added a second time, claiming a named set of aggregates, as an
+ancillary store — see [0016](architecture/0016-one-store-per-aggregate-not-per-host.md).
 
 ## Reading
 

@@ -37,7 +37,9 @@ beside all of it, on `Domain`, `Application` and `Core`, and belongs in test pro
 Thessera reference at all, resolving `Domain`'s types by metadata name instead — see
 [0014](0014-a-compile-time-analyzer-catches-four-startup-checks.md).
 
-Of the eleven, exactly two are a choice: `Persistence.EfCore.Postgres` or `Persistence.Marten`. The
+Of the eleven, exactly two are a store package: `Persistence.EfCore.Postgres` or `Persistence.Marten`.
+A host picks one of them as its main store; either may also be added a second time, for a named set
+of aggregates, as an ancillary store — see [0016](0016-one-store-per-aggregate-not-per-host.md). The
 rest follow from that choice or from whether the service talks to a broker.
 
 ### How a command travels
@@ -74,8 +76,10 @@ What the picture is trying to make obvious:
 - **State and events are written together or not at all.** On a state store the aggregate's state is
   reconciled into the change tracker and saved with the outbox rows in one `SaveChanges`; on an
   event store the events are appended to the stream at the expected version and saved with the
-  outbox rows in one `SaveChanges`. This single transaction is the reason a host may only have one
-  store — see [0004](0004-one-store-per-host.md).
+  outbox rows in one `SaveChanges`. This single transaction is why one command may only reach
+  aggregates claimed by the same store — a host may otherwise select more than one store at once,
+  routing each aggregate to exactly one of them — see
+  [0016](0016-one-store-per-aggregate-not-per-host.md).
 - **A failed commit is an answer, not an exception.** The fault translators turn a unique-constraint
   violation or a concurrency conflict into a `Failure`, and the command returns a failed `Result` —
   see [0006](0006-persistence-failures-as-result.md).

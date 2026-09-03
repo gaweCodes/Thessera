@@ -24,7 +24,7 @@ public static class TestMetadata
     /// The aggregate the event belongs to. Its <c>[AggregateName]</c> supplies the name in the
     /// metadata.
     /// </typeparam>
-    /// <param name="aggregateId">The aggregate's identity. Its <c>[AggregateName]</c> supplies the name.</param>
+    /// <param name="aggregateId">The aggregate's identity.</param>
     /// <param name="version">The version the event carries. Projections use it as their watermark.</param>
     /// <param name="eventId">Defaults to a new value; pass one to test redelivery of the same event.</param>
     /// <param name="occurredAt">Defaults to <see cref="DateTimeOffset.UnixEpoch"/> so tests stay deterministic.</param>
