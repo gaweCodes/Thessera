@@ -71,17 +71,7 @@ internal sealed class AggregateStateModelCheck<TContext>(IServiceProvider servic
             return;
         }
 
-        var storedNameAnnotation = entityType.IsMappedToJson()
-            ? RelationalAnnotationNames.JsonPropertyName
-            : RelationalAnnotationNames.ColumnName;
-
-        foreach (var property in entityType.GetProperties())
-        {
-            if (!property.IsShadowProperty() && property.FindAnnotation(storedNameAnnotation) is null)
-            {
-                derivedNames.Add($"'{entityType.ClrType.Name}.{property.Name}'");
-            }
-        }
+        ValidateStoredNames(entityType, derivedNames);
 
         foreach (var navigation in entityType.GetNavigations())
         {
@@ -108,6 +98,26 @@ internal sealed class AggregateStateModelCheck<TContext>(IServiceProvider servic
         foreach (var navigation in entityType.GetSkipNavigations())
         {
             offenders.Add(Describe(entityType, navigation.Name, navigation.TargetEntityType));
+        }
+    }
+
+    private static void ValidateStoredNames(ITypeBase type, List<string> derivedNames)
+    {
+        var storedNameAnnotation = type.IsMappedToJson()
+            ? RelationalAnnotationNames.JsonPropertyName
+            : RelationalAnnotationNames.ColumnName;
+
+        foreach (var property in type.GetProperties())
+        {
+            if (!property.IsShadowProperty() && property.FindAnnotation(storedNameAnnotation) is null)
+            {
+                derivedNames.Add($"'{type.ClrType.Name}.{property.Name}'");
+            }
+        }
+
+        foreach (var complexProperty in type.GetComplexProperties())
+        {
+            ValidateStoredNames(complexProperty.ComplexType, derivedNames);
         }
     }
 
