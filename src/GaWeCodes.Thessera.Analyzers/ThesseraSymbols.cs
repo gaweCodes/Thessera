@@ -37,6 +37,15 @@ internal static class ThesseraSymbols
     /// <summary>The metadata name of <c>EntityState&lt;TSelf, TKey&gt;</c>.</summary>
     internal const string EntityStateMetadataName = "GaWeCodes.Thessera.Domain.Entities.EntityState`2";
 
+    /// <summary>The metadata name of <c>ICommandHandler&lt;TCommand&gt;</c>.</summary>
+    internal const string CommandHandlerMetadataName = "GaWeCodes.Thessera.Application.Cqrs.ICommandHandler`1";
+
+    /// <summary>The metadata name of <c>ICommandHandler&lt;TCommand, TResult&gt;</c>.</summary>
+    internal const string CommandHandlerWithResultMetadataName = "GaWeCodes.Thessera.Application.Cqrs.ICommandHandler`2";
+
+    /// <summary>The metadata name of <c>IRepository&lt;TAggregate, TKey&gt;</c>.</summary>
+    internal const string RepositoryMetadataName = "GaWeCodes.Thessera.Application.Persistence.IRepository`2";
+
     /// <summary>
     /// Answers whether <paramref name="type"/> derives - directly or indirectly - from the open
     /// generic type <paramref name="openGenericBase"/> resolves to.
@@ -79,6 +88,38 @@ internal static class ThesseraSymbols
     /// <summary>Answers whether <paramref name="type"/> implements <paramref name="interfaceType"/>.</summary>
     internal static bool Implements(this ITypeSymbol type, INamedTypeSymbol interfaceType) =>
         type.AllInterfaces.Contains(interfaceType, SymbolEqualityComparer.Default);
+
+    /// <summary>
+    /// Answers whether <paramref name="type"/> is <paramref name="interfaceType"/> itself, or
+    /// implements it.
+    /// </summary>
+    internal static bool ImplementsOrIs(this ITypeSymbol type, INamedTypeSymbol interfaceType) =>
+        SymbolEqualityComparer.Default.Equals(type, interfaceType) || type.Implements(interfaceType);
+
+    /// <summary>
+    /// Answers whether <paramref name="type"/> is <paramref name="baseType"/> itself, or derives
+    /// from it - directly or indirectly - through an ordinary, non-generic base-type chain.
+    /// </summary>
+    internal static bool DerivesFromOrIs(this ITypeSymbol? type, INamedTypeSymbol baseType)
+    {
+        for (var current = type; current is not null; current = current.BaseType)
+        {
+            if (SymbolEqualityComparer.Default.Equals(current, baseType))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Answers whether <paramref name="type"/> implements a closed instantiation of the open generic
+    /// interface <paramref name="openGenericInterface"/> resolves to.
+    /// </summary>
+    internal static bool ImplementsOpenGeneric(this ITypeSymbol type, INamedTypeSymbol openGenericInterface) =>
+        type.AllInterfaces.Any(candidate =>
+            SymbolEqualityComparer.Default.Equals(candidate.OriginalDefinition, openGenericInterface));
 
     /// <summary>
     /// Answers whether <paramref name="symbol"/> itself - not something it derives from - carries
