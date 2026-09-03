@@ -34,10 +34,13 @@ public sealed class ReadModelRebuildWriter(IServiceScopeFactory scopeFactory)
     /// <typeparam name="TKey">The aggregate's typed identity.</typeparam>
     /// <param name="cancellationToken">Cancels the operation.</param>
     /// <returns>A task that completes once every registered rebuilder has cleared.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// No <c>IReadModelRebuilder</c> is registered for <typeparamref name="TAggregate"/>. A rebuild
+    /// that projects nothing would otherwise report success while the read model stays empty.
+    /// </exception>
     /// <remarks>
     /// Every rebuilder registered for the aggregate is cleared, so an aggregate feeding several read
-    /// models rebuilds all of them together. A host with no rebuilder registered clears nothing —
-    /// silently, because having none is a legitimate state.
+    /// models rebuilds all of them together.
     /// </remarks>
     public async Task ClearAsync<TAggregate, TKey>(CancellationToken cancellationToken)
         where TAggregate : class, IAggregateRoot<TKey>

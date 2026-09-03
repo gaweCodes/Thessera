@@ -12,7 +12,9 @@ namespace GaWeCodes.Thessera.Persistence.Marten.ReadModels;
 /// Rebuilds a read model by replaying what actually happened: it walks the streams of one aggregate
 /// type, replays each one, and hands the rebuilt aggregate to your rebuilder.
 /// </summary>
-/// <param name="scopeFactory">Used to open a scope per batch, so a rebuild does not hold one open.</param>
+/// <param name="scopeFactory">
+/// Held open for the whole run while reading; the writer this creates opens its own scope per batch.
+/// </param>
 /// <remarks>
 /// Registered for you by <c>UseMartenEventStore</c>; resolve it when a projection changed and its
 /// read model has to catch up. Unlike the state-stored runner this sees the history, so the rebuilt

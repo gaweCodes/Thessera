@@ -12,7 +12,9 @@ namespace GaWeCodes.Thessera.Persistence.EfCore.ReadModels;
 /// each aggregate, and hands it to your rebuilder.
 /// </summary>
 /// <typeparam name="TContext">The write context the state is read from.</typeparam>
-/// <param name="scopeFactory">Used to open a scope per batch, so a rebuild does not hold one open.</param>
+/// <param name="scopeFactory">
+/// Held open for the whole run while reading; the writer this creates opens its own scope per batch.
+/// </param>
 /// <remarks>
 /// Registered for you by <c>UseEfCoreStateStore</c>; resolve it when a projection changed and its
 /// read model has to catch up.
