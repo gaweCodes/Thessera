@@ -21,7 +21,7 @@ internal sealed class BrokerTopologyCheck(
         var connection = await factory.CreateConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var closingConnection = connection.ConfigureAwait(false);
 
-        await AssertExistsAsync(
+        await AssertAsync(
             connection,
             channel => channel.ExchangeDeclarePassiveAsync(adapter.ExchangeName, cancellationToken),
             $"the exchange '{adapter.ExchangeName}' does not exist on the broker. Wolverine would still start and " +
@@ -29,12 +29,28 @@ internal sealed class BrokerTopologyCheck(
             "ever see it",
             cancellationToken).ConfigureAwait(false);
 
+        await AssertAsync(
+            connection,
+            channel => channel.ExchangeDeclareAsync(
+                adapter.ExchangeName,
+                ExchangeType.Topic,
+                durable: true,
+                autoDelete: false,
+                arguments: null,
+                passive: false,
+                noWait: false,
+                cancellationToken),
+            $"the exchange '{adapter.ExchangeName}' exists but not as a durable topic exchange. A publish routed " +
+            "by topic pattern would instead fan out to every bound queue or reach none at all, and a broker " +
+            "restart could drop it",
+            cancellationToken).ConfigureAwait(false);
+
         if (context.Subscription is not { } subscription)
         {
             return;
         }
 
-        await AssertExistsAsync(
+        await AssertAsync(
             connection,
             channel => channel.QueueDeclarePassiveAsync(subscription.EndpointName, cancellationToken),
             $"the queue '{subscription.EndpointName}' does not exist on the broker. Wolverine's listener would fail " +
@@ -42,9 +58,9 @@ internal sealed class BrokerTopologyCheck(
             cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task AssertExistsAsync(
+    private static async Task AssertAsync(
         IConnection connection,
-        Func<IChannel, Task> declarePassive,
+        Func<IChannel, Task> declare,
         string complaint,
         CancellationToken cancellationToken)
     {
@@ -57,7 +73,7 @@ internal sealed class BrokerTopologyCheck(
                 .ConfigureAwait(false);
             await using var closingChannel = channel.ConfigureAwait(false);
 
-            await declarePassive(channel).ConfigureAwait(false);
+            await declare(channel).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
