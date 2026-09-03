@@ -144,7 +144,7 @@ and it is deliberately independent of the CLR type the attribute happens to sit 
 
 ## The family
 
-Eleven packages. Exactly two of them are a choice you make; the rest follow from it.
+Our packages. Exactly two of them are a choice you make; the rest follow from it.
 
 - `GaWeCodes.Thessera.Domain` — aggregates, entities, domain events, typed keys, rules. BCL only.
 - `GaWeCodes.Thessera.Application` — CQRS, persistence and integration-event contracts,

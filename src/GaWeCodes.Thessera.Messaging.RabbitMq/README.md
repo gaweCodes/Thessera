@@ -136,7 +136,7 @@ actually there rather than letting the host start against a broker that will dro
 
 ## The family
 
-Eleven packages. Exactly two of them are a choice you make; the rest follow from it.
+Our packages. Exactly two of them are a choice you make; the rest follow from it.
 
 - `GaWeCodes.Thessera.Domain` — aggregates, entities, domain events, typed keys, rules. BCL only.
 - `GaWeCodes.Thessera.Application` — CQRS, persistence and integration-event contracts,

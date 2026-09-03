@@ -141,7 +141,7 @@ What the picture is trying to make obvious:
 - [0009 — Project and package names are a tested convention](0009-project-names-are-tested.md).
   Why a file name gets a test, and why the projects *without* the prefix are guarded hardest.
 - [0010 — One version for the family, derived from Git tags](0010-one-version-from-git-tags.md).
-  Why ten packages share a number, and why nothing is ever published from a laptop.
+  Why our packages share a number, and why nothing is ever published from a laptop.
 - [0011 — Every dependency version lives in one file](0011-central-package-management.md). Why
   transitive pinning is part of the decision rather than an extra.
 - [0012 — Built-in asserts, no assertion library](0012-xunit-built-in-asserts.md). The one record

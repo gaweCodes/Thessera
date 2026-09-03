@@ -103,9 +103,9 @@ prints at startup, and the lower bounds of the dependencies the packages declare
   the package READMEs, the error messages and the XML documentation; architecture decision records
   for the decisions behind the design and behind the way the repository is kept honest, which until
   now were stated as fact or as bare rules with no reasoning attached; and a cross-package overview
-  of how the ten packages stack and how a command travels from `ISender` to the broker, which no
+  of how the packages stack and how a command travels from `ISender` to the broker, which no
   single package README could own.
-- XML documentation on the public surface of all ten packages, so that IntelliSense answers what a
+- XML documentation on the public surface of all packages, so that IntelliSense answers what a
   member does, what its arguments have to satisfy and what it throws — including the constraints
   that previously lived only in the READMEs, such as which key value types a stream key accepts and
   why the others are refused. `CS1591` is no longer relaxed anywhere, so an undocumented public

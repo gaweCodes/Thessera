@@ -10,7 +10,7 @@ one aggregate event-sourced and another state-stored, each committing through it
 
 ## Packages
 
-Take as much as you need. Only two of the eleven are a real choice; the rest follow from it. Each
+Take as much as you need. Only two of our packages are a real choice; the rest follow from it. Each
 package's own README has the details — when you need it, when you don't, install, a runnable
 example, and its limits.
 

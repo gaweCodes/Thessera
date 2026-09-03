@@ -5,7 +5,7 @@
 
 ## Context
 
-Ten packages plus their test projects reference the same third-party libraries repeatedly. With a
+Our packages plus their test projects reference the same third-party libraries repeatedly. With a
 version on every `PackageReference`, two projects end up on two versions of the same library sooner
 or later, and NuGet resolves the conflict by picking one — silently. The project that asked for the
 other version compiles against what it declared and runs against something else.

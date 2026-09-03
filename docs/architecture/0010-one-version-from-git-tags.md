@@ -5,7 +5,7 @@
 
 ## Context
 
-Ten packages that are released together can be versioned in two ways. Each can carry its own number,
+The packages in this repo are released together and can be versioned in two ways. Each can carry its own number,
 which is honest about what changed but forces every consumer to work out which combinations are
 compatible. Or they can share one, which wastes version numbers on packages that did not change and
 tells a consumer at a glance that the set belongs together.
