@@ -21,6 +21,7 @@ public class Result
     private protected Result(bool isSuccess, IReadOnlyList<Failure> failures)
     {
         ArgumentNullException.ThrowIfNull(failures);
+        ThrowIfContainsNull(failures);
 
         if (isSuccess && failures.Count > 0)
         {
@@ -67,6 +68,7 @@ public class Result
     /// <typeparam name="TResult">The value's type.</typeparam>
     /// <param name="value">The value.</param>
     /// <returns>A success carrying <paramref name="value"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
     public static Result<TResult> Success<TResult>(TResult value)
         where TResult : notnull => Result<TResult>.Success(value);
 
@@ -85,9 +87,11 @@ public class Result
     /// <summary>
     /// Creates a failed result with several reasons.
     /// </summary>
-    /// <param name="failures">The reasons. Must not be empty.</param>
+    /// <param name="failures">The reasons. Must not be empty or contain <see langword="null"/>.</param>
     /// <returns>A failure carrying all of them.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="failures"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="failures"/> is <see langword="null"/>, or contains a <see langword="null"/> entry.
+    /// </exception>
     /// <exception cref="ArgumentException"><paramref name="failures"/> is empty.</exception>
     public static Result Failed(IReadOnlyList<Failure> failures)
     {
@@ -101,4 +105,12 @@ public class Result
     /// <param name="failure">The reason.</param>
     /// <returns>A failed result.</returns>
     public static implicit operator Result(Failure failure) => Failed(failure);
+
+    private static void ThrowIfContainsNull(IReadOnlyList<Failure> failures)
+    {
+        for (var index = 0; index < failures.Count; index++)
+        {
+            ArgumentNullException.ThrowIfNull(failures[index], nameof(failures));
+        }
+    }
 }

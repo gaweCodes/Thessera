@@ -24,11 +24,9 @@ public sealed class ResultOfTTests
     }
 
     [Fact]
-    public void TheNullCheck_MovedFromRuntimeToTheCompiler()
+    public void Success_WithNullValue_ThrowsArgumentNullException()
     {
-        var result = Result<string>.Success(null!);
-
-        Assert.True(result.IsSuccess);
+        Assert.Throws<ArgumentNullException>(() => Result<string>.Success(null!));
     }
 
     [Fact]
@@ -44,6 +42,24 @@ public sealed class ResultOfTTests
     public void Failure_WithNullFailureList_Throws()
     {
         Assert.Throws<ArgumentNullException>(() => Result<int>.Failed((IReadOnlyList<Failure>)null!));
+    }
+
+    [Fact]
+    public void Failure_WithANullEntryInTheFailuresList_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(
+            () => Result<int>.Failed([Failure.Validation("code", "message"), null!]));
+    }
+
+    [Fact]
+    public void Failure_CopiesTheFailuresList_SoItIsNotMutableFromOutside()
+    {
+        var failures = new List<Failure> { Failure.Validation("code", "message") };
+        var result = Result<int>.Failed(failures);
+
+        failures.Add(Failure.Validation("other", "other message"));
+
+        Assert.Single(result.Failures);
     }
 
     [Fact]

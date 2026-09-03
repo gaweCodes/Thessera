@@ -71,7 +71,7 @@ public sealed class DomainValidationException : Exception
     public DomainValidationException(IReadOnlyList<RuleViolation> violations)
         : base(RuleViolationText.Describe(RuleViolationText.Validate(violations)))
     {
-        Violations = violations;
+        Violations = [.. violations];
     }
 
     /// <summary>

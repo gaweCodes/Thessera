@@ -22,6 +22,12 @@ public sealed class RuleViolationTests
         Assert.Equal("message", violation.Message);
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Construction_WithABlankTarget_Throws(string target) =>
+        Assert.Throws<ArgumentException>(() => new RuleViolation("code", target, "message"));
+
     [Fact]
     public void DomainValidationException_WithoutViolations_Throws() =>
         Assert.Throws<ArgumentException>(() => new DomainValidationException(Array.Empty<RuleViolation>()));
@@ -74,5 +80,27 @@ public sealed class RuleViolationTests
             [new RuleViolation("a", "name", "first"), new RuleViolation("b", "quantity", "second")]);
 
         Assert.Equal("first; second", exception.Message);
+    }
+
+    [Fact]
+    public void DomainValidationException_CopiesTheViolationsList_SoItIsNotMutableFromOutside()
+    {
+        var violations = new List<RuleViolation> { new("a", null, "first") };
+        var exception = new DomainValidationException(violations);
+
+        violations.Add(new RuleViolation("b", null, "second"));
+
+        Assert.Single(exception.Violations);
+    }
+
+    [Fact]
+    public void BusinessRuleViolationException_CopiesTheViolationsList_SoItIsNotMutableFromOutside()
+    {
+        var violations = new List<RuleViolation> { new("a", null, "first") };
+        var exception = new BusinessRuleViolationException(violations);
+
+        violations.Add(new RuleViolation("b", null, "second"));
+
+        Assert.Single(exception.Violations);
     }
 }

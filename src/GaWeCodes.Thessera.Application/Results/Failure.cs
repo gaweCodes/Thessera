@@ -11,6 +11,9 @@ namespace GaWeCodes.Thessera.Application.Results;
 /// </remarks>
 public sealed record Failure
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0032:Use auto property", Justification = "A backing field is required because the init accessor validates the value before storing it")]
+    private readonly string? _target;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Failure"/> class.
     /// </summary>
@@ -70,7 +73,16 @@ public sealed record Failure
     /// A field name the caller can attach the message to, or <see langword="null"/>. Usually set
     /// for <see cref="FailureCategory.Validation"/> and left unset otherwise.
     /// </value>
-    public string? Target { get; init; }
+    /// <exception cref="ArgumentException">
+    /// The value assigned is empty or blank rather than <see langword="null"/>.
+    /// </exception>
+    public string? Target
+    {
+        get => _target;
+        init => _target = value is null || !string.IsNullOrWhiteSpace(value)
+            ? value
+            : throw new ArgumentException("The target must be null, or a non-blank field name.", nameof(value));
+    }
 
     /// <summary>Creates a failure about a wrong input value.</summary>
     /// <param name="code">The stable identifier.</param>

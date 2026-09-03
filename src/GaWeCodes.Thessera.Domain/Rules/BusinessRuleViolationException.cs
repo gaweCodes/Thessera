@@ -71,7 +71,7 @@ public sealed class BusinessRuleViolationException : Exception
     public BusinessRuleViolationException(IReadOnlyList<RuleViolation> violations)
         : base(RuleViolationText.Describe(RuleViolationText.Validate(violations)))
     {
-        Violations = violations;
+        Violations = [.. violations];
     }
 
     /// <summary>

@@ -32,6 +32,15 @@ public sealed class FailureTests
         Assert.NotEqual(name, quantity);
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Target_SetToWhiteSpace_Throws(string target)
+    {
+        Assert.Throws<ArgumentException>(
+            () => new Failure("code", "message", FailureCategory.Validation) { Target = target });
+    }
+
     [Fact]
     public void Constructor_WithNullCode_ThrowsArgumentNullException()
     {

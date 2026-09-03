@@ -21,12 +21,18 @@ public sealed record RuleViolation
     /// <param name="message">The human-readable explanation.</param>
     /// <exception cref="ArgumentException">
     /// <paramref name="code"/> or <paramref name="message"/> is <see langword="null"/>, empty or
-    /// blank — a violation nobody can identify or read is not worth reporting.
+    /// blank — a violation nobody can identify or read is not worth reporting. Or
+    /// <paramref name="target"/> is empty or blank rather than <see langword="null"/>.
     /// </exception>
     public RuleViolation(string code, string? target, string message)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(code);
         ArgumentException.ThrowIfNullOrWhiteSpace(message);
+
+        if (target is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(target);
+        }
 
         Code = code;
         Target = target;

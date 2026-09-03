@@ -27,6 +27,7 @@ public sealed class Result<TResult> : Result
         : base(true, [])
     {
         ThrowIfForbiddenResultType();
+        ArgumentNullException.ThrowIfNull(value);
         _value = value;
     }
 
@@ -55,6 +56,7 @@ public sealed class Result<TResult> : Result
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>A success.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">
     /// <typeparamref name="TResult"/> is <see cref="Failure"/>.
     /// </exception>
@@ -75,9 +77,11 @@ public sealed class Result<TResult> : Result
     /// <summary>
     /// Creates a failed result with several reasons.
     /// </summary>
-    /// <param name="failures">The reasons. Must not be empty.</param>
+    /// <param name="failures">The reasons. Must not be empty or contain <see langword="null"/>.</param>
     /// <returns>A failure carrying all of them.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="failures"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="failures"/> is <see langword="null"/>, or contains a <see langword="null"/> entry.
+    /// </exception>
     /// <exception cref="ArgumentException"><paramref name="failures"/> is empty.</exception>
     public static new Result<TResult> Failed(IReadOnlyList<Failure> failures)
     {

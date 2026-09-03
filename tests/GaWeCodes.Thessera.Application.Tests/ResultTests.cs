@@ -54,6 +54,24 @@ public sealed class ResultTests
     }
 
     [Fact]
+    public void Failure_WithANullEntryInTheFailuresList_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(
+            () => Result.Failed([Failure.Validation("code", "message"), null!]));
+    }
+
+    [Fact]
+    public void Failure_CopiesTheFailuresList_SoItIsNotMutableFromOutside()
+    {
+        var failures = new List<Failure> { Failure.Validation("code", "message") };
+        var result = Result.Failed(failures);
+
+        failures.Add(Failure.Validation("other", "other message"));
+
+        Assert.Single(result.Failures);
+    }
+
+    [Fact]
     public void ImplicitConversion_FromFailure_CreatesFailedResult()
     {
         Result result = Failure.Conflict("recipe.exists", "The recipe already exists.");
