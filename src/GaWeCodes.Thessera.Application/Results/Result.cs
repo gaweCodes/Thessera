@@ -129,6 +129,14 @@ public class Result
     /// <returns>A failed result.</returns>
     public static implicit operator Result(Failure failure) => Failed(failure);
 
+    /// <summary>
+    /// Converts a failure into a failed result. The named alternative to the implicit conversion above.
+    /// </summary>
+    /// <param name="failure">The reason.</param>
+    /// <returns>A failed result.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="failure"/> is <see langword="null"/>.</exception>
+    public static Result FromFailure(Failure failure) => Failed(failure);
+
     private static void ThrowIfContainsNull(IReadOnlyList<Failure> failures)
     {
         for (var index = 0; index < failures.Count; index++)

@@ -130,3 +130,11 @@ follows is only what you have to *do*.
    heading with a short list underneath instead, and say what each item _means_ rather than only
    what it measures. Existing tables in the repository docs stay as they are.
 9. Never commit yourself.
+10. **In `*.md` files, never state the count of a growing collection** — packages, examples,
+    analyzer rules, ADRs, tests and the like — as a number. Word it counter-neutral instead (e.g.
+    "our packages", "the analyzer rules"), so the text does not go stale the next time the count
+    changes. This is mandatory, with no exception for a count that looks stable today.
+11. **Never suppress an analyzer or compiler rule** — `SuppressMessage`, `#pragma warning disable`,
+    a `.editorconfig` severity of `none`/`silent`, or `NoWarn` — without either asking the user
+    first, or recommending that the exception be recorded as an ADR. A suppression is a decision,
+    not a workaround, and it does not get made silently.

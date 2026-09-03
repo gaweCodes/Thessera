@@ -110,4 +110,13 @@ public sealed record Failure
     /// <param name="message">The human-readable explanation.</param>
     /// <returns>A failure in the <see cref="FailureCategory.Forbidden"/> category.</returns>
     public static Failure Forbidden(string code, string message) => new(code, message, FailureCategory.Forbidden);
+
+    /// <summary>
+    /// Converts this failure into a failed <see cref="Result{TResult}"/>. The named alternative to the
+    /// implicit conversion on <see cref="Result{TResult}"/>.
+    /// </summary>
+    /// <typeparam name="TResult">The value type the result would have carried on success.</typeparam>
+    /// <returns>A failed result carrying this failure.</returns>
+    public Result<TResult> ToResult<TResult>()
+        where TResult : notnull => Result.Failed<TResult>(this);
 }

@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `Result.Success<TResult>(...)` and the new `Result.Failed<TResult>(...)` instead. This removes the
   last suppressed `CA1000` (static members on a generic type) from the package — the non-generic
   `Result` was already the documented entry point for `Success`, and now is for `Failed` too.
+- `Result.FromFailure(Failure)` and `Failure.ToResult<TResult>()` are new named alternates for the
+  implicit conversions from a `Failure` into a `Result` or `Result<TResult>`. This removes the
+  solution-wide `CA2225` suppression; the one implicit conversion that genuinely has no sensible
+  named alternate — a bare value into `Result<TResult>` — now carries its own justified,
+  member-scoped suppression instead of a blanket one.
 
 ### Added
 

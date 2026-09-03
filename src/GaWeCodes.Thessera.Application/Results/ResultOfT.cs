@@ -100,6 +100,12 @@ public sealed class Result<TResult> : Result
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>A successful result.</returns>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Design",
+        "CA2225:Operator overloads have named alternates",
+        Justification = "The named alternate the analyzer proposes for this generic conversion is a " +
+            "method literally named \"FromTResult\", which names nothing real; Result.Success<TResult> " +
+            "is the actual named alternative, already public on the non-generic Result.")]
     public static implicit operator Result<TResult>(TResult value) => Success(value);
 
     /// <summary>
@@ -107,6 +113,12 @@ public sealed class Result<TResult> : Result
     /// </summary>
     /// <param name="failure">The reason.</param>
     /// <returns>A failed result.</returns>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Design",
+        "CA2225:Operator overloads have named alternates",
+        Justification = "Failure.ToResult<TResult>() is the real named alternate, but the analyzer's " +
+            "naming heuristic does not recognize a generic method as an alternate for a conversion into " +
+            "a closed generic type.")]
     public static implicit operator Result<TResult>(Failure failure) => Failed(failure);
 
     private static void ThrowIfForbiddenResultType()
