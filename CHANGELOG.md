@@ -7,17 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- `Result<TResult>.Success(...)` and `Result<TResult>.Failed(...)` are no longer public; call
-  `Result.Success<TResult>(...)` and the new `Result.Failed<TResult>(...)` instead. This removes the
-  last suppressed `CA1000` (static members on a generic type) from the package — the non-generic
-  `Result` was already the documented entry point for `Success`, and now is for `Failed` too.
-- `Result.FromFailure(Failure)` and `Failure.ToResult<TResult>()` are new named alternates for the
-  implicit conversions from a `Failure` into a `Result` or `Result<TResult>`. This removes the
-  solution-wide `CA2225` suppression; the one implicit conversion that genuinely has no sensible
-  named alternate — a bare value into `Result<TResult>` — now carries its own justified,
-  member-scoped suppression instead of a blanket one.
+## [1.0.0-preview.4] - 2026-09-04
 
 ### Added
 
@@ -26,7 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the store called without a list as the host's main store, owning every aggregate no other store
   claims. This is what lets a single host keep one aggregate event-sourced and another state-stored,
   narrowing the restriction from "one store per host" to "one store per aggregate" — see
-  [ADR 0016](docs/architecture/0016-one-store-per-aggregate-not-per-host.md).
+  [ADR 0016](docs/architecture/0016-one-store-per-aggregate-not-per-host.md). With more than one
+  store selected, a command handler registered through a factory delegate (for example
+  `AddScoped<TContract>(sp => ...)`) now fails the host at startup instead of being silently routed
+  incorrectly — routing needs the handler's concrete type, which a factory does not expose without
+  running it.
 - A seventh Roslyn analyzer, `THSS0007`, in `GaWeCodes.Thessera.Analyzers`: flags a command handler
   whose constructor injects `IRepository<TAggregate, TKey>` for more than one distinct aggregate —
   the compile-time twin of the rule that a command commits through exactly one store.
@@ -57,6 +51,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   two `MixedPersistence` examples rebuild one read model per aggregate, using each aggregate's own
   runner in the same host.
 
+### Changed
+
+- `Result<TResult>.Success(...)` and `Result<TResult>.Failed(...)` are no longer public; call
+  `Result.Success<TResult>(...)` and the new `Result.Failed<TResult>(...)` instead. This removes the
+  last suppressed `CA1000` (static members on a generic type) from the package — the non-generic
+  `Result` was already the documented entry point for `Success`, and now is for `Failed` too.
+- `Result.FromFailure(Failure)` and `Failure.ToResult<TResult>()` are new named alternates for the
+  implicit conversions from a `Failure` into a `Result` or `Result<TResult>`. This removes the
+  solution-wide `CA2225` suppression; the one implicit conversion that genuinely has no sensible
+  named alternate — a bare value into `Result<TResult>` — now carries its own justified,
+  member-scoped suppression instead of a blanket one.
+- `THSS0004` and the runtime check behind it, `AggregateConventions.Verify`, now flag a child entity
+  constructor with any broader-than-internal visibility — `protected` and `protected internal`
+  included — instead of only `public`. Either was already reachable from outside the aggregate root,
+  which is what the rule exists to prevent.
+- `Failure.Target` and `RuleViolation.Target` reject an empty or whitespace-only value; only `null`
+  or a real field name are accepted now. `Result.Failed(...)` and `Result<TResult>` reject a
+  `failures` list that contains a `null` entry, and the exception types built from a violation list
+  now copy it instead of holding the caller's own list, so a caller cannot mutate an already-thrown
+  exception's violations afterwards.
+- `AggregateRoot<TKey, TState>.Restore` now throws `InvalidOperationException` if the aggregate
+  already has uncommitted domain events, instead of silently replacing the state those events were
+  raised against. Restore into a fresh, empty hull instead.
+- `RequestPipeline<TResponse>.NextAsync` now throws `InvalidOperationException` if called a second
+  time on the same pipeline instance, instead of silently running the handler again.
+
 ### Fixed
 
 - Two persistence adapters registered on the same host no longer conflict at startup. Both adapters
@@ -70,6 +90,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [ADR 0017](docs/architecture/0017-wolverine-main-ancillary-message-store.md). Both bugs were only
   reachable once a host actually selected two persistence stores at once, which
   `Examples/MixedPersistence` is the first test in this repository to do.
+- `PostgresDatabaseDriver`'s ancillary-store schema name is now sanitized to lower-case ASCII,
+  deterministically truncated with a content hash once it would exceed PostgreSQL's 63-character
+  identifier limit, and derived from the enrolled context's full name rather than its bare type name
+  — two ancillary contexts of the same name in different namespaces no longer collide on one schema.
 
 ## [1.0.0-preview.3] - 2026-09-02
 
@@ -187,7 +211,8 @@ prints at startup, and the lower bounds of the dependencies the packages declare
 
 - No `InternalsVisibleTo` is used by any package.
 
-[Unreleased]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.3...main
+[Unreleased]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.4...main
+[1.0.0-preview.4]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.3...v1.0.0-preview.4
 [1.0.0-preview.3]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.2...v1.0.0-preview.3
 [1.0.0-preview.2]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.1...v1.0.0-preview.2
 [1.0.0-preview.1]: https://github.com/GaWeCodes/Thessera/commits/v1.0.0-preview.1
