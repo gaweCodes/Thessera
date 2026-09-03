@@ -10,6 +10,7 @@ public sealed class RequestPipeline<TResponse>
 {
     private readonly RequestPipelineContinuation<TResponse> _continuation;
     private readonly Func<IReadOnlyList<Failure>, TResponse> _failed;
+    private int _nextCalled;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RequestPipeline{TResponse}"/> class.
@@ -36,11 +37,19 @@ public sealed class RequestPipeline<TResponse>
     /// </summary>
     /// <param name="cancellationToken">Cancels the operation.</param>
     /// <returns>The response produced further in.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// This was already called. Calling it a second time would run the handler twice, which for a
+    /// command means doing the work twice.
+    /// </exception>
     /// <remarks>
-    /// Call this exactly once. Skipping it stops the request; calling it twice runs the handler
-    /// twice, which for a command means doing the work twice.
+    /// Call this exactly once. Skipping it stops the request.
     /// </remarks>
-    public Task<TResponse> NextAsync(CancellationToken cancellationToken) => _continuation(cancellationToken);
+    public Task<TResponse> NextAsync(CancellationToken cancellationToken) =>
+        Interlocked.Exchange(ref _nextCalled, 1) == 0
+            ? _continuation(cancellationToken)
+            : throw new InvalidOperationException(
+                "NextAsync was already called on this pipeline. A pipeline behavior may continue into " +
+                "the rest of the pipeline exactly once.");
 
     /// <summary>
     /// Stops the request with one failure, without reaching the handler.

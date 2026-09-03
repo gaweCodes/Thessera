@@ -34,6 +34,24 @@ public sealed class RequestPipelineTests
     }
 
     [Fact]
+    public async Task NextAsync_CalledTwice_ThrowsInsteadOfRunningTheHandlerAgain()
+    {
+        var calls = 0;
+        var pipeline = new RequestPipeline<Result>(
+            _ =>
+            {
+                calls++;
+                return Task.FromResult(Result.Success());
+            },
+            Result.Failed);
+
+        await pipeline.NextAsync(CancellationToken.None);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => pipeline.NextAsync(CancellationToken.None));
+        Assert.Equal(1, calls);
+    }
+
+    [Fact]
     public void Failed_ProducesTheResponseTypeSuppliedByTheDispatcher()
     {
         var pipeline = new RequestPipeline<Result<int>>(
