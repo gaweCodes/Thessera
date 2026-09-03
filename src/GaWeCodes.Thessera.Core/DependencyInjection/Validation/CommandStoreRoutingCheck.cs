@@ -30,6 +30,8 @@ internal sealed class CommandStoreRoutingCheck(
             return;
         }
 
+        ThrowForFactoryRegisteredHandlers();
+
         foreach (var handlerType in HandlerTypes())
         {
             RouteHandler(handlerType);
@@ -38,6 +40,39 @@ internal sealed class CommandStoreRoutingCheck(
 
     private bool HasMoreThanOneStore() =>
         persistence.Choices.Count(static choice => choice.IsSelected) > 1;
+
+    /// <summary>
+    /// Fails loudly instead of silently skipping a command handler this check cannot inspect.
+    /// </summary>
+    /// <remarks>
+    /// Routing a command to the right store requires reading a handler's constructor for the
+    /// repositories it injects, which in turn requires the handler's concrete type. A handler
+    /// registered through a factory delegate (for example <c>AddScoped&lt;TContract&gt;(sp => ...)</c>)
+    /// has no known type until the factory runs, so <see cref="HandlerTypes"/> cannot see it — and a
+    /// command silently routed to the wrong store, or to none, only surfaces as a data-integrity bug
+    /// far from here.
+    /// </remarks>
+    private void ThrowForFactoryRegisteredHandlers()
+    {
+        var uninspectable = services
+            .Where(static descriptor => IsCommandHandlerContract(descriptor.ServiceType))
+            .Where(static descriptor => descriptor.ResolveImplementationType() is null)
+            .Select(static descriptor => descriptor.ServiceType.ToString())
+            .Distinct()
+            .ToList();
+
+        if (uninspectable.Count == 0)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"'{string.Join("', '", uninspectable)}' was registered through a factory delegate. With more than " +
+            "one store selected, every command handler must be inspected to route its command to the store " +
+            "that owns the aggregates it touches, and a factory's return type is not known without invoking it. " +
+            "Register the handler with AddScoped<TContract, TImplementation>() or as an instance instead of a " +
+            "factory delegate.");
+    }
 
     private void RouteHandler(Type handlerType)
     {
@@ -69,7 +104,7 @@ internal sealed class CommandStoreRoutingCheck(
 
     private IEnumerable<Type> HandlerTypes() =>
         services
-            .Select(static descriptor => descriptor.ImplementationType)
+            .Select(static descriptor => descriptor.ResolveImplementationType())
             .Where(static type => type is { IsAbstract: false } && !type.IsGenericTypeDefinition)
             .Select(static type => type!)
             .Where(static type => Array.Exists(type.GetInterfaces(), IsCommandHandlerContract))

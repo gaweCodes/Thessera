@@ -111,7 +111,7 @@ internal static class ThesseraComposition
                 continue;
             }
 
-            var implementationType = descriptor.ImplementationType ?? descriptor.ImplementationInstance?.GetType();
+            var implementationType = descriptor.ResolveImplementationType();
             if (implementationType is not null && behaviorRegistry.TryGetOrder(implementationType, out _))
             {
                 continue;

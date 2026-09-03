@@ -100,9 +100,20 @@ internal sealed class AggregatePersistenceMatchCheck(
         string.Join(", ", aggregates.Take(5))
         + (aggregates.Count > 5 ? $" and {aggregates.Count - 5} more" : string.Empty);
 
+    /// <remarks>
+    /// Scans every registered service for a constructor parameter of type <see cref="IRepository{TAggregate,TKey}"/>
+    /// to find which aggregates a command handler asks for. A handler registered through a factory
+    /// delegate has no known implementation type until the factory runs
+    /// (see <see cref="ServiceDescriptorExtensions.ResolveImplementationType"/>), so its constructor
+    /// cannot be inspected here; such a handler's aggregate is silently excluded from this check
+    /// rather than reported, unlike <see cref="CommandStoreRoutingCheck"/>, which can fail loudly
+    /// because it knows in advance which service type identifies a command handler. Prefer
+    /// <c>AddScoped&lt;TContract, TImplementation&gt;()</c> over a factory delegate for a command
+    /// handler so both checks can see it.
+    /// </remarks>
     private IEnumerable<Type> RequestedAggregates() =>
         services
-            .Select(static descriptor => descriptor.ImplementationType)
+            .Select(static descriptor => descriptor.ResolveImplementationType())
             .Where(static type => type is { IsAbstract: false } && !type.IsGenericTypeDefinition)
             .SelectMany(static type => type!.GetConstructors())
             .SelectMany(static constructor => constructor.GetParameters())
