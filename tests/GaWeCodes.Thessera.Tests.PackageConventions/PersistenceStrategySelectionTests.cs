@@ -98,6 +98,46 @@ public sealed class PersistenceStrategySelectionTests
     }
 
     [Fact]
+    public void AddThessera_WithEfCoreMainAndMartenAncillaryForADifferentAggregate_DoesNotThrow()
+    {
+        var services = new ServiceCollection();
+
+        var exception = Record.Exception(() =>
+            services.AddThessera(options => WithDomainEvents(options)
+                .UseEfCoreStateStore<TestDbContext>(ConnectionString)
+                .UseMartenEventStore(ConnectionString, typeof(FlushProbe))));
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void AddThessera_WithTheSameAggregateClaimedByTwoStores_Throws()
+    {
+        var services = new ServiceCollection();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            services.AddThessera(options => WithDomainEvents(options)
+                .UseEfCoreStateStore<TestDbContext>(ConnectionString, forAggregates: typeof(FlushProbe))
+                .UseMartenEventStore("Host=elsewhere;Database=other;Username=test;******", typeof(FlushProbe))));
+
+        Assert.Contains("is claimed by both", exception.Message, StringComparison.Ordinal);
+        Assert.Contains(nameof(FlushProbe), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddThessera_WithTwoAncillaryStoresForDifferentAggregatesAndNoMainStore_DoesNotThrow()
+    {
+        var services = new ServiceCollection();
+
+        var exception = Record.Exception(() =>
+            services.AddThessera(options => WithDomainEvents(options)
+                .UseEfCoreStateStore<TestDbContext>(ConnectionString, forAggregates: typeof(FlushProbe))
+                .UseMartenEventStore("Host=elsewhere;Database=other;Username=test;******", typeof(FlushCounter))));
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
     public void AddThessera_WithMartenSelectedTwiceUnderDifferentConnectionStrings_Throws()
     {
         var services = new ServiceCollection();

@@ -6,6 +6,7 @@ using GaWeCodes.Thessera.Persistence.EfCore.StateStored;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Wolverine;
+using Wolverine.Persistence.Durability;
 
 namespace ForeignBrokerHost;
 
@@ -43,7 +44,7 @@ public sealed class ForeignDatabaseDriver : IEfCoreDatabaseDriver
         builder.UseInMemoryDatabase(connectionString);
     }
 
-    public void PersistMessages(WolverineOptions options, string connectionString)
+    public void PersistMessages(WolverineOptions options, string connectionString, MessageStoreRole role, Type? enrollContextType)
     {
     }
 

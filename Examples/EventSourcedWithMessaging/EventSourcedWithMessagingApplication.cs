@@ -5,6 +5,7 @@ using GaWeCodes.Thessera.Application.Results;
 using GaWeCodes.Thessera.Core.DependencyInjection;
 using GaWeCodes.Thessera.Core.Messaging.IntegrationEvents;
 using GaWeCodes.Thessera.Core.Messaging.Transport;
+using GaWeCodes.Thessera.Persistence.Marten.ReadModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -47,6 +48,7 @@ public sealed class EventSourcedWithMessagingApplication : IAsyncDisposable
         var builder = Host.CreateApplicationBuilder();
         builder.Services.AddSingleton<IReadingIdSequence, ReadingIdSequence>();
         builder.Services.AddSingleton<IReadingStreamCatalog>(_ => new ReadingStreamCatalog(selectedConnectionString));
+        builder.Services.AddSingleton<IReadingReadModelStore, ReadingReadModelStore>();
         builder.AddThessera(options => options
             .AddHandlersFrom(typeof(EventSourcedWithMessagingApplication).Assembly)
             .AddDomainEventsFrom(typeof(Reading).Assembly)
@@ -83,7 +85,13 @@ public sealed class EventSourcedWithMessagingApplication : IAsyncDisposable
             .ConfigureAwait(false);
         scope.ServiceProvider.GetRequiredService<IReadingIdSequence>().Initialize(maxId);
 
-        return new EventSourcedWithMessagingApplication(host);
+        var application = new EventSourcedWithMessagingApplication(host);
+
+        // The read model lives only in memory, so it starts empty on every process start
+        // regardless of what is already in the event store - catch it up before anyone lists.
+        await application.RebuildReadModelAsync(cancellationToken).ConfigureAwait(false);
+
+        return application;
     }
 
     public async Task<Result<ReadingOperationResponse>> CreateAsync(int value, CancellationToken cancellationToken = default)
@@ -91,6 +99,11 @@ public sealed class EventSourcedWithMessagingApplication : IAsyncDisposable
         var before = _logWriter.EntryCount;
         var result = await SendAsync(new CreateReading(value), cancellationToken).ConfigureAwait(false);
         await WaitForRoundTripAsync(result, before, cancellationToken).ConfigureAwait(false);
+        if (result.IsSuccess)
+        {
+            await RebuildReadModelAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         return result;
     }
 
@@ -102,6 +115,11 @@ public sealed class EventSourcedWithMessagingApplication : IAsyncDisposable
         var before = _logWriter.EntryCount;
         var result = await SendAsync(new UpdateReading(id, value), cancellationToken).ConfigureAwait(false);
         await WaitForRoundTripAsync(result, before, cancellationToken).ConfigureAwait(false);
+        if (result.IsSuccess)
+        {
+            await RebuildReadModelAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         return result;
     }
 
@@ -110,8 +128,24 @@ public sealed class EventSourcedWithMessagingApplication : IAsyncDisposable
         var before = _logWriter.EntryCount;
         var result = await SendAsync(new DeleteReading(id), cancellationToken).ConfigureAwait(false);
         await WaitForRoundTripAsync(result, before, cancellationToken).ConfigureAwait(false);
+        if (result.IsSuccess)
+        {
+            await RebuildReadModelAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         return result;
     }
+
+    /// <summary>
+    /// Clears and replays every <see cref="Reading"/> stream into the read model. Called once at
+    /// startup and after every successful mutation; a real system with a larger read model would
+    /// instead catch up incrementally or on a schedule, but a full rebuild is cheap enough here to
+    /// double as the demonstration of <c>EventSourcedReadModelRebuildRunner</c>.
+    /// </summary>
+    public Task RebuildReadModelAsync(CancellationToken cancellationToken = default) =>
+        _host.Services
+            .GetRequiredService<EventSourcedReadModelRebuildRunner>()
+            .RebuildAsync<Reading, ReadingId>(cancellationToken);
 
     public async ValueTask DisposeAsync()
     {

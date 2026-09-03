@@ -1,0 +1,48 @@
+using GaWeCodes.Thessera.Domain.Aggregates;
+using GaWeCodes.Thessera.Domain.Naming;
+using GaWeCodes.Thessera.Domain.Rules;
+
+namespace MixedPersistenceWithMessaging;
+
+/// <summary>
+/// The event-sourced half of this example: every reading keeps its full history, replayed from
+/// <c>GaWeCodes.Thessera.Persistence.Marten</c>. It is claimed explicitly with <c>forAggregates</c>
+/// in <see cref="MixedPersistenceWithMessagingApplication"/> so it runs on Marten while <see cref="Account"/>,
+/// in the very same host, runs on the EF Core state store instead.
+/// </summary>
+[AggregateName("reading")]
+public sealed class Reading : EventSourcedAggregateRoot<ReadingId, ReadingState>
+{
+    private Reading() : base(ReadingState.Empty)
+    {
+    }
+
+    public int Value => State.Value;
+
+    public DateTimeOffset CreatedAt => State.CreatedAt;
+
+    public DateTimeOffset? UpdatedAt => State.UpdatedAt;
+
+    public bool IsDeleted => State.IsDeleted;
+
+    public DateTimeOffset? DeletedAt => State.DeletedAt;
+
+    public long Version => State.Version;
+
+    public static Reading Record(ReadingId id, int value)
+    {
+        RuleChecker.CheckValidationRule(new ReadingValueMustBePositive(value));
+
+        var reading = new Reading();
+        reading.RaiseEvent(new ReadingCreated(id, value, DateTimeOffset.UtcNow));
+        return reading;
+    }
+
+    public void ChangeValue(int value)
+    {
+        RuleChecker.CheckValidationRule(new ReadingValueMustBePositive(value));
+        RaiseEvent(new ReadingUpdated(Id, value, DateTimeOffset.UtcNow));
+    }
+
+    public void Delete() => RaiseEvent(new ReadingDeleted(Id, DateTimeOffset.UtcNow));
+}

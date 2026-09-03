@@ -105,9 +105,15 @@ package contributes to this same registration through a `Use*` extension on `The
   names from it, and the envelope serializer resolves incoming names against it.
 - `AddPipelineBehavior(openGenericBehavior, order)` — your own cross-cutting behaviour. The built-in
   logging, exception-to-result and unit-of-work behaviours sit at 0, 100 and 300.
-- `UsePersistence(adapter)` / `UseNoPersistence()` — a store, or the explicit absence of one. Two
-  different stores in one host is an error: a bounded context has one write database, and a commit
-  cannot span two.
+- `UsePersistence(adapter, forAggregates)` / `UseNoPersistence()` — a store, or the explicit absence
+  of one. A store called without `forAggregates` is the host's **main store** and owns every
+  aggregate no other store claims; at most one main store may exist. Any further store is
+  **ancillary** and must name exactly the aggregates it owns through `forAggregates` — an aggregate
+  claimed by two stores, or a host with two main stores, is an error. This is what lets one host keep
+  one aggregate event-sourced and another state-stored: each aggregate still commits through exactly
+  one store's unit of work, only the store *per aggregate*, not per host, is now a choice. The
+  compile-time twin of "an aggregate belongs to one store" is analyzer rule THSS0007, which flags a
+  command handler whose constructor injects `IRepository<,>` for more than one aggregate.
 - `WithoutEventHistory()` — allows an event-sourced-style aggregate on a **state** store. It is a
   door handle you pull deliberately: the state and the version are written correctly and the outbox
   is fed, but no stream is kept, and that loss is silent and permanent.
@@ -212,7 +218,7 @@ Eleven packages. Exactly two of them are a choice you make; the rest follow from
 - `GaWeCodes.Thessera.Npgsql` — PostgreSQL error translation, shared by both choices.
 - `GaWeCodes.Thessera.Messaging.RabbitMq` — opt-in transport. Without one, no integration event leaves the service.
 - `GaWeCodes.Thessera.Testing` — convention checks and test helpers for all of the above.
-- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of six of those conventions, in every host.
+- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of eight of those conventions, in every host.
 
 ## License
 

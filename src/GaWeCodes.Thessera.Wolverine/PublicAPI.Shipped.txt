@@ -3,6 +3,7 @@ GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivato
 GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.Activate(Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.IWiringSnapshot! wiring) -> void
 GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.AddOutboxDurability(GaWeCodes.Thessera.Wolverine.Persistence.IOutboxDurabilityConfigurator! configurator) -> void
 GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.Customize(System.Action<Wolverine.WolverineOptions!>! customize) -> void
+GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.TryClaimMainMessageStore() -> bool
 GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeActivator.WolverineRuntimeActivator() -> void
 GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring.WolverineRuntimeRegistration
 GaWeCodes.Thessera.Wolverine.Diagnostics.DeadLetterHealthCheckRegistration

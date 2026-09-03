@@ -1,6 +1,7 @@
 using GaWeCodes.Thessera.Core.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
+using Wolverine.Persistence.Durability;
 
 namespace GaWeCodes.Thessera.Persistence.EfCore.StateStored;
 
@@ -37,12 +38,22 @@ public interface IEfCoreDatabaseDriver
     /// </summary>
     /// <param name="options">The message engine's options.</param>
     /// <param name="connectionString">The write database's connection string.</param>
+    /// <param name="role">
+    /// <see cref="MessageStoreRole.Main"/> if this is the host's sole (or first) message store;
+    /// <see cref="MessageStoreRole.Ancillary"/> if another store already claimed Main and this one
+    /// must be enrolled against <paramref name="enrollContextType"/> instead.
+    /// </param>
+    /// <param name="enrollContextType">
+    /// The write context to enroll this store's messages against. Required when
+    /// <paramref name="role"/> is <see cref="MessageStoreRole.Ancillary"/>; ignored for
+    /// <see cref="MessageStoreRole.Main"/>, where every unenrolled message lands here by default.
+    /// </param>
     /// <remarks>
     /// This is where the outbox and your transaction become one commit. It is also why a driver ends
     /// up referencing the message engine: an outbox has to know it, which is a fact about outboxes
     /// rather than a leak in this seam.
     /// </remarks>
-    void PersistMessages(WolverineOptions options, string connectionString);
+    void PersistMessages(WolverineOptions options, string connectionString, MessageStoreRole role, Type? enrollContextType);
 
     /// <summary>
     /// Decides whether a fault is worth retrying.

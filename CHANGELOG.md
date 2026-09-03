@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A host may now select more than one persistence store: a call to `UseEfCoreStateStore` or
+  `UseMartenEventStore` with a `forAggregates` list claims those aggregates for that store, leaving
+  the store called without a list as the host's main store, owning every aggregate no other store
+  claims. This is what lets a single host keep one aggregate event-sourced and another state-stored,
+  narrowing the restriction from "one store per host" to "one store per aggregate" — see
+  [ADR 0016](docs/architecture/0016-one-store-per-aggregate-not-per-host.md).
+- A seventh Roslyn analyzer, `THSS0007`, in `GaWeCodes.Thessera.Analyzers`: flags a command handler
+  whose constructor injects `IRepository<TAggregate, TKey>` for more than one distinct aggregate —
+  the compile-time twin of the rule that a command commits through exactly one store.
+- An eighth Roslyn analyzer, `THSS0008`, in `GaWeCodes.Thessera.Analyzers`: flags a command handler
+  whose constructor injects an EF Core `DbContext`-derived type or a Marten `IDocumentSession`
+  directly, instead of only `IRepository<TAggregate, TKey>`. Doing so lets a handler call
+  `SaveChangesAsync` itself, splitting the unit of work's one commit into two and risking a change
+  that is durable while its domain event is never published — the same guarantee
+  `NoPublishOnFailedCommitTests` proves holds when the pipeline's own commit is the only one that
+  ever runs. See [ADR 0018](docs/architecture/0018-analyzer-catches-unit-of-work-bypass.md).
+- `Examples/MixedPersistence`, proving the above: one host, an event-sourced `Reading` on
+  `GaWeCodes.Thessera.Persistence.Marten` (ancillary) alongside a state-stored `Account` on
+  `GaWeCodes.Thessera.Persistence.EfCore.Postgres` (main), against the same PostgreSQL database.
+- `Examples/MixedPersistence/MixedPersistenceWithMessaging`, next to the plain mixed-persistence
+  example, adds RabbitMQ publishing on top of the same two-store host: every domain event either
+  aggregate raises is mapped to an integration event and published under one shared context name,
+  and tests prove a failed commit on one aggregate's store never publishes that aggregate's event
+  while leaving the other aggregate's independent publishing unaffected. The two examples now live
+  under `Examples/MixedPersistence/` as siblings, each with its own `.Tests` project.
+- `NoPublishOnFailedCommitTests`, proving for both stores that a command whose commit fails (loses a
+  concurrency race) never publishes that command's domain event — the unit of work's one-transaction
+  guarantee held empirically, not just by reading `CommitAsync`.
+- All six `Examples/` projects now demonstrate the read-model-rebuild feature: each list query reads
+  a small in-memory read model instead of the write store directly, kept in sync by an
+  `IReadModelRebuilder<TAggregate, TKey>` and its store's rebuild runner
+  (`StateStoredReadModelRebuildRunner<TContext>` or `EventSourcedReadModelRebuildRunner`), rebuilt
+  once at startup, again after every successful mutation, and on demand from the console menu. The
+  two `MixedPersistence` examples rebuild one read model per aggregate, using each aggregate's own
+  runner in the same host.
+
+### Fixed
+
+- Two persistence adapters registered on the same host no longer conflict at startup. Both adapters
+  called `DeadLetterHealthCheckRegistration.Register` unconditionally, registering the
+  `thessera-dead-letters` health check twice; the second call is now a no-op once the check is
+  already registered. Separately, `GaWeCodes.Thessera.Persistence.EfCore`'s outbox wiring and
+  `GaWeCodes.Thessera.Persistence.Marten`'s both unconditionally claimed Wolverine's single Main
+  message-store slot; an EF Core store now self-selects Main or Ancillary depending on whether
+  Marten (which cannot be anything but Main) is also present, enrolling itself against its own
+  write context and a derived schema when it is not — see
+  [ADR 0017](docs/architecture/0017-wolverine-main-ancillary-message-store.md). Both bugs were only
+  reachable once a host actually selected two persistence stores at once, which
+  `Examples/MixedPersistence` is the first test in this repository to do.
+
 ## [1.0.0-preview.3] - 2026-09-02
 
 ### Added

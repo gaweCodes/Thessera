@@ -1,5 +1,5 @@
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace GaWeCodes.Thessera.Wolverine.Diagnostics;
@@ -14,7 +14,11 @@ public static class DeadLetterHealthCheckRegistration
     /// </summary>
     /// <param name="services">The service collection being built.</param>
     /// <remarks>
-    /// Both store packages call this, so a host that selected a store already has it.
+    /// Both store packages call this, so a host that selected a store already has it. A host that
+    /// selects both a main and an ancillary store calls this twice; the guard below makes the
+    /// second call a no-op instead of registering the same health check name twice, which
+    /// <see cref="Microsoft.Extensions.Diagnostics.HealthChecks.DefaultHealthCheckService"/> rejects
+    /// at host startup.
     /// <para>
     /// The check reports <em>degraded</em> rather than unhealthy on purpose: the host is still
     /// serving requests correctly, but the work in those messages did not happen. A dead-lettered
@@ -24,7 +28,12 @@ public static class DeadLetterHealthCheckRegistration
     /// </remarks>
     public static void Register(IServiceCollection services)
     {
-        services.TryAddSingleton<DeadLetterInspector>();
+        if (services.Any(descriptor => descriptor.ServiceType == typeof(DeadLetterInspector)))
+        {
+            return;
+        }
+
+        services.AddSingleton<DeadLetterInspector>();
 
         services.AddHealthChecks()
             .AddCheck<DeadLetterHealthCheck>(

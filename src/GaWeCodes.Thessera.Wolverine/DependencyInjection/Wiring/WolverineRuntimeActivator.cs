@@ -20,6 +20,7 @@ public sealed class WolverineRuntimeActivator : IRuntimeActivator
 {
     private readonly List<IOutboxDurabilityConfigurator> _outboxDurability = [];
     private readonly List<Action<WolverineOptions>> _customizations = [];
+    private bool _mainMessageStoreClaimed;
 
     /// <summary>
     /// Registers how a store binds the outbox to its database.
@@ -36,6 +37,35 @@ public sealed class WolverineRuntimeActivator : IRuntimeActivator
         ArgumentNullException.ThrowIfNull(configurator);
 
         _outboxDurability.Add(configurator);
+    }
+
+    /// <summary>
+    /// Claims this host's single Wolverine "Main" message store slot, if it is still free.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if the caller is the first to ask and now owns the Main slot;
+    /// <see langword="false"/> if another store already claimed it, so the caller must register
+    /// itself as Wolverine's Ancillary message store instead.
+    /// </returns>
+    /// <remarks>
+    /// Wolverine allows exactly one message store tagged Main per host; every other one must be
+    /// Ancillary. A host with a single persistence adapter is unaffected — that adapter is always
+    /// the first (and only) caller, so it always claims Main, exactly as before this method existed.
+    /// It only matters once two adapters share a host, per ADR 0016: whichever store's outbox
+    /// durability is configured first — Marten always eagerly, from its own <c>Register</c>, because
+    /// Wolverine's plain <c>AddMarten().IntegrateWithWolverine()</c> offers no ancillary option;
+    /// every other store's outbox durability configurator is deferred and runs later, from
+    /// <see cref="Activate"/> — becomes Main, and the rest fall back to Ancillary.
+    /// </remarks>
+    public bool TryClaimMainMessageStore()
+    {
+        if (_mainMessageStoreClaimed)
+        {
+            return false;
+        }
+
+        _mainMessageStoreClaimed = true;
+        return true;
     }
 
     /// <summary>

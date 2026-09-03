@@ -15,12 +15,25 @@ internal sealed class AggregatePersistenceMatchCheck(
 
     protected override void Run()
     {
-        if (persistence.Choice.Adapter is not { } adapter)
+        var selected = persistence.Choices.Where(static choice => choice.IsSelected).ToList();
+
+        if (selected.Count == 0)
         {
             ThrowIfWaivedWithoutStore();
             return;
         }
 
+        var requested = RequestedAggregates().ToList();
+
+        foreach (var choice in selected)
+        {
+            RunForChoice(choice, requested);
+        }
+    }
+
+    private void RunForChoice(PersistenceChoice choice, List<Type> requested)
+    {
+        var adapter = choice.Adapter!;
         var style = adapter.AggregateStyle;
 
         if (persistence.IsEventHistoryWaived && style == AggregateStyle.EventSourced)
@@ -32,7 +45,11 @@ internal sealed class AggregatePersistenceMatchCheck(
                 "the one being written. Remove the call.");
         }
 
-        var mismatched = RequestedAggregates()
+        var owned = choice.ClaimedAggregates.Count > 0
+            ? requested.Where(choice.ClaimedAggregates.Contains)
+            : requested.Where(aggregate => ReferenceEquals(persistence.ResolveChoice(aggregate), choice));
+
+        var mismatched = owned
             .Where(aggregate => StyleOf(aggregate) != style)
             .Select(aggregate => $"'{aggregate}'")
             .ToList();

@@ -3,8 +3,9 @@
 Stores Thessera aggregates as **state** in PostgreSQL, through EF Core, with the domain events going
 into a transactional outbox in the same commit. This is **one of the family's two store choices**;
 the other is `GaWeCodes.Thessera.Persistence.Marten`, which stores the same aggregates as an event
-stream. Pick exactly one per service — the package exposes a single entry point,
-`UseEfCoreStateStore<TContext>(connectionString)`, and brings the rest of the family with it.
+stream. A host picks one store per *aggregate*, not per host — this package exposes a single entry
+point, `UseEfCoreStateStore<TContext>(connectionString, configureContext, forAggregates)`, and
+brings the rest of the family with it.
 
 **Why not just Wolverine?** Wolverine already gives you the outbox and the EF Core integration, and
 this package uses both — openly, by name, in its dependency list. What it adds is the half Wolverine
@@ -25,8 +26,9 @@ context between the two store choices is a change of wiring, not a rewrite of th
 ## When you don't
 
 - Your context should keep the **history**, not just the state. Use
-  `GaWeCodes.Thessera.Persistence.Marten` instead. Never both in one host: a bounded context has one
-  write database, and a commit cannot span two.
+  `GaWeCodes.Thessera.Persistence.Marten` instead. This can run alongside this package in the same
+  host for a *different* aggregate — see "Mixing this store with the event store" below — but never
+  for the same aggregate: a commit cannot span two stores.
 - You need EF Core on a database other than PostgreSQL. Reference
   `GaWeCodes.Thessera.Persistence.EfCore` and implement `IEfCoreDatabaseDriver` — the whole
   Postgres-specific part of this package is a driver and the extension method that selects it.
@@ -98,7 +100,14 @@ builder.AddThessera(options =>
 That one call registers the `DbContext` with Wolverine's EF Core integration, the repository, the
 aggregate tracker, the unit of work, the Postgres fault translators, the outbox durability, the
 read-model rebuild runner and a dead-letter health check. There is an optional third parameter,
-`Action<DbContextOptionsBuilder>`, if you need to configure the context further.
+`Action<DbContextOptionsBuilder>`, if you need to configure the context further, and a trailing
+`params Type[] forAggregates`: leave it empty to make this the host's **main store**, owning every
+aggregate no other selected store claims — the common, single-store case above. Name one or more
+aggregate types to make this an **ancillary** store next to another one already selected on the same
+host (typically `UseMartenEventStore`), so a state-stored aggregate and an event-sourced aggregate
+run side by side, each committing through its own store's unit of work. An aggregate claimed by two
+stores, or a second store selected without `forAggregates`, fails at startup with a descriptive
+message.
 
 Your handlers now resolve `IRepository<Reading, ReadingId>` and never call `SaveChanges`: the unit
 of work commits once per command, and the domain events land in the outbox in that same
@@ -123,6 +132,38 @@ await serviceProvider
 The runner is registered for you. It reads the stored state in batches, rehydrates each aggregate,
 and hands it to your `IReadModelRebuilder<Reading, ReadingId>` — which you register. A state store
 has no history to replay, so a rebuild reconstructs the read model from the current state.
+
+## Mixing this store with the event store
+
+A host is no longer one store — it is one store *per aggregate*. Claim each aggregate on the store
+that fits it:
+
+```csharp
+builder.AddThessera(options =>
+{
+    options.AddHandlersFrom(typeof(RecordReading).Assembly);
+    options.AddDomainEventsFrom(typeof(Reading).Assembly);
+
+    options.UseEfCoreStateStore<BillingWriteDbContext>(writeConnectionString, forAggregates: typeof(Invoice));
+    options.UseMartenEventStore(writeConnectionString, typeof(Reading));
+});
+```
+
+One of the two calls may omit `forAggregates` and become the host's main store, owning every
+aggregate the other does not claim by name. A command handler still resolves
+`IRepository<TAggregate, TKey>` for exactly one aggregate and commits through that aggregate's own
+store; nothing here lets a single command span two stores. THSS0007 (in
+`GaWeCodes.Thessera.Analyzers`) flags a command handler whose constructor injects `IRepository<,>`
+for more than one aggregate, so a handler that would need to span stores is caught at compile time,
+not at startup.
+
+This is Thessera's own main/ancillary split — which aggregate belongs to which store. It is a
+separate fact from Wolverine's own rule that a host runs exactly one message store tagged
+**Main**; every other one must be **Ancillary** and enrolled against its own write context. Marten's
+plain integration is always Main, so whenever this store shares a host with one, `PersistMessages`
+self-selects Ancillary and gives its outbox tables their own schema
+(`wolverine_<writecontext>`) — you see this only if you implement `IEfCoreDatabaseDriver` yourself;
+the shipped PostgreSQL driver already does it for you.
 
 ## What it checks at startup
 
@@ -167,7 +208,7 @@ Eleven packages. Exactly two of them are a choice you make; the rest follow from
 - `GaWeCodes.Thessera.Npgsql` — PostgreSQL error translation, shared by both choices.
 - `GaWeCodes.Thessera.Messaging.RabbitMq` — opt-in transport. Without one, no integration event leaves the service.
 - `GaWeCodes.Thessera.Testing` — convention checks and test helpers for all of the above.
-- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of six of those conventions, in every host.
+- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of eight of those conventions, in every host.
 
 ## License
 

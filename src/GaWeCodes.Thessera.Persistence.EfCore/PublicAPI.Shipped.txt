@@ -18,7 +18,7 @@ GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver
 GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.ConfigureContext(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! builder, string! connectionString) -> void
 GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.FaultTranslators.get -> System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Core.Persistence.IPersistenceFaultTranslator!>!
 GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.IsTransientFault(System.Exception! exception) -> bool
-GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.PersistMessages(Wolverine.WolverineOptions! options, string! connectionString) -> void
+GaWeCodes.Thessera.Persistence.EfCore.StateStored.IEfCoreDatabaseDriver.PersistMessages(Wolverine.WolverineOptions! options, string! connectionString, Wolverine.Persistence.Durability.MessageStoreRole role, System.Type? enrollContextType) -> void
 override GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.Equals(object? obj) -> bool
 override GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.GetHashCode() -> int
 override GaWeCodes.Thessera.Persistence.EfCore.StateStored.EfCorePersistenceAdapter<TContext>.ToString() -> string!

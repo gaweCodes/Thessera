@@ -90,6 +90,30 @@ public sealed class AggregatePersistenceMatchTests
     public async Task AnAggregateNoHandlerAsksFor_IsNotJudged() =>
         await RunChecksAsync(options => options.UseMartenEventStore(WriteConnectionString), _ => { });
 
+    [Fact]
+    public async Task AMixedHost_WithEachAggregateOnItsMatchingStore_PassesTheStart() =>
+        await RunChecksAsync(
+            options => options
+                .UseEfCoreStateStore<MatchDbContext>(WriteConnectionString)
+                .UseMartenEventStore(WriteConnectionString, typeof(Journal)),
+            services => services
+                .AddScoped<ICommandHandler<RecordDeposit>, RecordDepositHandler>()
+                .AddScoped<ICommandHandler<OpenJournal>, OpenJournalHandler>());
+
+    [Fact]
+    public async Task AMixedHost_WithTheStateStoredAggregateClaimedByTheAncillaryEventStore_FailsTheStartWithTheReason()
+    {
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => RunChecksAsync(
+            options => options
+                .UseEfCoreStateStore<MatchDbContext>(WriteConnectionString)
+                .UseMartenEventStore(WriteConnectionString, typeof(Ledger)),
+            services => services.AddScoped<ICommandHandler<RecordDeposit>, RecordDepositHandler>()));
+
+        Assert.Contains("UseMartenEventStore", thrown.Message, StringComparison.Ordinal);
+        Assert.Contains(nameof(Ledger), thrown.Message, StringComparison.Ordinal);
+        Assert.Contains("keep no history", thrown.Message, StringComparison.Ordinal);
+    }
+
     private static async Task RunChecksAsync(
         Action<ThesseraOptions> configure,
         Action<IServiceCollection> register)

@@ -52,6 +52,7 @@ public sealed class PublicSurfaceTests
         "GaWeCodes.Thessera.Core.Messaging.Transport.IMessagingTransportAdapter",
         "GaWeCodes.Thessera.Core.Messaging.Transport.MessagingTransportRegistrationContext",
         "GaWeCodes.Thessera.Core.Persistence.AggregateFactory",
+        "GaWeCodes.Thessera.Core.Persistence.AggregateKeyType",
         "GaWeCodes.Thessera.Core.Persistence.AggregateStyle",
         "GaWeCodes.Thessera.Core.Persistence.EntityKeyActivator",
         "GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter",

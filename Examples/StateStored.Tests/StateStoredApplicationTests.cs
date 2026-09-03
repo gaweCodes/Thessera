@@ -1,3 +1,4 @@
+using GaWeCodes.Thessera.Application.Results;
 using GaWeCodes.Thessera.Domain.Rules;
 using GaWeCodes.Thessera.Tests;
 using StateStored;
@@ -139,6 +140,35 @@ public sealed class StateStoredApplicationTests(PostgreSqlFixture fixture)
         finally
         {
             await app.DeleteAsync(baseline.Value.Reading.Id, TestContext.Current.CancellationToken);
+        }
+    }
+
+    [Fact]
+    public async Task StartAsync_RebuildsTheReadModelFromWriteRowsWrittenByAnEarlierProcess()
+    {
+        Assert.SkipUnless(fixture.Available, fixture.SkipReason);
+
+        Result<ReadingOperationResponse> created;
+        await using (var first = await StateStoredApplication.StartAsync(fixture.ConnectionString, TestContext.Current.CancellationToken))
+        {
+            created = await first.CreateAsync(42, TestContext.Current.CancellationToken);
+            Assert.True(created.IsSuccess);
+        }
+
+        try
+        {
+            // The read model is in-memory only, so a fresh process has to re-read the write table
+            // to know the reading exists at all - this is what StartAsync does on boot.
+            await using var second = await StateStoredApplication.StartAsync(fixture.ConnectionString, TestContext.Current.CancellationToken);
+
+            var listed = await second.ListAsync(TestContext.Current.CancellationToken);
+            Assert.True(listed.IsSuccess);
+            Assert.Contains(listed.Value.Readings, reading => reading.Id == created.Value.Reading.Id && reading.Value == 42);
+        }
+        finally
+        {
+            await using var cleanup = await StateStoredApplication.StartAsync(fixture.ConnectionString, TestContext.Current.CancellationToken);
+            await cleanup.DeleteAsync(created.Value.Reading.Id, TestContext.Current.CancellationToken);
         }
     }
 }

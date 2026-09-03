@@ -14,6 +14,7 @@ while (true)
     Console.WriteLine("2) List");
     Console.WriteLine("3) Update");
     Console.WriteLine("4) Delete");
+    Console.WriteLine("5) Rebuild read model");
     Console.WriteLine("0) Exit");
     Console.Write("Select: ");
 
@@ -58,6 +59,10 @@ while (true)
             {
                 PrintEnvelope(ResultEnvelope.FromFailure("Delete", "id.invalid", "Enter a valid id."));
             }
+            break;
+        case "5":
+            await app.RebuildReadModelAsync();
+            Console.WriteLine("Read model rebuilt.");
             break;
         case "0":
             return;

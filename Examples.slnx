@@ -6,6 +6,8 @@
     <Project Path="Examples/EventSourced/EventSourced.csproj" />
     <Project Path="Examples/StateStoredWithMessaging/StateStoredWithMessaging.csproj" />
     <Project Path="Examples/EventSourcedWithMessaging/EventSourcedWithMessaging.csproj" />
+    <Project Path="Examples/MixedPersistence/MixedPersistence/MixedPersistence.csproj" />
+    <Project Path="Examples/MixedPersistence/MixedPersistenceWithMessaging/MixedPersistenceWithMessaging.csproj" />
   </Folder>
   <Folder Name="/Examples/Tests/">
     <Project Path="Examples/DomainOnly.Tests/DomainOnly.Tests.csproj" />
@@ -14,5 +16,7 @@
     <Project Path="Examples/EventSourced.Tests/EventSourced.Tests.csproj" />
     <Project Path="Examples/StateStoredWithMessaging.Tests/StateStoredWithMessaging.Tests.csproj" />
     <Project Path="Examples/EventSourcedWithMessaging.Tests/EventSourcedWithMessaging.Tests.csproj" />
+    <Project Path="Examples/MixedPersistence/MixedPersistence.Tests/MixedPersistence.Tests.csproj" />
+    <Project Path="Examples/MixedPersistence/MixedPersistenceWithMessaging.Tests/MixedPersistenceWithMessaging.Tests.csproj" />
   </Folder>
 </Solution>

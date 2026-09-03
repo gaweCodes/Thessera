@@ -20,6 +20,12 @@ public static class MartenEventStoreExtensions
     /// </summary>
     /// <param name="options">The options being configured inside <c>AddThessera</c>.</param>
     /// <param name="connectionString">The connection string of the write database.</param>
+    /// <param name="forAggregates">
+    /// The aggregate types this store owns. Leave empty to make this the host's main store, owning
+    /// every aggregate no other selected store claims — the common, single-store case. Name one or
+    /// more aggregates to make this an additional store next to another one already selected on the
+    /// same host, so an event-sourced aggregate and a state-stored aggregate can run side by side.
+    /// </param>
     /// <returns>The same <paramref name="options"/>, so calls can be chained.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="options"/> or <paramref name="connectionString"/> is <see langword="null"/>.
@@ -34,17 +40,20 @@ public static class MartenEventStoreExtensions
     /// </para>
     /// <para>
     /// Only aggregates derived from <c>EventSourcedAggregateRoot</c> can run on this store — a plain
-    /// aggregate has no history to replay and its repository cannot even be built. A host selects
-    /// exactly one store; combining this with <c>UseEfCoreStateStore</c> is an error.
+    /// aggregate has no history to replay and its repository cannot even be built. A host selects at
+    /// most one store without <paramref name="forAggregates"/>; selecting this store a second time
+    /// with a different connection string, or claiming an aggregate already claimed by another
+    /// selected store, is an error.
     /// </para>
     /// </remarks>
     public static ThesseraOptions UseMartenEventStore(
         this ThesseraOptions options,
-        string connectionString)
+        string connectionString,
+        params Type[] forAggregates)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(connectionString);
 
-        return options.UsePersistence(new MartenPersistenceAdapter(connectionString));
+        return options.UsePersistence(new MartenPersistenceAdapter(connectionString), forAggregates);
     }
 }

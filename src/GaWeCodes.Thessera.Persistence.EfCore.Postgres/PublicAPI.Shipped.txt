@@ -1,3 +1,3 @@
 ﻿#nullable enable
 GaWeCodes.Thessera.EfCoreStateStoreExtensions
-static GaWeCodes.Thessera.EfCoreStateStoreExtensions.UseEfCoreStateStore<TContext>(this GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions! options, string! connectionString, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>? configureContext = null) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+static GaWeCodes.Thessera.EfCoreStateStoreExtensions.UseEfCoreStateStore<TContext>(this GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions! options, string! connectionString, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>? configureContext = null, params System.Type![]! forAggregates) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!

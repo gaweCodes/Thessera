@@ -7,15 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.v3.extensibility.core" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\GaWeCodes.Thessera.Core\GaWeCodes.Thessera.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>

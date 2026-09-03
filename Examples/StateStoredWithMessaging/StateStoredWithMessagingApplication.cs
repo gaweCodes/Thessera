@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using GaWeCodes.Thessera.Persistence.EfCore.ReadModels;
 using Wolverine;
 
 namespace StateStoredWithMessaging;
@@ -46,6 +47,7 @@ public sealed class StateStoredWithMessagingApplication : IAsyncDisposable
 
         var builder = Host.CreateApplicationBuilder();
         builder.Services.AddSingleton<IReadingIdSequence, ReadingIdSequence>();
+        builder.Services.AddSingleton<IReadingReadModelStore, ReadingReadModelStore>();
         builder.AddThessera(options => options
             .AddHandlersFrom(typeof(StateStoredWithMessagingApplication).Assembly)
             .AddDomainEventsFrom(typeof(Reading).Assembly)
@@ -100,7 +102,13 @@ public sealed class StateStoredWithMessagingApplication : IAsyncDisposable
             .Max();
         scope.ServiceProvider.GetRequiredService<IReadingIdSequence>().Initialize(maxId);
 
-        return new StateStoredWithMessagingApplication(host);
+        var application = new StateStoredWithMessagingApplication(host);
+
+        // The read model lives only in memory, so it starts empty on every process start
+        // regardless of what is already in the write table - catch it up before anyone lists.
+        await application.RebuildReadModelAsync(cancellationToken).ConfigureAwait(false);
+
+        return application;
     }
 
     public async Task<Result<ReadingOperationResponse>> CreateAsync(int value, CancellationToken cancellationToken = default)
@@ -108,6 +116,11 @@ public sealed class StateStoredWithMessagingApplication : IAsyncDisposable
         var before = _logWriter.EntryCount;
         var result = await SendAsync(new CreateReading(value), cancellationToken).ConfigureAwait(false);
         await WaitForRoundTripAsync(result, before, cancellationToken).ConfigureAwait(false);
+        if (result.IsSuccess)
+        {
+            await RebuildReadModelAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         return result;
     }
 
@@ -119,6 +132,11 @@ public sealed class StateStoredWithMessagingApplication : IAsyncDisposable
         var before = _logWriter.EntryCount;
         var result = await SendAsync(new UpdateReading(id, value), cancellationToken).ConfigureAwait(false);
         await WaitForRoundTripAsync(result, before, cancellationToken).ConfigureAwait(false);
+        if (result.IsSuccess)
+        {
+            await RebuildReadModelAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         return result;
     }
 
@@ -127,8 +145,24 @@ public sealed class StateStoredWithMessagingApplication : IAsyncDisposable
         var before = _logWriter.EntryCount;
         var result = await SendAsync(new DeleteReading(id), cancellationToken).ConfigureAwait(false);
         await WaitForRoundTripAsync(result, before, cancellationToken).ConfigureAwait(false);
+        if (result.IsSuccess)
+        {
+            await RebuildReadModelAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         return result;
     }
+
+    /// <summary>
+    /// Clears and re-reads every current <see cref="Reading"/> row into the read model. Called once
+    /// at startup and after every successful mutation; a real system with a larger read model would
+    /// instead catch up incrementally or on a schedule, but a full rebuild is cheap enough here to
+    /// double as the demonstration of <c>StateStoredReadModelRebuildRunner{TContext}</c>.
+    /// </summary>
+    public Task RebuildReadModelAsync(CancellationToken cancellationToken = default) =>
+        _host.Services
+            .GetRequiredService<StateStoredReadModelRebuildRunner<ReadingDbContext>>()
+            .RebuildAsync<Reading, ReadingId, ReadingState>(cancellationToken);
 
     public async ValueTask DisposeAsync()
     {

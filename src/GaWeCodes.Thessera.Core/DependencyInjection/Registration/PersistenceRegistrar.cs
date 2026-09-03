@@ -13,14 +13,17 @@ internal sealed class PersistenceRegistrar(
 {
     public void UseNone() => persistence.Select(PersistenceChoice.NoPersistence);
 
-    public void Use(IPersistenceAdapter adapter)
+    public void Use(IPersistenceAdapter adapter, IReadOnlyCollection<Type>? forAggregates = null)
     {
         ArgumentNullException.ThrowIfNull(adapter);
 
-        persistence.Select(PersistenceChoice.For(adapter));
+        var choice = PersistenceChoice.For(adapter, forAggregates);
+        persistence.Select(choice);
         adapter.Register(new PersistenceRegistrationContext(
             services,
             () => provisioning.ProvisionsInfrastructure,
-            runtime));
+            runtime,
+            choice.StoreId,
+            choice.ClaimedAggregates));
     }
 }

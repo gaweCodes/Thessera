@@ -1,6 +1,6 @@
 ﻿#nullable enable
 GaWeCodes.Thessera.MartenEventStoreExtensions
+static GaWeCodes.Thessera.MartenEventStoreExtensions.UseMartenEventStore(this GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions! options, string! connectionString, params System.Type![]! forAggregates) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
 GaWeCodes.Thessera.Persistence.Marten.ReadModels.EventSourcedReadModelRebuildRunner
 GaWeCodes.Thessera.Persistence.Marten.ReadModels.EventSourcedReadModelRebuildRunner.EventSourcedReadModelRebuildRunner(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory) -> void
 GaWeCodes.Thessera.Persistence.Marten.ReadModels.EventSourcedReadModelRebuildRunner.RebuildAsync<TAggregate, TKey>(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-static GaWeCodes.Thessera.MartenEventStoreExtensions.UseMartenEventStore(this GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions! options, string! connectionString) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!

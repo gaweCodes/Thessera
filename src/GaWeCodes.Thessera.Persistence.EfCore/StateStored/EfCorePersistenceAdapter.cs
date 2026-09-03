@@ -97,8 +97,25 @@ public sealed record EfCorePersistenceAdapter<TContext> : IPersistenceAdapter
         services.TryAddScoped<EfCoreAggregateTracker>();
         services.TryAddSingleton<DomainEventEnvelopeFactory>();
         services.TryAddSingleton<StateStoredReadModelRebuildRunner<TContext>>();
-        services.TryAddScoped<IUnitOfWork, EfCoreUnitOfWork<TContext>>();
-        services.TryAddScoped(typeof(IRepository<,>), typeof(EfCoreRepository<,>));
+
+        if (context.ClaimedAggregates.Count == 0)
+        {
+            services.TryAddScoped<IUnitOfWork, EfCoreUnitOfWork<TContext>>();
+            services.TryAddScoped(typeof(IRepository<,>), typeof(EfCoreRepository<,>));
+        }
+        else
+        {
+            services.TryAddKeyedScoped<IUnitOfWork, EfCoreUnitOfWork<TContext>>(context.StoreId);
+
+            foreach (var aggregateType in context.ClaimedAggregates)
+            {
+                var keyType = AggregateKeyType.Of(aggregateType);
+                services.TryAddScoped(
+                    typeof(IRepository<,>).MakeGenericType(aggregateType, keyType),
+                    typeof(EfCoreRepository<,>).MakeGenericType(aggregateType, keyType));
+            }
+        }
+
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IPersistenceFaultTranslator, EfCoreFaultTranslator>());
 
@@ -110,8 +127,8 @@ public sealed record EfCorePersistenceAdapter<TContext> : IPersistenceAdapter
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IStartupCheck, AggregateStateModelCheck<TContext>>());
         services.AddSingleton<IStartupCheck>(new WriteDbContextLifetimeCheck<TContext>(services));
-        context.UseWolverineRuntime()
-            .AddOutboxDurability(new EfCoreOutboxDurability(driver, connectionString));
+        var runtime = context.UseWolverineRuntime();
+        runtime.AddOutboxDurability(new EfCoreOutboxDurability(driver, connectionString, runtime, typeof(TContext)));
         DeadLetterHealthCheckRegistration.Register(services);
     }
 }

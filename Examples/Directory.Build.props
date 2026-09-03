@@ -10,6 +10,6 @@
       Third-party package versions stay literal per project, same as before - only the Thessera
       family version is centralized, because it is the one that goes stale on every single commit.
     -->
-    <ThesseraVersion>1.0.0-preview.2</ThesseraVersion>
+    <ThesseraVersion>1.0.0-preview.3.5</ThesseraVersion>
   </PropertyGroup>
 </Project>

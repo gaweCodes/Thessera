@@ -4,8 +4,8 @@ Stores Thessera aggregates as an **event stream** in PostgreSQL, through
 [Marten](https://martendb.io), with the domain events going into a transactional outbox in the same
 commit. This is **one of the family's two store choices**; the other is
 `GaWeCodes.Thessera.Persistence.EfCore.Postgres`, which stores the same aggregates as current state.
-Pick exactly one per service — the package exposes a single entry point,
-`UseMartenEventStore(connectionString)`, and brings the rest of the family with it.
+A host picks one store per *aggregate*, not per host — this package exposes a single entry point,
+`UseMartenEventStore(connectionString, forAggregates)`, and brings the rest of the family with it.
 
 **Why not just Wolverine?** Wolverine already integrates with Marten and gives you the outbox, and
 this package uses both — openly, by name, in its dependency list. What it adds is the half neither
@@ -25,8 +25,9 @@ untouched. That switch is the one thing no one else hands you.
 ## When you don't
 
 - Your context only needs the **current state**. Use
-  `GaWeCodes.Thessera.Persistence.EfCore.Postgres` instead. Never both in one host: a bounded
-  context has one write database, and a commit cannot span two.
+  `GaWeCodes.Thessera.Persistence.EfCore.Postgres` instead. This can run alongside this package in
+  the same host for a *different* aggregate — see "Mixing this store with the state store" below —
+  but never for the same aggregate: a commit cannot span two stores.
 - You want no persistence at all. `GaWeCodes.Thessera.Core` with `UseNoPersistence()` covers it.
 
 ## Install
@@ -84,7 +85,12 @@ builder.AddThessera(options =>
 That one call configures Marten with string stream identity, registers the repository, the aggregate
 tracker, the unit of work, the Marten and Postgres fault translators, the outbox durability, the
 read-model rebuild runner and a dead-letter health check. `AddDomainEventsFrom` is not optional
-here: every `[EventName]` in those assemblies is registered as Marten's event type name.
+here: every `[EventName]` in those assemblies is registered as Marten's event type name. There is a
+trailing `params Type[] forAggregates`: leave it empty to make this the host's **main store**, owning
+every aggregate no other selected store claims — the case above. Name one or more aggregate types to
+make this an **ancillary** store next to another one already selected on the same host (typically
+`UseEfCoreStateStore`), so an event-sourced aggregate and a state-stored aggregate run side by side —
+see "Mixing this store with the state store" below.
 
 Your handlers now resolve `IRepository<Reading, ReadingId>` and never touch a session: loading
 fetches the stream and replays it, and the unit of work appends and commits once per command, with
@@ -119,6 +125,39 @@ convention changes and makes every existing stream unreachable.
 
 The same holds for `[EventName]`: it is the event type name in the database. Renaming the C# type is
 free; changing the attribute value orphans every event already written under the old one.
+
+## Mixing this store with the state store
+
+A host is no longer one store — it is one store *per aggregate*. Claim each aggregate on the store
+that fits it:
+
+```csharp
+builder.AddThessera(options =>
+{
+    options.AddHandlersFrom(typeof(RecordReading).Assembly);
+    options.AddDomainEventsFrom(typeof(Reading).Assembly);
+
+    options.UseEfCoreStateStore<BillingWriteDbContext>(writeConnectionString, forAggregates: typeof(Invoice));
+    options.UseMartenEventStore(writeConnectionString, typeof(Reading));
+});
+```
+
+One of the two calls may omit `forAggregates` and become the host's main store, owning every
+aggregate the other does not claim by name — useful when only a handful of aggregates need the other
+store's shape. A command handler still resolves `IRepository<TAggregate, TKey>` for exactly one
+aggregate and commits through that aggregate's own store; nothing here lets a single command span
+two stores. THSS0007 (in `GaWeCodes.Thessera.Analyzers`) flags a command handler whose constructor
+injects `IRepository<,>` for more than one aggregate, so a handler that would need to span stores is
+caught at compile time, not at startup.
+
+Which of the two calls omits `forAggregates` here is a free choice — it only decides which aggregate
+falls into the catch-all. It is a different question, at a lower level, which store holds
+Wolverine's own inbox/outbox tables: Wolverine allows exactly one message store tagged Main per
+host, and Marten's plain `IntegrateWithWolverine()` — the one this package uses — can only ever be
+that Main store; it has no ancillary mode. So whenever this store shares a host with an EF Core one,
+the EF Core store is always the one that becomes Wolverine's Ancillary message store, regardless of
+which one is *this family's* main aggregate store above. See
+[ADR 0017](../../docs/architecture/0017-wolverine-main-ancillary-message-store.md).
 
 ## What it checks at startup
 
@@ -163,7 +202,7 @@ Eleven packages. Exactly two of them are a choice you make; the rest follow from
 - `GaWeCodes.Thessera.Npgsql` — PostgreSQL error translation, shared by both choices.
 - `GaWeCodes.Thessera.Messaging.RabbitMq` — opt-in transport. Without one, no integration event leaves the service.
 - `GaWeCodes.Thessera.Testing` — convention checks and test helpers for all of the above.
-- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of six of those conventions, in every host.
+- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of eight of those conventions, in every host.
 
 ## License
 

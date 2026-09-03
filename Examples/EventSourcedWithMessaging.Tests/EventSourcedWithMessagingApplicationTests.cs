@@ -1,4 +1,5 @@
 using EventSourcedWithMessaging;
+using GaWeCodes.Thessera.Application.Results;
 using GaWeCodes.Thessera.Domain.Rules;
 using GaWeCodes.Thessera.Tests;
 
@@ -238,6 +239,62 @@ public sealed class EventSourcedWithMessagingApplicationTests(PostgreSqlFixture 
             finally
             {
                 await app.DeleteAsync(baseline.Value.Reading.Id, TestContext.Current.CancellationToken);
+            }
+        }
+        finally
+        {
+            if (Directory.Exists(artifactDirectory))
+            {
+                Directory.Delete(artifactDirectory, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task StartAsync_RebuildsTheReadModelFromEventStreamsWrittenByAnEarlierProcess()
+    {
+        Assert.SkipUnless(postgres.Available, postgres.SkipReason);
+        Assert.SkipUnless(rabbit.Available, rabbit.SkipReason);
+
+        var artifactDirectory = Path.Combine(AppContext.BaseDirectory, "artifacts", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(artifactDirectory);
+
+        Result<ReadingOperationResponse> created;
+
+        try
+        {
+            await using (var first = await EventSourcedWithMessagingApplication.StartAsync(
+                postgres.ConnectionString,
+                rabbit.ConnectionUri,
+                artifactDirectory,
+                TestContext.Current.CancellationToken))
+            {
+                created = await first.CreateAsync(42, TestContext.Current.CancellationToken);
+                Assert.True(created.IsSuccess);
+            }
+
+            try
+            {
+                // The read model is in-memory only, so a fresh process has to replay the Marten
+                // streams to know the reading exists at all - this is what StartAsync does on boot.
+                await using var second = await EventSourcedWithMessagingApplication.StartAsync(
+                    postgres.ConnectionString,
+                    rabbit.ConnectionUri,
+                    artifactDirectory,
+                    TestContext.Current.CancellationToken);
+
+                var listed = await second.ListAsync(TestContext.Current.CancellationToken);
+                Assert.True(listed.IsSuccess);
+                Assert.Contains(listed.Value.Readings, reading => reading.Id == created.Value.Reading.Id && reading.Value == 42);
+            }
+            finally
+            {
+                await using var cleanup = await EventSourcedWithMessagingApplication.StartAsync(
+                    postgres.ConnectionString,
+                    rabbit.ConnectionUri,
+                    artifactDirectory,
+                    TestContext.Current.CancellationToken);
+                await cleanup.DeleteAsync(created.Value.Reading.Id, TestContext.Current.CancellationToken);
             }
         }
         finally

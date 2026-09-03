@@ -2,6 +2,7 @@ using GaWeCodes.Thessera.Application.Persistence;
 using GaWeCodes.Thessera.Core.Messaging.DomainEvents;
 using GaWeCodes.Thessera.Core.Persistence;
 using GaWeCodes.Thessera.Core.Startup;
+using GaWeCodes.Thessera.Domain.Aggregates;
 using GaWeCodes.Thessera.Persistence.Marten.ReadModels;
 using GaWeCodes.Thessera.Npgsql;
 using GaWeCodes.Thessera.Wolverine.DependencyInjection.Wiring;
@@ -54,15 +55,49 @@ internal sealed record MartenPersistenceAdapter(string WriteConnectionString) : 
         services.TryAddScoped<MartenAggregateTracker>();
         services.TryAddSingleton<DomainEventEnvelopeFactory>();
         services.TryAddSingleton<EventSourcedReadModelRebuildRunner>();
-        services.TryAddScoped<IUnitOfWork, MartenUnitOfWork>();
-        services.TryAddScoped(typeof(IRepository<,>), typeof(MartenEventSourcedRepository<,>));
+
+        if (context.ClaimedAggregates.Count == 0)
+        {
+            services.TryAddScoped<IUnitOfWork, MartenUnitOfWork>();
+            services.TryAddScoped(typeof(IRepository<,>), typeof(MartenEventSourcedRepository<,>));
+        }
+        else
+        {
+            services.TryAddKeyedScoped<IUnitOfWork, MartenUnitOfWork>(context.StoreId);
+
+            foreach (var aggregateType in context.ClaimedAggregates)
+            {
+                var keyType = AggregateKeyType.Of(aggregateType);
+
+                if (!IsEventSourced(aggregateType, keyType))
+                {
+                    // A mismatched aggregate style closes this repository over a generic constraint it
+                    // does not satisfy - registering it here would throw a raw TypeLoadException instead
+                    // of the descriptive one AggregatePersistenceMatchCheck reports for exactly this case.
+                    continue;
+                }
+
+                services.TryAddScoped(
+                    typeof(IRepository<,>).MakeGenericType(aggregateType, keyType),
+                    typeof(MartenEventSourcedRepository<,>).MakeGenericType(aggregateType, keyType));
+            }
+        }
+
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IPersistenceFaultTranslator, MartenFaultTranslator>());
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IPersistenceFaultTranslator, PostgresFaultTranslator>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IStartupCheck, MartenSchemaProvisioner>(
             provider => new MartenSchemaProvisioner(provider, () => context.ProvisionsInfrastructure)));
-        context.UseWolverineRuntime();
+
+        // Wolverine's plain AddMarten().IntegrateWithWolverine() above is hard-coded to Main - there
+        // is no ancillary option for it, so this is a one-way announcement, not a negotiation. It
+        // only matters when another store shares this host: claiming Main here, before that other
+        // store's outbox durability runs at Activate(), is what makes it self-select Ancillary.
+        context.UseWolverineRuntime().TryClaimMainMessageStore();
         DeadLetterHealthCheckRegistration.Register(services);
     }
+
+    private static bool IsEventSourced(Type aggregateType, Type keyType) =>
+        typeof(IEventSourcedAggregateRoot<>).MakeGenericType(keyType).IsAssignableFrom(aggregateType);
 }

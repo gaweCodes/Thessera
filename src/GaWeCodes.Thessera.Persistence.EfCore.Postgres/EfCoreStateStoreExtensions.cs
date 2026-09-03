@@ -31,6 +31,12 @@ public static class EfCoreStateStoreExtensions
     /// Optional further configuration of the context options, applied on top of the provider
     /// registration.
     /// </param>
+    /// <param name="forAggregates">
+    /// The aggregate types this store owns. Leave empty to make this the host's main store, owning
+    /// every aggregate no other selected store claims — the common, single-store case. Name one or
+    /// more aggregates to make this an additional store next to another one already selected on the
+    /// same host, so an event-sourced aggregate and a state-stored aggregate can run side by side.
+    /// </param>
     /// <returns>The same <paramref name="options"/>, so calls can be chained.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="options"/> or <paramref name="connectionString"/> is <see langword="null"/>.
@@ -40,9 +46,10 @@ public static class EfCoreStateStoreExtensions
     /// aggregate tracker, the unit of work, the PostgreSQL fault translators, the outbox durability,
     /// the read-model rebuild runner and a dead-letter health check.
     /// <para>
-    /// A host selects exactly one store. Combining this with <c>UseMartenEventStore</c> is an error:
-    /// a bounded context has one write database, and a commit cannot span two. An aggregate derived
-    /// from <c>EventSourcedAggregateRoot</c> is refused here unless the host says
+    /// A host selects at most one store without <paramref name="forAggregates"/>. Selecting this
+    /// store a second time with a different connection string, or claiming an aggregate already
+    /// claimed by another selected store, is an error: a commit cannot span two databases. An
+    /// aggregate derived from <c>EventSourcedAggregateRoot</c> is refused here unless the host says
     /// <c>WithoutEventHistory()</c> — the state and version would be written correctly while the
     /// stream is silently and permanently lost.
     /// </para>
@@ -50,7 +57,8 @@ public static class EfCoreStateStoreExtensions
     public static ThesseraOptions UseEfCoreStateStore<TContext>(
         this ThesseraOptions options,
         string connectionString,
-        Action<DbContextOptionsBuilder>? configureContext = null)
+        Action<DbContextOptionsBuilder>? configureContext = null,
+        params Type[] forAggregates)
         where TContext : DbContext
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -60,6 +68,7 @@ public static class EfCoreStateStoreExtensions
             new EfCorePersistenceAdapter<TContext>(
                 PostgresDatabaseDriver.Instance,
                 connectionString,
-                configureContext));
+                configureContext),
+            forAggregates);
     }
 }

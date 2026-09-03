@@ -1,0 +1,7 @@
+using GaWeCodes.Thessera.Application.IntegrationEvents;
+using GaWeCodes.Thessera.Domain.Naming;
+
+namespace MixedPersistenceWithMessaging;
+
+[IntegrationEventTopic("mixed-persistence.reading-deleted")]
+public sealed record ReadingDeletedIntegrationEvent(int ReadingId, Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent;

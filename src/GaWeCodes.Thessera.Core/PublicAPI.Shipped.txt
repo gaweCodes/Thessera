@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 abstract GaWeCodes.Thessera.Core.Startup.SynchronousStartupCheck.Phase.get -> GaWeCodes.Thessera.Core.Startup.StartupPhase
 abstract GaWeCodes.Thessera.Core.Startup.SynchronousStartupCheck.Run() -> void
 const GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.ExceptionToResultBehaviorOrder = 100 -> int
@@ -135,7 +135,6 @@ GaWeCodes.Thessera.Core.Persistence.ITrackedAggregate.AggregateName.get -> strin
 GaWeCodes.Thessera.Core.Persistence.ITrackedAggregate.CurrentVersion.get -> long
 GaWeCodes.Thessera.Core.Persistence.PersistenceFailureCodes
 GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext
-GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.PersistenceRegistrationContext(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Func<bool>! provisionsInfrastructure, GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation! runtime) -> void
 GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.ProvisionsInfrastructure.get -> bool
 GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.UseRuntime<TActivator>(System.Func<TActivator!>! create) -> TActivator!
@@ -184,3 +183,9 @@ static GaWeCodes.Thessera.Core.Persistence.EntityKeyJsonOptions.Apply(System.Tex
 static GaWeCodes.Thessera.Core.Persistence.EntityKeyJsonOptions.Create() -> System.Text.Json.JsonSerializerOptions!
 static GaWeCodes.Thessera.HostApplicationBuilderExtensions.AddThessera<TBuilder>(this TBuilder builder, System.Action<GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!>! configure) -> TBuilder
 static GaWeCodes.Thessera.ServiceCollectionExtensions.AddThessera(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions.UsePersistence(GaWeCodes.Thessera.Core.Persistence.IPersistenceAdapter! adapter, params System.Type![]! forAggregates) -> GaWeCodes.Thessera.Core.DependencyInjection.ThesseraOptions!
+GaWeCodes.Thessera.Core.Persistence.AggregateKeyType
+static GaWeCodes.Thessera.Core.Persistence.AggregateKeyType.Of(System.Type! aggregateType) -> System.Type!
+GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.PersistenceRegistrationContext(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Func<bool>! provisionsInfrastructure, GaWeCodes.Thessera.Core.DependencyInjection.Extensibility.RuntimeActivation! runtime, string! storeId, System.Collections.Generic.IReadOnlyCollection<System.Type!>! claimedAggregates) -> void
+GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.StoreId.get -> string!
+GaWeCodes.Thessera.Core.Persistence.PersistenceRegistrationContext.ClaimedAggregates.get -> System.Collections.Generic.IReadOnlyCollection<System.Type!>!

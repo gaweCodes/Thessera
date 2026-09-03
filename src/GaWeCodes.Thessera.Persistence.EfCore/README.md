@@ -45,6 +45,7 @@ rebuild — is already written and database-neutral.
 
 ```csharp
 using GaWeCodes.Thessera.Persistence.EfCore.StateStored;
+using Wolverine.Persistence.Durability;
 
 internal sealed class SqlServerDatabaseDriver : IEfCoreDatabaseDriver
 {
@@ -53,8 +54,19 @@ internal sealed class SqlServerDatabaseDriver : IEfCoreDatabaseDriver
     public void ConfigureContext(DbContextOptionsBuilder builder, string connectionString) =>
         builder.UseSqlServer(connectionString);
 
-    public void PersistMessages(WolverineOptions options, string connectionString) =>
-        options.PersistMessagesWithSqlServer(connectionString);
+    public void PersistMessages(WolverineOptions options, string connectionString, MessageStoreRole role, Type? enrollContextType)
+    {
+        if (role == MessageStoreRole.Main)
+        {
+            options.PersistMessagesWithSqlServer(connectionString);
+            return;
+        }
+
+        // Ancillary: another store already claimed Main, so this one needs its own schema and must
+        // be enrolled against the write context whose messages belong to it.
+        options.PersistMessagesWithSqlServer(connectionString, "wolverine_" + enrollContextType!.Name.ToLowerInvariant(), MessageStoreRole.Ancillary)
+            .Enroll(enrollContextType);
+    }
 
     public bool IsTransientFault(Exception exception) => exception is SqlException { IsTransient: true };
 
@@ -124,7 +136,7 @@ Eleven packages. Exactly two of them are a choice you make; the rest follow from
 - `GaWeCodes.Thessera.Npgsql` — PostgreSQL error translation, shared by both choices.
 - `GaWeCodes.Thessera.Messaging.RabbitMq` — opt-in transport. Without one, no integration event leaves the service.
 - `GaWeCodes.Thessera.Testing` — convention checks and test helpers for all of the above.
-- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of six of those conventions, in every host.
+- `GaWeCodes.Thessera.Analyzers` — the compile-time twin of eight of those conventions, in every host.
 
 ## License
 

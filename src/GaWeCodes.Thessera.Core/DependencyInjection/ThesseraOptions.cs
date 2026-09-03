@@ -176,6 +176,40 @@ public sealed class ThesseraOptions
     }
 
     /// <summary>
+    /// Selects an additional store for this host, owning only the named aggregates.
+    /// </summary>
+    /// <param name="adapter">The store announcing itself.</param>
+    /// <param name="forAggregates">
+    /// The aggregate types this store owns. A commit never spans two stores, so every aggregate on
+    /// the host must be reachable from exactly one selected store: either named here, or left to the
+    /// one store selected through <see cref="UsePersistence(IPersistenceAdapter)"/> or the overload
+    /// without <paramref name="forAggregates"/>, which owns whatever no other store claims.
+    /// </param>
+    /// <returns>The same options, so calls can be chained.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="adapter"/> or <paramref name="forAggregates"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// The same adapter type was already selected with different arguments; an aggregate named here
+    /// is already claimed by another selected store; or <see cref="UseNoPersistence"/> was already
+    /// selected.
+    /// </exception>
+    /// <remarks>
+    /// Normally reached through a store package entry point rather than called directly. Selecting
+    /// two stores this way, each owning its own aggregates, is how one host runs an event-sourced
+    /// aggregate and a state-stored aggregate side by side: each commit still touches exactly one
+    /// store, because the two aggregate families never share a transaction.
+    /// </remarks>
+    public ThesseraOptions UsePersistence(IPersistenceAdapter adapter, params Type[] forAggregates)
+    {
+        ArgumentNullException.ThrowIfNull(adapter);
+        ArgumentNullException.ThrowIfNull(forAggregates);
+
+        _persistence.Use(adapter, forAggregates);
+        return this;
+    }
+
+    /// <summary>
     /// Allows an event-sourced aggregate to run on a state store, giving up its history on purpose.
     /// </summary>
     /// <returns>The same options, so calls can be chained.</returns>

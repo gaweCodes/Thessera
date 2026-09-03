@@ -150,6 +150,7 @@ internal static class ThesseraComposition
         services.TryAddScoped<MapperRunner>();
         services.TryAddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();
         services.TryAddScoped<IUnitOfWork, NullUnitOfWork>();
+        services.AddSingleton<CommandStoreRouter>();
     }
 
     private static void RegisterStartupChecks(IServiceCollection services, ThesseraOptions options)
@@ -169,5 +170,9 @@ internal static class ThesseraComposition
             services));
         services.AddSingleton<IStartupCheck>(new AggregateStateSelfBindingCheck(
             [.. options.ScannedAssemblies.Union(options.DomainEventAssemblies)]));
+        services.AddSingleton<IStartupCheck>(provider => new CommandStoreRoutingCheck(
+            options.Wiring.Persistence,
+            services,
+            provider.GetRequiredService<CommandStoreRouter>()));
     }
 }
