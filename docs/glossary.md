@@ -123,14 +123,16 @@ rather than published under a key nobody has bound.
 
 A store that keeps an aggregate's current state and overwrites it on every change, so the past is
 not retained. In this family that is `GaWeCodes.Thessera.Persistence.EfCore.Postgres`, selected with
-`UseEfCoreStateStore<TContext>`. It is store choice 1 of 2.
+`UseEfCoreStateStore<TContext>`. It is store choice 1 of 2 — as a host's main store or as an
+ancillary store for a named subset of aggregates.
 
 ### Event store
 
 A store that keeps the events an aggregate produced and rebuilds the current state by replaying
 them. In this family that is `GaWeCodes.Thessera.Persistence.Marten`, selected with
-`UseMartenEventStore`. It is store choice 2 of 2. Do not confuse it with the *outbox*, which also
-stores messages but exists to get them delivered, not to reconstruct an aggregate.
+`UseMartenEventStore`. It is store choice 2 of 2 — as a host's main store or as an ancillary store
+for a named subset of aggregates. Do not confuse it with the *outbox*, which also stores messages
+but exists to get them delivered, not to reconstruct an aggregate.
 
 ### Event history
 
@@ -214,10 +216,25 @@ never leaves, an integration event is a published contract you are not free to c
 
 ### Bounded context
 
-In this repository, deliberately the narrow reading: one host, one write database, one name. The
-name is given as `contextName` when a transport is wired, it is validated as a contract name, and it
-is the first segment of every topic that host may publish under. A commit cannot span two of them,
-which is why two stores in one host is an error.
+In this repository, deliberately the narrow reading: one host, one name, and — per aggregate — one
+write database. The name is given as `contextName` when a transport is wired, it is validated as a
+contract name, and it is the first segment of every topic that host may publish under. A commit
+cannot span two databases, which is why claiming the same aggregate from two stores is an error; a
+host may still select more than one store, as long as each aggregate is claimed by exactly one of
+them (see "Main store" and "Ancillary store" below).
+
+### Main store
+
+The one store in a host selected *without* a `forAggregates` list — it owns every aggregate no other
+selected store claims. A host has at most one; the common single-store host is a main store with no
+ancillary stores next to it.
+
+### Ancillary store
+
+A store selected *with* a `forAggregates` list, naming exactly the aggregates it owns. A host may
+have any number of ancillary stores, each keyed by its own `IUnitOfWork` registration, alongside at
+most one main store. This is what lets one host keep one aggregate event-sourced and another
+state-stored — see [ADR 0016](architecture/0016-one-store-per-aggregate-not-per-host.md).
 
 ### Source context
 
