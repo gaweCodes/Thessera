@@ -66,6 +66,7 @@ GaWeCodes.Thessera.Application.Results.Failure.Failure(string! code, string! mes
 GaWeCodes.Thessera.Application.Results.Failure.Message.get -> string!
 GaWeCodes.Thessera.Application.Results.Failure.Target.get -> string?
 GaWeCodes.Thessera.Application.Results.Failure.Target.init -> void
+GaWeCodes.Thessera.Application.Results.Failure.ToResult<TResult>() -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
 GaWeCodes.Thessera.Application.Results.FailureCategory
 GaWeCodes.Thessera.Application.Results.FailureCategory.BusinessRule = 1 -> GaWeCodes.Thessera.Application.Results.FailureCategory
 GaWeCodes.Thessera.Application.Results.FailureCategory.Conflict = 3 -> GaWeCodes.Thessera.Application.Results.FailureCategory
@@ -95,6 +96,9 @@ static GaWeCodes.Thessera.Application.Results.Failure.operator ==(GaWeCodes.Thes
 static GaWeCodes.Thessera.Application.Results.Failure.Validation(string! code, string! message) -> GaWeCodes.Thessera.Application.Results.Failure!
 static GaWeCodes.Thessera.Application.Results.Result.Failed(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result!
 static GaWeCodes.Thessera.Application.Results.Result.Failed(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>! failures) -> GaWeCodes.Thessera.Application.Results.Result!
+static GaWeCodes.Thessera.Application.Results.Result.Failed<TResult>(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
+static GaWeCodes.Thessera.Application.Results.Result.Failed<TResult>(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>! failures) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
+static GaWeCodes.Thessera.Application.Results.Result.FromFailure(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result!
 static GaWeCodes.Thessera.Application.Results.Result.implicit operator GaWeCodes.Thessera.Application.Results.Result!(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result!
 static GaWeCodes.Thessera.Application.Results.Result.Success() -> GaWeCodes.Thessera.Application.Results.Result!
 static GaWeCodes.Thessera.Application.Results.Result.Success<TResult>(TResult value) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!

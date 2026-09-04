@@ -1,5 +1,1 @@
 ﻿#nullable enable
-GaWeCodes.Thessera.Application.Results.Failure.ToResult<TResult>() -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
-static GaWeCodes.Thessera.Application.Results.Result.Failed<TResult>(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
-static GaWeCodes.Thessera.Application.Results.Result.Failed<TResult>(System.Collections.Generic.IReadOnlyList<GaWeCodes.Thessera.Application.Results.Failure!>! failures) -> GaWeCodes.Thessera.Application.Results.Result<TResult>!
-static GaWeCodes.Thessera.Application.Results.Result.FromFailure(GaWeCodes.Thessera.Application.Results.Failure! failure) -> GaWeCodes.Thessera.Application.Results.Result!
