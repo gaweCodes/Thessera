@@ -35,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   that declares anything other than `private` now fails the build and the convention test; making
   the constructor `private` is the whole fix. See
   [ADR 0020](docs/architecture/0020-aggregate-parameterless-constructor-must-be-private.md).
+- The minimum versions of the dependencies our packages bring are raised: Marten to 9.63.0,
+  WolverineFx to 6.65.1, EF Core and the `Microsoft.Extensions.*` abstractions to 10.0.15, and
+  Npgsql and its EF Core provider to 10.0.4. Every upper bound is unchanged, so the family stays on
+  .NET 10, Marten 9 and Wolverine 6. A host that pins an older version of one of these gets a
+  restore error (`NU1605`) until it raises that pin.
 
 ### Fixed
 
