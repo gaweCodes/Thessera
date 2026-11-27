@@ -3,8 +3,11 @@ updates:
   - package-ecosystem: nuget
     directory: "/"
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 10
+    # A group holds packages that are released together or pin each other's versions, so that one
+    # breaking package blocks only its own group. The first matching group wins, so the catch-all
+    # group stays last.
     groups:
       roslyn:
         patterns:
@@ -12,6 +15,23 @@ updates:
       xunit:
         patterns:
           - "xunit*"
+      dotnet-lts:
+        patterns:
+          - "Microsoft.Extensions.*"
+          - "Microsoft.EntityFrameworkCore*"
+          - "Npgsql*"
+          - "Microsoft.SourceLink.*"
+      critter-stack:
+        patterns:
+          - "Marten*"
+          - "WolverineFx*"
+      test-tooling:
+        patterns:
+          - "Microsoft.NET.Test.Sdk"
+          - "coverlet*"
+          - "NSubstitute*"
+          - "Testcontainers*"
+          - "SSH.NET"
       thessera-dependencies:
         patterns:
           - "*"
@@ -43,9 +63,12 @@ updates:
   - package-ecosystem: nuget
     directory: "/Examples"
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 10
     groups:
+      xunit:
+        patterns:
+          - "xunit*"
       thessera-examples-dependencies:
         patterns:
           - "*"
