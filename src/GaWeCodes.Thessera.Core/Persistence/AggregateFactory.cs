@@ -42,14 +42,30 @@ public static class AggregateFactory
         }
     }
 
-    private static IEnumerable<Type> AggregateTypesIn(Assembly assembly) =>
-        assembly.GetTypes().Where(static type =>
+    private static IEnumerable<Type> AggregateTypesIn(Assembly assembly)
+    {
+        Type[] types;
+
+        try
+        {
+            types = assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException exception)
+        {
+            throw new InvalidOperationException(
+                $"The types of assembly '{assembly.FullName}' could not be loaded. " +
+                "The most common cause is a missing package reference.",
+                exception);
+        }
+
+        return types.Where(static type =>
             type is { IsClass: true, IsAbstract: false }
             && !type.IsGenericTypeDefinition
             && Array.Exists(
                 type.GetInterfaces(),
                 static contract => contract.IsGenericType
                     && contract.GetGenericTypeDefinition() == typeof(IAggregateRoot<>)));
+    }
 
     private static ConstructorInfo ConstructorFor(Type aggregateType) =>
         Constructors.GetOrAdd(aggregateType, static type =>

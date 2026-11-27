@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Compile-time twin of six of Thessera's startup checks: an aggregate without [AggregateName], a domain event without [EventName], an aggregate whose parameterless constructor is not private, a child entity whose constructor is not internal, and an aggregate- or entity-state that names the wrong type as itself are now a build error instead of a message the first affected host prints at boot, or an InvalidCastException on the first applied event. Ships no Thessera runtime code - reference it from every host, regardless of which store it selects.</Description>
+    <Description>Compile-time twin of Thessera's startup and runtime checks: an aggregate without [AggregateName], a domain event without [EventName], an aggregate whose parameterless constructor is not private, a child entity whose constructor is not internal, an aggregate- or entity-state that names the wrong type as itself, a command handler that touches more than one aggregate or bypasses the unit of work, and raising a retired domain event are a build error instead of a message the first affected host prints at boot, or an exception on the first applied or raised event. Ships no Thessera runtime code - reference it from every host, regardless of which store it selects.</Description>
     <PackageTags>analyzer;ddd;aggregate;domain-events;roslyn;static-analysis</PackageTags>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DevelopmentDependency>true</DevelopmentDependency>

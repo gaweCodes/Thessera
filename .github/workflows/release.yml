@@ -61,6 +61,82 @@ jobs:
           echo "::error::Tag ${{ github.ref_name }} resolved to package version ${{ steps.version.outputs.version }} instead of matching itself. This happens when the tag is unreachable (shallow clone, wrong prefix) and MinVer falls back to 0.0.0-alpha.0. Refusing to publish."
           exit 1
 
+      - name: Refuse a stable release the public surface does not allow
+        if: ${{ !contains(steps.version.outputs.version, '-') }}
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          pending=$(git ls-files -- 'src/*/PublicAPI.Unshipped.txt' 'src/*/AnalyzerReleases.Unshipped.md' \
+            | while read -r file; do
+                if LC_ALL=C awk 'NR == 1 { sub(/^\357\273\277/, "") } { sub(/\r$/, "") } $0 != "#nullable enable" && NF { found = 1 } END { exit !found }' "$file"; then
+                  echo "$file"
+                fi
+              done)
+          if [ -n "$pending" ]; then
+            echo "::error::A stable release promotes every unshipped entry first (ADR 0025). Still pending in: $(echo $pending)"
+            exit 1
+          fi
+
+          previous=$(git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude 'v*-*' HEAD^ 2>/dev/null || true)
+          if [ -z "$previous" ]; then
+            echo "No earlier stable release to compare the public surface against."
+            exit 0
+          fi
+
+          tracked() {
+            { git ls-tree -r --name-only "$previous" -- src; git ls-files -- src; } | grep "/$1\$" | sort -u
+          }
+          read_at() {
+            git show "$1:$2" 2>/dev/null || true
+          }
+          surface() {
+            for file in $(tracked 'PublicAPI\.Shipped\.txt'); do
+              read_at "$1" "$file" \
+                | LC_ALL=C awk -v package="${file%/*}" 'NR == 1 { sub(/^\357\273\277/, "") } { sub(/\r$/, "") } $0 != "#nullable enable" && NF { print package ": " $0 }'
+            done | LC_ALL=C sort -u
+          }
+          rules() {
+            for file in $(tracked 'AnalyzerReleases\.Shipped\.md'); do
+              read_at "$1" "$file" \
+                | LC_ALL=C awk 'NR == 1 { sub(/^\357\273\277/, "") } { sub(/\r$/, "") } /^### / { section = substr($0, 5); next } /^[A-Z]+[0-9]+[ \t]*\|/ { gsub(/[ \t]*\|[ \t]*/, "|"); print section "|" $0 }'
+            done | LC_ALL=C sort -u
+          }
+          surface "$previous" > "$RUNNER_TEMP/surface-before.txt"
+          surface HEAD > "$RUNNER_TEMP/surface-after.txt"
+          rules "$previous" > "$RUNNER_TEMP/rules-before.txt"
+          rules HEAD > "$RUNNER_TEMP/rules-after.txt"
+          removed=$(LC_ALL=C comm -23 "$RUNNER_TEMP/surface-before.txt" "$RUNNER_TEMP/surface-after.txt")
+          added=$(LC_ALL=C comm -13 "$RUNNER_TEMP/surface-before.txt" "$RUNNER_TEMP/surface-after.txt")
+          errors=$(LC_ALL=C comm -13 "$RUNNER_TEMP/rules-before.txt" "$RUNNER_TEMP/rules-after.txt" \
+            | awk -F'|' '($1 == "New Rules" && $4 == "Error") || ($1 == "Changed Rules" && $4 == "Error" && $6 != "Error") { print $2 }')
+
+          IFS=. read -r major minor _ <<< "$VERSION"
+          IFS=. read -r previous_major previous_minor _ <<< "${previous#v}"
+          if [ "$major" -gt "$previous_major" ]; then
+            bump=major
+          elif [ "$major" -eq "$previous_major" ] && [ "$minor" -gt "$previous_minor" ]; then
+            bump=minor
+          else
+            bump=patch
+          fi
+          echo "Comparing v$VERSION ($bump) against $previous."
+
+          if [ -n "$removed" ] && [ "$bump" != major ]; then
+            echo "::error::v$VERSION is a $bump release, but it removes or changes public API shipped in $previous; that needs a new major version (ADR 0025)."
+            echo "$removed"
+            exit 1
+          fi
+          if [ -n "$errors" ] && [ "$bump" != major ]; then
+            echo "::error::v$VERSION is a $bump release, but it adds or raises analyzer rules to severity Error since $previous, which can break a consumer's build; that needs a new major version (ADR 0025)."
+            echo "$errors"
+            exit 1
+          fi
+          if [ -n "$added" ] && [ "$bump" = patch ]; then
+            echo "::error::v$VERSION is a patch release, but it adds public API to $previous; that needs at least a new minor version (ADR 0025)."
+            echo "$added"
+            exit 1
+          fi
+
       - name: Upload packages
         uses: actions/upload-artifact@v7
         with:

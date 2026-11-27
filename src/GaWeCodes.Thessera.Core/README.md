@@ -3,9 +3,10 @@
 The composition root and the runtime that fulfils the Thessera contracts: `AddThessera(...)`, the
 CQRS dispatcher and its pipeline behaviours, domain-event delivery, projection dispatch,
 integration-event mapping, typed-key formatting and JSON, telemetry, and the startup checks that
-turn silent misconfiguration into a message at boot. It makes **no store choice** — you add exactly
-one on top, either `GaWeCodes.Thessera.Persistence.EfCore.Postgres` (state) or
-`GaWeCodes.Thessera.Persistence.Marten` (event stream) — and it contains **no Wolverine**: its only
+turn silent misconfiguration into a message at boot. It makes **no store choice** — you add one on
+top, either `GaWeCodes.Thessera.Persistence.EfCore.Postgres` (state) or
+`GaWeCodes.Thessera.Persistence.Marten` (event stream), or both side by side with every aggregate
+owned by exactly one of them — and it contains **no Wolverine**: its only
 dependencies are `Microsoft.Extensions.*.Abstractions`.
 
 **Why not just Wolverine?** Because that question has two halves and this package answers only one
@@ -102,7 +103,10 @@ package contributes to this same registration through a `Use*` extension on `The
 - `AddHandlersFrom(assembly)` — command and query handlers, pipeline behaviours, projection handlers
   and integration-event mappers, found by scanning.
 - `AddDomainEventsFrom(assembly)` — the `[EventName]` catalogue. The event store maps persisted
-  names from it, and the envelope serializer resolves incoming names against it.
+  names from it, and the envelope serializer resolves incoming names against it. It also reads each
+  retired event's `IRetiredDomainEvent<TSuccessor>`: a successor that is not in the catalogue, more
+  than one successor, or a chain that leads back to its start fails the host at startup, and
+  `Unwrap` returns every retired event as its current successor.
 - `AddPipelineBehavior(openGenericBehavior, order)` — your own cross-cutting behaviour. The built-in
   logging, exception-to-result and unit-of-work behaviours sit at 0, 100 and 300.
 - `UsePersistence(adapter, forAggregates)` / `UseNoPersistence()` — a store, or the explicit absence
@@ -125,8 +129,10 @@ package contributes to this same registration through a `Use*` extension on `The
 
 Before hosted services start, the core checks that every discovered command and query has exactly
 one handler, that the aggregate style matches the chosen store, that aggregate state binds to
-itself, that every integration-event mapper is reachable, and that a unit of work exists when
-commands do. Each check exists because the failure it catches is otherwise silent until production.
+itself, that every integration-event mapper is reachable, that a unit of work exists when
+commands do, and — once more than one store is selected — that every command handler touches
+aggregates of a single store only. Each check exists because the failure it catches is otherwise
+silent until production. Store and transport packages add checks of their own.
 
 Add your own with `IStartupCheck` (or `SynchronousStartupCheck`) and a `StartupPhase`.
 
@@ -188,7 +194,8 @@ aggregate, read `IStateOwner.State` at save time.
   in the `BusinessRule`/`Validation` category: this package's `ExceptionToResultBehavior`, but only
   once it is registered — which happens for every host that calls `AddThessera`.
 - The startup checks named in "What runs at startup" above (handler registration, aggregate style,
-  state self-binding, mapper reachability, unit-of-work presence): all of them run because
+  state self-binding, mapper reachability, unit-of-work presence, command-to-store routing): all of
+  them run because
   `AddThessera` registers them; a host that composed the pieces itself without it would not get them.
 
 ## Limits

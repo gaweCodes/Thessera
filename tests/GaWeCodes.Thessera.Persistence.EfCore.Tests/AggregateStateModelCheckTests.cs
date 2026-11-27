@@ -38,6 +38,31 @@ public sealed class AggregateStateModelCheckTests : IDisposable
         Assert.Contains("'Money.Amount'", exception.Message, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task StartAsync_VersionWithoutConcurrencyToken_ThrowsAtStartup()
+    {
+        var builder = Host.CreateApplicationBuilder();
+
+        builder.AddThessera(options => options
+            .AddDomainEventsFrom(typeof(WalletOpened).Assembly)
+            .UsePersistence(new EfCorePersistenceAdapter<WalletContextWithoutConcurrencyToken>(
+                new SqliteDatabaseDriver(),
+                ConnectionString))
+                .ProvisionInfrastructure(InfrastructureProvisioning.AtStartup)
+            .CustomizeWolverine(wolverine =>
+            {
+                wolverine.Durability.Mode = DurabilityMode.Solo;
+                wolverine.ApplicationAssembly = typeof(DomainEventEnvelopeHandler).Assembly;
+            }));
+
+        using var host = builder.Build();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => host.StartAsync(TestContext.Current.CancellationToken));
+
+        Assert.Contains("'WalletState.Version'", exception.Message, StringComparison.Ordinal);
+    }
+
     public void Dispose()
     {
         try

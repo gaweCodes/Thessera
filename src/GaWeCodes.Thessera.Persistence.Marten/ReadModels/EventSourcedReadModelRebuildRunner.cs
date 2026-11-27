@@ -1,3 +1,4 @@
+using GaWeCodes.Thessera.Core.Messaging.DomainEvents;
 using GaWeCodes.Thessera.Core.Persistence;
 using GaWeCodes.Thessera.Core.ReadModels;
 using GaWeCodes.Thessera.Domain.Aggregates;
@@ -44,16 +45,18 @@ public sealed class EventSourcedReadModelRebuildRunner(IServiceScopeFactory scop
 
         using var scope = scopeFactory.CreateScope();
         var store = scope.ServiceProvider.GetRequiredService<IDocumentStore>();
+        var registry = scope.ServiceProvider.GetRequiredService<DomainEventTypeRegistry>();
         var session = store.QuerySession();
 
         await using (session.ConfigureAwait(false))
         {
-            await RebuildFromStreamsAsync<TAggregate, TKey>(session, cancellationToken).ConfigureAwait(false);
+            await RebuildFromStreamsAsync<TAggregate, TKey>(session, registry, cancellationToken).ConfigureAwait(false);
         }
     }
 
     private async Task RebuildFromStreamsAsync<TAggregate, TKey>(
         IQuerySession session,
+        DomainEventTypeRegistry registry,
         CancellationToken cancellationToken)
         where TAggregate : class, IEventSourcedAggregateRoot<TKey>
         where TKey : struct, IEntityKey, IEquatable<TKey>
@@ -74,7 +77,7 @@ public sealed class EventSourcedReadModelRebuildRunner(IServiceScopeFactory scop
 
             var aggregate = AggregateFactory.CreateEmpty<TAggregate>();
             ((IEventSourcedAggregateRoot<TKey>)aggregate)
-                .LoadFromHistory(stream.Select(@event => (IDomainEvent)@event.Data));
+                .LoadFromHistory(stream.Select(@event => registry.Upcast((IDomainEvent)@event.Data)));
             batch.Add(aggregate);
 
             if (batch.Count < ReadModelRebuildWriter.BatchSize)

@@ -53,8 +53,8 @@ public sealed class ChildEntityStateSelfBindingAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var entityState = compilationContext.Compilation.GetTypeByMetadataName(
-                ThesseraSymbols.EntityStateMetadataName);
+            var entityState = compilationContext.Compilation.ResolveType(
+                ThesseraSymbols.EntityStateMetadataName, ThesseraSymbols.DomainAssemblyName);
 
             if (entityState is null)
             {

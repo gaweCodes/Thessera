@@ -52,10 +52,10 @@ public sealed class AggregateNameAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var aggregateRoot = compilationContext.Compilation.GetTypeByMetadataName(
-                ThesseraSymbols.AggregateRootMetadataName);
-            var aggregateNameAttribute = compilationContext.Compilation.GetTypeByMetadataName(
-                ThesseraSymbols.AggregateNameAttributeMetadataName);
+            var aggregateRoot = compilationContext.Compilation.ResolveType(
+                ThesseraSymbols.AggregateRootMetadataName, ThesseraSymbols.DomainAssemblyName);
+            var aggregateNameAttribute = compilationContext.Compilation.ResolveType(
+                ThesseraSymbols.AggregateNameAttributeMetadataName, ThesseraSymbols.DomainAssemblyName);
 
             if (aggregateRoot is null || aggregateNameAttribute is null)
             {

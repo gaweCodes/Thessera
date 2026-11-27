@@ -4,9 +4,10 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 THSS0001 | Thessera.Design | Error | Non-abstract type deriving from `AggregateRoot<TKey, TState>` that does not carry `[AggregateName]` directly.
 THSS0002 | Thessera.Design | Error | Non-abstract type implementing `IDomainEvent` that does not carry `[EventName]` directly.
-THSS0003 | Thessera.Design | Error | Non-abstract type deriving from `AggregateRoot<TKey, TState>` that has no parameterless constructor, or whose parameterless constructor is `public`.
-THSS0004 | Thessera.Design | Error | Non-abstract type deriving from `Entity<TKey, TState>` that exposes any `public` constructor.
+THSS0003 | Thessera.Design | Error | Non-abstract type deriving from `AggregateRoot<TKey, TState>` that has no parameterless constructor, or whose parameterless constructor is not `private`.
+THSS0004 | Thessera.Design | Error | Non-abstract type deriving from `Entity<TKey, TState>` that has any constructor that is not `internal`.
 THSS0005 | Thessera.Design | Error | Non-abstract type deriving from `AggregateState<TSelf, TKey>` whose first type argument does not name the deriving type itself.
 THSS0006 | Thessera.Design | Error | Non-abstract type deriving from `EntityState<TSelf, TKey>` whose first type argument does not name the deriving type itself.
 THSS0007 | Thessera.Design | Error | Command handler whose constructor injects `IRepository<TAggregate, TKey>` for more than one distinct aggregate type.
 THSS0008 | Thessera.Design | Error | Command handler whose constructor injects an EF Core `DbContext`-derived type or a Marten `IDocumentSession` directly, instead of only `IRepository<TAggregate, TKey>`.
+THSS0009 | Thessera.Design | Error | Call to `RaiseEvent` on an aggregate or child entity whose argument is a domain event implementing `IRetiredDomainEvent<TSuccessor>`.

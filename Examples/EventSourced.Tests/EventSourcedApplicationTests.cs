@@ -1,7 +1,11 @@
 using EventSourced;
 using GaWeCodes.Thessera.Application.Results;
+using GaWeCodes.Thessera.Core.Persistence;
 using GaWeCodes.Thessera.Domain.Rules;
 using GaWeCodes.Thessera.Tests;
+using JasperFx;
+using JasperFx.Events;
+using Marten;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class EventSourcedApplicationTests(PostgreSqlFixture fixture)
@@ -141,6 +145,58 @@ public sealed class EventSourcedApplicationTests(PostgreSqlFixture fixture)
         {
             await app.DeleteAsync(baseline.Value.Reading.Id, TestContext.Current.CancellationToken);
         }
+    }
+
+    [Fact]
+    public async Task AStoredRetiredEvent_IsReadAsItsSuccessorOnRebuildAndOnLoad()
+    {
+        Assert.SkipUnless(fixture.Available, fixture.SkipReason);
+
+        Result<ReadingOperationResponse> created;
+        await using (var first = await EventSourcedApplication.StartAsync(fixture.ConnectionString, TestContext.Current.CancellationToken))
+        {
+            created = await first.CreateAsync(8, TestContext.Current.CancellationToken);
+            Assert.True(created.IsSuccess);
+        }
+
+        var id = new ReadingId(created.Value.Reading.Id);
+        await AppendRetiredUpdateAsync(id, value: 21);
+
+        try
+        {
+            await using var second = await EventSourcedApplication.StartAsync(fixture.ConnectionString, TestContext.Current.CancellationToken);
+
+            var listed = await second.ListAsync(TestContext.Current.CancellationToken);
+            Assert.Contains(listed.Value.Readings, reading => reading.Id == id.Value && reading.Value == 21);
+
+            var updated = await second.UpdateAsync(id.Value, 34, TestContext.Current.CancellationToken);
+            Assert.True(updated.IsSuccess);
+            Assert.Equal(34, updated.Value.Reading.Value);
+            Assert.Equal(nameof(ReadingUpdatedV2), Assert.Single(updated.Value.DomainEvents).Type);
+        }
+        finally
+        {
+            await using var cleanup = await EventSourcedApplication.StartAsync(fixture.ConnectionString, TestContext.Current.CancellationToken);
+            await cleanup.DeleteAsync(id.Value, TestContext.Current.CancellationToken);
+        }
+    }
+
+    private async Task AppendRetiredUpdateAsync(ReadingId id, int value)
+    {
+        using var store = DocumentStore.For(options =>
+        {
+            options.Connection(fixture.ConnectionString);
+            options.AutoCreateSchemaObjects = AutoCreate.None;
+            options.Events.StreamIdentity = StreamIdentity.AsString;
+            options.UseSystemTextJsonForSerialization(EntityKeyJsonOptions.Create());
+            options.Events.MapEventType<ReadingUpdated>("reading-updated-v1");
+        });
+
+        await using var session = store.LightweightSession();
+        session.Events.Append(
+            EventSourcedApplication.StreamKeyPrefix + id.Value,
+            new ReadingUpdated(id, value, DateTimeOffset.UtcNow));
+        await session.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]

@@ -18,6 +18,7 @@ public sealed class DomainEventTypeRegistry
 {
     private readonly Dictionary<string, Type> _typesByName = [];
     private readonly Dictionary<Type, string> _namesByType = [];
+    private readonly Dictionary<Type, Type> _successors = [];
 
     /// <summary>
     /// Builds the catalogue by scanning the given assemblies for domain events.
@@ -26,7 +27,9 @@ public sealed class DomainEventTypeRegistry
     /// <exception cref="ArgumentNullException"><paramref name="assemblies"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">
     /// An assembly could not be loaded, a domain event has no persisted name, a type claims two
-    /// names, or two types claim the same name — a persisted name identifies exactly one type.
+    /// names, or two types claim the same name — a persisted name identifies exactly one type. Also
+    /// thrown when a retired event names more than one successor, a successor that is not
+    /// registered, or a chain of successors that leads back to itself.
     /// </exception>
     [RequiresUnreferencedCode(TrimmingMessages.AssemblyScanning)]
     public DomainEventTypeRegistry(IEnumerable<Assembly> assemblies)
@@ -40,6 +43,11 @@ public sealed class DomainEventTypeRegistry
                 Register(domainEventType);
             }
         }
+
+        RegisterSuccessors();
+        RefuseCycles();
+
+        NamesByType = _namesByType.AsReadOnly();
     }
 
     /// <summary>
@@ -49,7 +57,7 @@ public sealed class DomainEventTypeRegistry
     /// A store uses this to register the same names with its own event mapping, so that both sides
     /// agree on what a stored event is called.
     /// </remarks>
-    public IReadOnlyDictionary<Type, string> NamesByType => _namesByType;
+    public IReadOnlyDictionary<Type, string> NamesByType { get; }
 
     /// <summary>
     /// Looks up the persisted name a domain event type is written under.
@@ -94,6 +102,51 @@ public sealed class DomainEventTypeRegistry
                 $"No domain event type is registered under the name '{eventName}'. A stored event whose name is no " +
                 "longer known cannot be read. Keep the retired type and its [EventName] alongside the successor " +
                 "instead of renaming it, so that both versions stay readable.");
+    }
+
+    /// <summary>
+    /// Turns a retired event into the current version of it, following the chain of successors.
+    /// </summary>
+    /// <param name="domainEvent">The event as it was read.</param>
+    /// <returns>
+    /// The event itself when it is not an <see cref="IRetiredDomainEvent{TSuccessor}"/>, otherwise
+    /// the last successor in its chain.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="domainEvent"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// A retired event in the chain is not registered, or its <c>Upcast</c> returned
+    /// <see langword="null"/> or an instance of a type other than its declared successor.
+    /// </exception>
+    public IDomainEvent Upcast(IDomainEvent domainEvent)
+    {
+        ArgumentNullException.ThrowIfNull(domainEvent);
+
+        var current = domainEvent;
+
+        while (current is IRetiredDomainEvent<IDomainEvent> retired)
+        {
+            var retiredType = current.GetType();
+
+            if (!_successors.TryGetValue(retiredType, out var successorType))
+            {
+                throw new InvalidOperationException(
+                    $"The retired domain event '{retiredType}' is not registered. Pass the assembly that declares it " +
+                    "to ThesseraOptions.AddDomainEventsFrom, so that its successor is checked before it is read.");
+            }
+
+            var next = retired.Upcast();
+
+            if (next is null || next.GetType() != successorType)
+            {
+                throw new InvalidOperationException(
+                    $"'{retiredType}.Upcast' returned '{next?.GetType().ToString() ?? "null"}' instead of an instance of " +
+                    $"its declared successor '{successorType}'.");
+            }
+
+            current = next;
+        }
+
+        return current;
     }
 
     private static IEnumerable<Type> DomainEventTypesIn(Assembly assembly)
@@ -146,5 +199,63 @@ public sealed class DomainEventTypeRegistry
 
         _namesByType.Add(domainEventType, name);
         _typesByName.Add(name, domainEventType);
+    }
+
+    private void RegisterSuccessors()
+    {
+        foreach (var domainEventType in _namesByType.Keys)
+        {
+            var successors = domainEventType.GetInterfaces()
+                .Where(static contract =>
+                    contract.IsGenericType && contract.GetGenericTypeDefinition() == typeof(IRetiredDomainEvent<>))
+                .Select(static contract => contract.GetGenericArguments()[0])
+                .ToArray();
+
+            if (successors.Length == 0)
+            {
+                continue;
+            }
+
+            if (successors.Length > 1)
+            {
+                throw new InvalidOperationException(
+                    $"The retired domain event '{domainEventType}' names more than one successor: " +
+                    $"{string.Join(", ", successors.Select(static successor => $"'{successor}'"))}. " +
+                    "A stored event is read as exactly one successor.");
+            }
+
+            var successor = successors[0];
+
+            if (!_namesByType.ContainsKey(successor))
+            {
+                throw new InvalidOperationException(
+                    $"The successor '{successor}' of the retired domain event '{domainEventType}' is not a registered " +
+                    "domain event. It has to be a concrete type in an assembly passed to " +
+                    "ThesseraOptions.AddDomainEventsFrom.");
+            }
+
+            _successors.Add(domainEventType, successor);
+        }
+    }
+
+    private void RefuseCycles()
+    {
+        foreach (var start in _successors.Keys)
+        {
+            var visited = new HashSet<Type> { start };
+            var current = start;
+
+            while (_successors.TryGetValue(current, out var next))
+            {
+                if (!visited.Add(next))
+                {
+                    throw new InvalidOperationException(
+                        $"The successors of the retired domain event '{start}' lead back to '{next}'. " +
+                        "A chain of successors has to end at an event that is not retired.");
+                }
+
+                current = next;
+            }
+        }
     }
 }

@@ -49,10 +49,10 @@ public sealed class DomainEventNameAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var domainEvent = compilationContext.Compilation.GetTypeByMetadataName(
-                ThesseraSymbols.DomainEventInterfaceMetadataName);
-            var eventNameAttribute = compilationContext.Compilation.GetTypeByMetadataName(
-                ThesseraSymbols.EventNameAttributeMetadataName);
+            var domainEvent = compilationContext.Compilation.ResolveType(
+                ThesseraSymbols.DomainEventInterfaceMetadataName, ThesseraSymbols.DomainAssemblyName);
+            var eventNameAttribute = compilationContext.Compilation.ResolveType(
+                ThesseraSymbols.EventNameAttributeMetadataName, ThesseraSymbols.DomainAssemblyName);
 
             if (domainEvent is null || eventNameAttribute is null)
             {

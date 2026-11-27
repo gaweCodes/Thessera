@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using GaWeCodes.Thessera.Core.Persistence;
@@ -22,11 +21,6 @@ internal sealed class PostgresDatabaseDriver : IEfCoreDatabaseDriver
     public void ConfigureContext(DbContextOptionsBuilder builder, string connectionString) =>
         builder.UseNpgsql(connectionString);
 
-    [SuppressMessage(
-        "Globalization",
-        "CA1308:Normalize strings to uppercase",
-        Justification = "PostgreSQL folds unquoted identifiers to lower case; Wolverine requires an all-lower-case " +
-            "schema name here, not a security-sensitive normalization.")]
     public void PersistMessages(WolverineOptions options, string connectionString, MessageStoreRole role, Type? enrollContextType)
     {
         if (role == MessageStoreRole.Main)
@@ -45,11 +39,6 @@ internal sealed class PostgresDatabaseDriver : IEfCoreDatabaseDriver
 
     public bool IsTransientFault(Exception exception) => PostgresTransientFaults.IsTransient(exception);
 
-    [SuppressMessage(
-        "Globalization",
-        "CA1308:Normalize strings to uppercase",
-        Justification = "PostgreSQL folds unquoted identifiers to lower case; Wolverine requires an all-lower-case " +
-            "schema name here, not a security-sensitive normalization.")]
     private static string SchemaNameFor(Type enrollContextType)
     {
         const string prefix = "wolverine_";
@@ -57,7 +46,7 @@ internal sealed class PostgresDatabaseDriver : IEfCoreDatabaseDriver
         var qualifiedName = enrollContextType.FullName ?? enrollContextType.Name;
         var sanitized = new string(Array.ConvertAll(
             qualifiedName.ToCharArray(),
-            static character => char.IsAsciiLetterOrDigit(character) ? character : '_')).ToLowerInvariant();
+            static character => char.IsAsciiLetterOrDigit(character) ? char.ToLowerInvariant(character) : '_'));
         var schemaName = prefix + sanitized;
 
         if (schemaName.Length <= PostgresIdentifierMaxLength)
@@ -65,7 +54,7 @@ internal sealed class PostgresDatabaseDriver : IEfCoreDatabaseDriver
             return schemaName;
         }
 
-        var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(qualifiedName)))[..8].ToLowerInvariant();
+        var hash = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(qualifiedName)))[..8];
         var truncatedLength = PostgresIdentifierMaxLength - prefix.Length - hash.Length - 1;
         return $"{prefix}{sanitized[..truncatedLength]}_{hash}";
     }

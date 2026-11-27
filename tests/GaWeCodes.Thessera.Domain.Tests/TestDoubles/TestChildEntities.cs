@@ -60,6 +60,8 @@ internal sealed class TestChild : Entity<TestId, ChildState>
     public void ChangeValue(int value) => RaiseEvent(new ChildValueChanged(Id, value));
 
     public void RaiseNothing() => RaiseEvent(null!);
+
+    public void RaiseAny(IDomainEvent domainEvent) => RaiseEvent(domainEvent);
 }
 
 internal sealed class ParentAggregate : AggregateRoot<TestId, ParentState>,

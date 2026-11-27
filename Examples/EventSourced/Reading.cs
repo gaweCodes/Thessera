@@ -35,7 +35,7 @@ public sealed class Reading : EventSourcedAggregateRoot<ReadingId, ReadingState>
     public void ChangeValue(int value)
     {
         RuleChecker.CheckValidationRule(new ReadingValueMustBePositive(value));
-        RaiseEvent(new ReadingUpdated(Id, value, DateTimeOffset.UtcNow));
+        RaiseEvent(new ReadingUpdatedV2(Id, value, DateTimeOffset.UtcNow));
     }
 
     public void Delete() => RaiseEvent(new ReadingDeleted(Id, DateTimeOffset.UtcNow));

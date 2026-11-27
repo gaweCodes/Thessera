@@ -76,6 +76,7 @@ GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.DomainEve
 GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.NameOf(System.Type! domainEventType) -> string!
 GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.NamesByType.get -> System.Collections.Generic.IReadOnlyDictionary<System.Type!, string!>!
 GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.Resolve(string! eventName) -> System.Type!
+GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventTypeRegistry.Upcast(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent) -> GaWeCodes.Thessera.Domain.Events.IDomainEvent!
 GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope
 GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.<Clone>$() -> GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope!
 GaWeCodes.Thessera.Core.Messaging.DomainEvents.ProjectionEnvelope.Deconstruct(out GaWeCodes.Thessera.Core.Messaging.DomainEvents.DomainEventEnvelope! Event) -> void

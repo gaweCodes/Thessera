@@ -106,8 +106,11 @@ modelBuilder.ApplyEntityKeyConversions();
 That converts every `IEntityKey<TValue>` property to its bare value, so a column holds a `uuid` or a
 `bigint` rather than a serialized object.
 
-At startup the model is checked: every aggregate state has to be mapped and bound to itself, and the
-write `DbContext` has to be scoped. Both failures are otherwise silent until the first save.
+At startup the model is checked: every aggregate state has to be mapped and bound to itself, its
+`Version` has to be the concurrency token, and the write `DbContext` has to be scoped. Each of these
+failures is otherwise silent until the first save — a missing concurrency token even longer, until
+two writers race and the later one overwrites the earlier without a conflict
+([ADR 0019](../../docs/architecture/0019-version-must-be-the-concurrency-token.md)).
 
 ## Limits
 

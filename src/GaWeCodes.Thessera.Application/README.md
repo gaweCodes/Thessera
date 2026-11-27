@@ -70,6 +70,11 @@ public sealed class GetReadingHandler(IReadingStore store) : IQueryHandler<GetRe
 }
 ```
 
+Where no target type is there to convert to — a `var` local, or an argument whose generic type
+has to be inferred — name the conversion instead: `Result.Success(value)` for a success,
+`failure.ToResult<TResult>()` for a failed `Result<TResult>` and `Result.FromFailure(failure)` for
+a failed `Result`. They produce exactly what the implicit conversions do.
+
 The handler never commits. `IUnitOfWork` is committed once per command by the runtime, in the same
 transaction that writes the outbox. `IRepository<TAggregate, TKey>` is deliberately narrow —
 `GetByIdAsync` and `AddAsync` — because everything else an aggregate needs is a method on the
@@ -96,7 +101,9 @@ An `IProjectionHandler<TDomainEvent>` writes one domain event into a read model;
 `IIntegrationEventMapper<TDomainEvent>` turns one into the `[IntegrationEventTopic]`-tagged
 `IIntegrationEvent`s other services should see. Both are discovered by assembly scanning and driven
 by `GaWeCodes.Thessera.Core`. Delivery is at-least-once, so write projections idempotently using the
-`Version` watermark on `DomainEventMetadata`. See
+`Version` watermark on `DomainEventMetadata`. Where no per-aggregate watermark fits — a total across
+aggregates, or a side effect such as sending a mail — deduplicate on `DomainEventMetadata.EventId`
+instead, which stays the same across redeliveries. See
 [`Examples/EventSourced`](../../Examples/EventSourced/README.md) for projections and
 [`Examples/EventSourcedWithMessaging`](../../Examples/EventSourcedWithMessaging/README.md) for
 integration events end to end.

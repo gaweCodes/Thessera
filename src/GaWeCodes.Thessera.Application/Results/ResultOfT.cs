@@ -20,22 +20,19 @@ public sealed class Result<TResult> : Result
 {
     private static readonly bool ForbiddenResultType = typeof(TResult) == typeof(Failure);
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0032:Use auto property", Justification = "A backing field is required because the Value property validates the result state before returning the stored value")]
-    private readonly TResult _value;
-
     private Result(TResult value)
         : base(true, [])
     {
         ThrowIfForbiddenResultType();
         ArgumentNullException.ThrowIfNull(value);
-        _value = value;
+        Value = value;
     }
 
     private Result(IReadOnlyList<Failure> failures)
         : base(false, failures)
     {
         ThrowIfForbiddenResultType();
-        _value = default!;
+        Value = default!;
     }
 
     /// <summary>
@@ -48,7 +45,7 @@ public sealed class Result<TResult> : Result
     /// </exception>
     public TResult Value =>
         IsSuccess
-            ? _value
+            ? field
             : throw new InvalidOperationException("The value of a failed result cannot be accessed.");
 
     /// <summary>

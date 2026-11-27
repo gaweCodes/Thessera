@@ -25,6 +25,7 @@ public sealed class DomainPublicSurfaceTests
         "GaWeCodes.Thessera.Domain.Events.IDomainEventOwner",
         "GaWeCodes.Thessera.Domain.Events.IDomainEventRaiser",
         "GaWeCodes.Thessera.Domain.Events.IHasDomainEvents",
+        "GaWeCodes.Thessera.Domain.Events.IRetiredDomainEvent`1",
         "GaWeCodes.Thessera.Domain.IClock",
         "GaWeCodes.Thessera.Domain.Naming.AggregateNameAttribute",
         "GaWeCodes.Thessera.Domain.Naming.EventNameAttribute",

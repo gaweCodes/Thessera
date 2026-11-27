@@ -1,3 +1,4 @@
+using System.Reflection;
 using GaWeCodes.Thessera.Application.Persistence;
 using GaWeCodes.Thessera.Core.DependencyInjection;
 using GaWeCodes.Thessera.Core.Persistence;
@@ -144,12 +145,33 @@ public sealed class MartenEventSourcedRepositoryTests(PostgreSqlFixture fixture)
         await host.StopAsync(TestContext.Current.CancellationToken);
     }
 
-    private async Task<IHost> StartHostAsync()
+    [Fact]
+    public async Task GetByIdAsync_ReadsARetiredEventAsItsSuccessor()
+    {
+        Assert.SkipUnless(fixture.Available, fixture.SkipReason);
+
+        using var host = await StartHostAsync(typeof(RebuildProbeRetitled).Assembly);
+        var id = await EventSourcedReadModelRebuildRunnerTests.SeedRetiredStreamAsync(host, "Pasta");
+
+        using var scope = host.Services.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<IRepository<RebuildProbe, RebuildProbeId>>();
+        var reloaded = await repository.GetByIdAsync(id, TestContext.Current.CancellationToken);
+
+        Assert.NotNull(reloaded);
+        Assert.Equal("Pasta", reloaded!.Name);
+        Assert.Equal(2, ((IStateOwner)reloaded).Version);
+
+        await host.StopAsync(TestContext.Current.CancellationToken);
+    }
+
+    private Task<IHost> StartHostAsync() => StartHostAsync(typeof(CounterCreated).Assembly);
+
+    private async Task<IHost> StartHostAsync(Assembly domainEvents)
     {
         var builder = Host.CreateApplicationBuilder();
 
         builder.AddThessera(options => options
-            .AddDomainEventsFrom(typeof(CounterCreated).Assembly)
+            .AddDomainEventsFrom(domainEvents)
             .UseMartenEventStore(fixture.ConnectionString)
             .ProvisionInfrastructure(InfrastructureProvisioning.AtStartup)
             .CustomizeWolverine(ConfigureDurability));

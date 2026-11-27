@@ -36,7 +36,7 @@ public static class AggregateConventions
     /// nothing passes every check without asserting anything and stays green forever.
     /// </exception>
     /// <remarks>
-    /// Checked here: every aggregate has a parameterless constructor and it is not public; every
+    /// Checked here: every aggregate has a parameterless constructor and it is private; every
     /// aggregate carries <c>[AggregateName]</c>; every domain event carries <c>[EventName]</c>; and
     /// child entities keep their constructors internal.
     /// </remarks>
@@ -66,19 +66,20 @@ public static class AggregateConventions
 
         foreach (var aggregate in aggregates)
         {
-            if (aggregate.GetConstructor(
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-                    Type.EmptyTypes) is null)
+            var parameterless = aggregate.GetConstructor(
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                Type.EmptyTypes);
+
+            if (parameterless is null)
             {
                 violations.Add(
                     $"'{aggregate}' has no parameterless constructor, so no repository can reconstitute it.");
             }
-
-            if (aggregate.GetConstructor(Type.EmptyTypes) is not null)
+            else if (!parameterless.IsPrivate)
             {
                 violations.Add(
-                    $"'{aggregate}' exposes a public parameterless constructor, so it can be created without going " +
-                    "through its factory. Keep the parameterless constructor private.");
+                    $"'{aggregate}' exposes a non-private parameterless constructor, so it can be created without " +
+                    "going through its factory. Keep the parameterless constructor private.");
             }
 
             if (aggregate.GetCustomAttribute<AggregateNameAttribute>(inherit: false) is null)

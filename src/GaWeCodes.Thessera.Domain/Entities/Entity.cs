@@ -72,6 +72,9 @@ public abstract class Entity<TKey, TState> : EntityBase<TKey>
     /// </summary>
     /// <param name="domainEvent">The event to raise.</param>
     /// <exception cref="ArgumentNullException"><paramref name="domainEvent"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// The event is an <see cref="IRetiredDomainEvent{TSuccessor}"/>, which is only ever read.
+    /// </exception>
     protected void RaiseEvent(IDomainEvent domainEvent)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);

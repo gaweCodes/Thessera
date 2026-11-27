@@ -106,17 +106,21 @@ The rules that make this work, and where each of them is caught:
 
 - The parameterless constructor exists and is **private**. A repository reconstitutes through it; a
   caller must go through the factory method. That it exists is checked while the host is composed,
-  once a store is selected; that it is private is not — only the convention test below sees that.
+  once a store is selected. That it exists and is private is caught at build time by `THSS0003`
+  and by the convention test below ([ADR 0020](../../docs/architecture/0020-aggregate-parameterless-constructor-must-be-private.md)).
 - `Apply` returns the state that follows the event and returns `this` unchanged for events it does
   not know. Returning `null` is rejected the moment an event is applied, not at startup.
 - The applied event must set a non-empty identity. An aggregate without one cannot be addressed;
   this is checked when the event is applied, too.
 - Child entities derive from `Entity<TKey, TState>`, keep an **internal** constructor and raise
   through their root via `IChildOwner<TKey, TState>` — a child hull built without its root would
-  have nothing to raise into. Nothing in the runtime checks this one.
+  have nothing to raise into. Nothing in the runtime checks this one; `THSS0004` flags any child
+  constructor that is not internal at build time, and the convention test below checks the same.
 
-`GaWeCodes.Thessera.Testing` moves the two constructor rules — and the presence of
-`[AggregateName]` and `[EventName]` — into a single test, before any host starts.
+`GaWeCodes.Thessera.Analyzers` catches the two constructor rules — and the presence of
+`[AggregateName]` and `[EventName]` — while you write the type. `GaWeCodes.Thessera.Testing`
+checks the same in a single test, before any host starts, for a project that does not reference
+the analyzers.
 
 ### Which base class
 
@@ -143,6 +147,38 @@ travel on the domain-event envelope. A published integration-event topic is buil
 segment grammar, so the set also has to survive as a routing key. Renaming an attribute value
 orphans everything already stored under the old one; renaming the C# type does not, which is the
 entire point of writing the name down.
+
+## Changing an event that has already been stored
+
+A stored event is read back into whatever its type looks like *today* — on every replay of an
+event-sourced stream, and on both stores for every envelope still waiting in the outbox, a queue or
+dead-letter storage. So:
+
+- **Adding a property** is the one change made in place. Old events read it as its default, so make
+  it nullable, or give it a default the domain reads as "not recorded".
+- **Anything else** — removing, renaming or retyping a property, or changing what it means — is a
+  new event: a new type named with the next version, `reading-recorded-v2`. Keep the retired type
+  and its `[EventName]` unchanged, and let it declare how it becomes its successor:
+
+```csharp
+[EventName("reading-recorded-v1")]
+public sealed record ReadingRecorded(ReadingId ReadingId, decimal Value)
+    : DomainEvent, IRetiredDomainEvent<ReadingRecordedV2>
+{
+    public ReadingRecordedV2 Upcast() => new(ReadingId, Value, Unit: "mmol/L");
+}
+```
+
+Every stored occurrence is then read as `ReadingRecordedV2` — on replay, on rebuild and on every
+envelope, on both stores — so `Apply`, projection handlers and integration-event mappers handle the
+successor only. A chain `v1 → v2 → v3` is followed to its end. A retired event cannot be raised:
+`RaiseEvent` throws, and `THSS0009` in `GaWeCodes.Thessera.Analyzers` makes it a build error.
+
+A renamed property does not fail; the stored value is dropped and the new one reads as its default.
+`PersistedSchema` in `GaWeCodes.Thessera.Testing` shows every such change as a diff, and a declared
+upcast as an added `=> reading-recorded-v2` line. See
+[ADR 0021](../../docs/architecture/0021-a-stored-domain-event-changes-only-by-addition.md) and
+[ADR 0022](../../docs/architecture/0022-retired-domain-events-are-upcast-when-read.md).
 
 ## What this package promises, and what the runtime adds
 

@@ -131,6 +131,18 @@ What the picture is trying to make obvious:
 - [0018 — An analyzer rule catches a handler bypassing the unit of work](0018-analyzer-catches-unit-of-work-bypass.md).
   Why a command handler injecting a raw `DbContext` or Marten `IDocumentSession` is a silent hole in
   the one-transaction guarantee, and the `THSS0008` compile-time rule that now catches it.
+- [0019 — An EF Core aggregate state's `Version` must be the concurrency token](0019-version-must-be-the-concurrency-token.md).
+  Why optimistic concurrency on the state store is enforced by a startup check rather than left to
+  the consumer's mapping, and why the adapter does not configure the token itself.
+- [0020 — An aggregate's parameterless constructor must be private](0020-aggregate-parameterless-constructor-must-be-private.md).
+  Why `THSS0003` and the convention test now enforce the private constructor the Domain README always
+  asked for, instead of only rejecting a public one.
+- [0021 — A stored domain event changes only by addition; anything else is a new event](0021-a-stored-domain-event-changes-only-by-addition.md).
+  What an old payload meets when the type it is read into has changed, and why everything but an
+  added property gets a new event name while the retired type stays readable.
+- [0022 — Retired domain events are upcast when read, in one place for both stores](0022-retired-domain-events-are-upcast-when-read.md).
+  How a retired event declares its successor with `IRetiredDomainEvent<TSuccessor>`, so that the
+  domain sees only the current version, on the envelope path and the stream path alike.
 
 ### How the repository is kept honest
 
@@ -148,6 +160,13 @@ What the picture is trying to make obvious:
   here whose alternative genuinely reads better.
 - [0013 — Tests run on the MTP mode of `dotnet test`](0013-tests-run-on-mtp-mode.md). Why the
   VSTest bridge had to go, and why the three xUnit packages move as one.
+- [0023 — Dependencies released in step with .NET follow LTS releases only](0023-dotnet-aligned-dependencies-follow-lts-only.md).
+  Why Dependabot no longer offers their major versions, and how the step to the next LTS is made.
+- [0024 — Roslyn is never newer than the compiler of the pinned SDK](0024-roslyn-never-outruns-the-pinned-sdk-compiler.md).
+  Why a Roslyn version the compiler cannot load silences the analyzer rather than failing the build.
+- [0025 — A stable release promotes the public surface, and its number must match what changed](0025-a-stable-release-promotes-the-public-surface.md).
+  What separates the shipped from the unshipped tracking file after 1.0, and how a breaking change
+  is kept from going out as a minor or patch release.
 
 ## Format
 

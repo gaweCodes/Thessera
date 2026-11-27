@@ -16,11 +16,12 @@ boot or a test a project happened to include.
 ## When you need this package
 
 - You want a missing `[AggregateName]`, a missing `[EventName]`, an aggregate whose parameterless
-  constructor is absent or public, a child entity with a public constructor, an aggregate- or
-  entity-state that names the wrong type as itself, a command handler that dispatches to more than
-  one aggregate type, or a command handler that injects a store's raw session directly instead of
-  `IRepository<,>` caught while you are writing the type — not the first time a repository, the
-  event-catalogue build, or the first applied event touches it.
+  constructor is absent or not private, a child entity with a constructor that is not internal, an
+  aggregate- or entity-state that names the wrong type as itself, a command handler that
+  dispatches to more than one aggregate type, a command handler that injects a store's raw
+  session directly instead of `IRepository<,>`, or an aggregate or child entity that raises a
+  retired domain event caught while you are writing the type — not the first time a repository,
+  the event-catalogue build, or the first applied event touches it.
 - You maintain more than one host or more than one team writes aggregates, and want the same
   rules enforced identically everywhere without relying on everyone remembering to write (and run)
   the equivalent `GaWeCodes.Thessera.Testing` check.
@@ -54,25 +55,30 @@ added to your build output, and nothing needs a version bump when the rest of th
 | --- | --- |
 | `THSS0001` | A non-abstract type deriving from `AggregateRoot<TKey, TState>` (directly, or through `EventSourcedAggregateRoot<TKey, TState>`) that does not carry `[AggregateName]` directly. |
 | `THSS0002` | A non-abstract type implementing `IDomainEvent` that does not carry `[EventName]` directly. |
-| `THSS0003` | A non-abstract type deriving from `AggregateRoot<TKey, TState>` that has no parameterless constructor, or whose parameterless constructor is `public`. |
-| `THSS0004` | A non-abstract type deriving from `Entity<TKey, TState>` that exposes any `public` constructor. |
+| `THSS0003` | A non-abstract type deriving from `AggregateRoot<TKey, TState>` that has no parameterless constructor, or whose parameterless constructor is not `private`. |
+| `THSS0004` | A non-abstract type deriving from `Entity<TKey, TState>` that has any constructor that is not `internal` — `public`, `protected`, `private` or the implicit default constructor alike. |
 | `THSS0005` | A non-abstract type deriving from `AggregateState<TSelf, TKey>` whose first type argument does not name the deriving type itself. |
 | `THSS0006` | A non-abstract type deriving from `EntityState<TSelf, TKey>` whose first type argument does not name the deriving type itself. |
 | `THSS0007` | A command handler whose constructor injects `IRepository<TAggregate, TKey>` for more than one distinct aggregate type. |
 | `THSS0008` | A command handler whose constructor injects an EF Core `DbContext`-derived type or a Marten `IDocumentSession` directly, instead of only `IRepository<TAggregate, TKey>`. |
+| `THSS0009` | A call to `RaiseEvent` on `AggregateRoot<TKey, TState>` or `Entity<TKey, TState>` whose argument implements `IRetiredDomainEvent<TSuccessor>` — the compile-time twin of the exception `RaiseEvent` throws. |
 
 Every rule is `Error` severity and enabled by default — a build with one of these violations does not
-merely warn, it fails, the same way a build with a missing `using` fails. All rules are read directly
-off the compilation being built through `Compilation.GetTypeByMetadataName`, never by referencing
+merely warn, it fails, the same way a build with a missing `using` fails. All rules read their types
+directly off the compilation being built, by metadata name and owning assembly
+(`Compilation.GetTypesByMetadataName`, keeping only the type from `GaWeCodes.Thessera.Domain`,
+`GaWeCodes.Thessera.Application`, EF Core or Marten), never by referencing
 `GaWeCodes.Thessera.Domain` (or, for THSS0007/THSS0008, EF Core or Marten) from this package's own
-code; a compilation that does not reference the relevant type at all resolves nothing and the rule
-silently reports zero diagnostics for it.
+code. A same-named type in another assembly is therefore ignored; a compilation that does not
+reference the relevant type at all resolves nothing and the rule silently reports zero diagnostics
+for it.
 
 Read the reasoning behind each rule in
 [ADR 0014](../../docs/architecture/0014-a-compile-time-analyzer-catches-four-startup-checks.md),
 [ADR 0015](../../docs/architecture/0015-two-more-analyzer-rules-catch-self-binding.md),
-[ADR 0016](../../docs/architecture/0016-one-store-per-aggregate-not-per-host.md) and
-[ADR 0018](../../docs/architecture/0018-analyzer-catches-unit-of-work-bypass.md).
+[ADR 0016](../../docs/architecture/0016-one-store-per-aggregate-not-per-host.md),
+[ADR 0018](../../docs/architecture/0018-analyzer-catches-unit-of-work-bypass.md) and
+[ADR 0022](../../docs/architecture/0022-retired-domain-events-are-upcast-when-read.md).
 
 ## What this deliberately does not check
 
@@ -139,6 +145,14 @@ public sealed class RenameReadingHandler(IRepository<Reading, ReadingId> reading
         return Result.Success();
     }
 }
+```
+
+```csharp
+// THSS0009: ReadingRecorded is retired; its stored occurrences are read as ReadingRecordedV2.
+public void Record(decimal value) => RaiseEvent(new ReadingRecorded(Id, value));
+
+// Compiles cleanly.
+public void Record(decimal value) => RaiseEvent(new ReadingRecordedV2(Id, value, Unit: "mmol/L"));
 ```
 
 ## Limits

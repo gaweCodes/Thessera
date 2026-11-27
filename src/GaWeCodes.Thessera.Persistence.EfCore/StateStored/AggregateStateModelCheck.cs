@@ -19,12 +19,14 @@ internal sealed class AggregateStateModelCheck<TContext>(IServiceProvider servic
         var offenders = new List<string>();
         var keyless = new List<string>();
         var derivedNames = new List<string>();
+        var unguardedVersions = new List<string>();
         var visited = new HashSet<IEntityType>();
 
         foreach (var entityType in context.Model.GetEntityTypes())
         {
             if (!entityType.IsOwned() && IsAggregateState(entityType.ClrType))
             {
+                ValidateConcurrencyToken(entityType, unguardedVersions);
                 Validate(entityType, offenders, keyless, derivedNames, visited);
             }
         }
@@ -56,6 +58,15 @@ internal sealed class AggregateStateModelCheck<TContext>(IServiceProvider servic
                 + "Without an explicit HasColumnName a rename of the property renames the column, which turns a "
                 + "pure refactoring into a destructive migration; with one it costs nothing. Declare a name for: "
                 + $"{string.Join("; ", derivedNames)}.");
+        }
+
+        if (unguardedVersions.Count > 0)
+        {
+            throw new InvalidOperationException(
+                "Aggregate state mapping validation failed at startup. An aggregate state's Version is its "
+                + "optimistic-concurrency guard, so it is mapped as the concurrency token (IsConcurrencyToken). "
+                + "Without it the commit updates the row whatever version it now holds, and a concurrent writer's "
+                + $"change is silently overwritten instead of failing as a conflict: {string.Join("; ", unguardedVersions)}.");
         }
     }
 
@@ -98,6 +109,14 @@ internal sealed class AggregateStateModelCheck<TContext>(IServiceProvider servic
         foreach (var navigation in entityType.GetSkipNavigations())
         {
             offenders.Add(Describe(entityType, navigation.Name, navigation.TargetEntityType));
+        }
+    }
+
+    private static void ValidateConcurrencyToken(IEntityType entityType, List<string> unguardedVersions)
+    {
+        if (entityType.FindProperty(nameof(IStateOwner.Version)) is not { IsConcurrencyToken: true })
+        {
+            unguardedVersions.Add($"'{entityType.ClrType.Name}.{nameof(IStateOwner.Version)}'");
         }
     }
 

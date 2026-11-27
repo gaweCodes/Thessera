@@ -69,6 +69,7 @@ public abstract class AggregateRoot<TKey, TState> : EntityBase<TKey>, IAggregate
     /// <param name="domainEvent">The event that has happened.</param>
     /// <exception cref="ArgumentNullException"><paramref name="domainEvent"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">
+    /// The event is an <see cref="IRetiredDomainEvent{TSuccessor}"/>, which is only ever read, or
     /// <c>Apply</c> returned <see langword="null"/> for the event. An unhandled event returns the
     /// state unchanged; <see langword="null"/> is never a state an aggregate can be in.
     /// </exception>
@@ -84,6 +85,14 @@ public abstract class AggregateRoot<TKey, TState> : EntityBase<TKey>, IAggregate
     protected void RaiseEvent(IDomainEvent domainEvent)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);
+
+        if (domainEvent is IRetiredDomainEvent<IDomainEvent>)
+        {
+            throw new InvalidOperationException(
+                $"The event '{domainEvent.GetType()}' is retired: it is kept only so that stored occurrences can "
+                + "be read, and every read upcasts it to its successor. Raise the successor instead.");
+        }
+
         ApplyEvent(domainEvent);
         _domainEvents.Add(domainEvent);
     }

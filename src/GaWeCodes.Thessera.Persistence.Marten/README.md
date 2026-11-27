@@ -126,6 +126,16 @@ convention changes and makes every existing stream unreachable.
 The same holds for `[EventName]`: it is the event type name in the database. Renaming the C# type is
 free; changing the attribute value orphans every event already written under the old one.
 
+A stream is never rewritten, so its oldest event is replayed for as long as the aggregate exists.
+Change an event in place only by adding a property; anything else is a new event with the next
+version in its name, and the retired type implements `IRetiredDomainEvent<TSuccessor>`. The
+repository and `EventSourcedReadModelRebuildRunner` upcast every retired event of a fetched stream
+before `LoadFromHistory`, so `Apply` sees the successor only. The stream itself keeps the retired
+name and payload, and Marten's own upcasting is not used. See
+[ADR 0021](../../docs/architecture/0021-a-stored-domain-event-changes-only-by-addition.md),
+[ADR 0022](../../docs/architecture/0022-retired-domain-events-are-upcast-when-read.md) and the
+Domain README.
+
 ## Mixing this store with the state store
 
 A host is no longer one store — it is one store *per aggregate*. Claim each aggregate on the store

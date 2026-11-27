@@ -60,12 +60,15 @@ public sealed class DomainEventEnvelopeSerializer(DomainEventTypeRegistry regist
     /// Reads a stored envelope back into a domain event.
     /// </summary>
     /// <param name="envelope">The stored envelope.</param>
-    /// <returns>The deserialized event, as its declared type.</returns>
+    /// <returns>
+    /// The deserialized event, upcast through <see cref="DomainEventTypeRegistry.Upcast"/> when its
+    /// type is retired, so it always arrives as the current version.
+    /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="envelope"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">
-    /// No type is registered under the envelope's event name, or the payload deserialized to
-    /// <see langword="null"/>. A stored event whose name is no longer known cannot be read — keep a
-    /// retired type and its name alongside the successor instead of renaming it.
+    /// No type is registered under the envelope's event name, the payload deserialized to
+    /// <see langword="null"/>, or an upcast failed. A stored event whose name is no longer known
+    /// cannot be read — keep a retired type and its name alongside the successor instead of renaming it.
     /// </exception>
     public IDomainEvent Unwrap(DomainEventEnvelope envelope)
     {
@@ -76,6 +79,6 @@ public sealed class DomainEventEnvelopeSerializer(DomainEventTypeRegistry regist
             ?? throw new InvalidOperationException(
                 $"The domain event envelope payload deserialized to null for event name '{envelope.EventName}'.");
 
-        return (IDomainEvent)domainEvent;
+        return registry.Upcast((IDomainEvent)domainEvent);
     }
 }

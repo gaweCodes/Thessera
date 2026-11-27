@@ -69,3 +69,30 @@ public sealed class WalletContextWithUndeclaredColumnName(DbContextOptions<Walle
         modelBuilder.ApplyEntityKeyConversions();
     }
 }
+
+public sealed class WalletContextWithoutConcurrencyToken(DbContextOptions<WalletContextWithoutConcurrencyToken> options)
+    : DbContext(options)
+{
+    public DbSet<WalletState> Wallets => Set<WalletState>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(modelBuilder);
+
+        modelBuilder.Entity<WalletState>(entity =>
+        {
+            entity.ToTable("wallets");
+            entity.HasKey(state => state.Id);
+            entity.Property(state => state.Id).HasColumnName("id");
+            entity.Property(state => state.Version).HasColumnName("version");
+
+            entity.ComplexProperty(state => state.Balance, money =>
+            {
+                money.Property(m => m.Currency).HasColumnName("currency");
+                money.Property(m => m.Amount).HasColumnName("amount");
+            });
+        });
+
+        modelBuilder.ApplyEntityKeyConversions();
+    }
+}

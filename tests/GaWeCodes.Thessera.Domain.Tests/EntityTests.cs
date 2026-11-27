@@ -118,6 +118,17 @@ public sealed class EntityTests
     }
 
     [Fact]
+    public void Child_RaisingARetiredEvent_Throws()
+    {
+        var parent = ParentAggregate.Create(new TestId(1));
+        parent.AddChild(new TestId(2), 3);
+
+        Assert.Throws<InvalidOperationException>(
+            () => parent.Child(new TestId(2)).RaiseAny(new RetiredTestDomainEvent(9)));
+        Assert.Equal(2, parent.DomainEvents.Count);
+    }
+
+    [Fact]
     public void Child_RaisingAnEvent_FoldsItIntoTheRootState()
     {
         var parent = ParentAggregate.Create(new TestId(1));

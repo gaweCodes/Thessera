@@ -48,6 +48,18 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
+    public void RaiseEvent_ARetiredEvent_ThrowsAndNeitherAppliesNorRecordsIt()
+    {
+        var aggregate = new TestAggregate(new TestId(1));
+
+        var thrown = Assert.Throws<InvalidOperationException>(() => aggregate.Raise(new RetiredTestDomainEvent(5)));
+
+        Assert.Contains(nameof(RetiredTestDomainEvent), thrown.Message, StringComparison.Ordinal);
+        Assert.Equal(new TestId(1), aggregate.Id);
+        Assert.Empty(aggregate.DomainEvents);
+    }
+
+    [Fact]
     public void RaiseEvent_SurfacesEventsInOrder()
     {
         var aggregate = new TestAggregate(new TestId(1));

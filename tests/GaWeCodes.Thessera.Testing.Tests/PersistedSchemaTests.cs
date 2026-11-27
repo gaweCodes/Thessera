@@ -25,6 +25,15 @@ public sealed class PersistedSchemaTests
           SampleId : guid
           comment : string
 
+        domain-event sample-renamed-v1
+          SampleId : guid
+          Title : string
+          => sample-renamed-v2
+
+        domain-event sample-renamed-v2
+          Name : string
+          SampleId : guid
+
         integration-event fixture.sample-created
           EventId : guid
           OccurredAt : datetimeoffset
@@ -109,6 +118,7 @@ public sealed class PersistedSchemaTests
             () => PersistedSchema.Verify(baseline.ApprovedFilePath, [typeof(SampleCreated).Assembly]));
 
         Assert.Contains("successor", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("IRetiredDomainEvent<TSuccessor>", exception.Message, StringComparison.Ordinal);
         Assert.Contains("comment : string", File.ReadAllText(baseline.ReceivedFilePath), StringComparison.Ordinal);
     }
 

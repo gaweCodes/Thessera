@@ -64,6 +64,8 @@ GaWeCodes.Thessera.Domain.Events.IDomainEventRaiser
 GaWeCodes.Thessera.Domain.Events.IDomainEventRaiser.Raise(GaWeCodes.Thessera.Domain.Events.IDomainEvent! domainEvent) -> void
 GaWeCodes.Thessera.Domain.Events.IHasDomainEvents
 GaWeCodes.Thessera.Domain.Events.IHasDomainEvents.DomainEvents.get -> System.Collections.Generic.IReadOnlyCollection<GaWeCodes.Thessera.Domain.Events.IDomainEvent!>!
+GaWeCodes.Thessera.Domain.Events.IRetiredDomainEvent<TSuccessor>
+GaWeCodes.Thessera.Domain.Events.IRetiredDomainEvent<TSuccessor>.Upcast() -> TSuccessor!
 GaWeCodes.Thessera.Domain.IClock
 GaWeCodes.Thessera.Domain.IClock.Now.get -> System.DateTimeOffset
 GaWeCodes.Thessera.Domain.Naming.AggregateNameAttribute

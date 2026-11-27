@@ -1,4 +1,5 @@
 using GaWeCodes.Thessera.Application.Persistence;
+using GaWeCodes.Thessera.Core.Messaging.DomainEvents;
 using GaWeCodes.Thessera.Core.Persistence;
 using GaWeCodes.Thessera.Domain.Aggregates;
 using GaWeCodes.Thessera.Domain.Entities;
@@ -7,7 +8,10 @@ using Marten;
 
 namespace GaWeCodes.Thessera.Persistence.Marten;
 
-internal sealed class MartenEventSourcedRepository<TAggregate, TKey>(IDocumentSession session, MartenAggregateTracker tracker)
+internal sealed class MartenEventSourcedRepository<TAggregate, TKey>(
+    IDocumentSession session,
+    MartenAggregateTracker tracker,
+    DomainEventTypeRegistry registry)
     : IRepository<TAggregate, TKey>
     where TAggregate : class, IEventSourcedAggregateRoot<TKey>
     where TKey : struct, IEntityKey, IEquatable<TKey>
@@ -29,7 +33,8 @@ internal sealed class MartenEventSourcedRepository<TAggregate, TKey>(IDocumentSe
         }
 
         var aggregate = AggregateFactory.CreateEmpty<TAggregate>();
-        ((IEventSourcedAggregateRoot<TKey>)aggregate).LoadFromHistory(stream.Select(@event => (IDomainEvent)@event.Data));
+        ((IEventSourcedAggregateRoot<TKey>)aggregate)
+            .LoadFromHistory(stream.Select(@event => registry.Upcast((IDomainEvent)@event.Data)));
         Track(aggregate, aggregateName);
         return aggregate;
     }

@@ -29,6 +29,15 @@ public sealed record SampleDetailed(
     SampleLine? Highlight,
     DateOnly? Due) : DomainEvent;
 
+[EventName("sample-renamed-v1")]
+public sealed record SampleRetitled(SampleId SampleId, string Title) : DomainEvent, IRetiredDomainEvent<SampleRenamed>
+{
+    public SampleRenamed Upcast() => new(SampleId, Title);
+}
+
+[EventName("sample-renamed-v2")]
+public sealed record SampleRenamed(SampleId SampleId, string Name) : DomainEvent;
+
 [IntegrationEventTopic("fixture.sample-created")]
 public sealed record SampleCreatedIntegrationEvent(Guid SampleId, Guid EventId, DateTimeOffset OccurredAt)
     : IIntegrationEvent;

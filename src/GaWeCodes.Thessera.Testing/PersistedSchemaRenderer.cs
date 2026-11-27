@@ -115,8 +115,24 @@ internal static class PersistedSchemaRenderer
             RenderMembers(persistedType, options, builder, depth: 1, [persistedType]);
         }
 
+        foreach (var successorName in SuccessorNames(persistedType))
+        {
+            builder.Append(Indent).Append("=> ").Append(successorName).Append('\n');
+        }
+
         return builder.ToString();
     }
+
+    private static IEnumerable<string> SuccessorNames(Type persistedType) =>
+        persistedType.GetInterfaces()
+            .Where(static @interface => @interface.IsGenericType
+                && @interface.GetGenericTypeDefinition() == typeof(IRetiredDomainEvent<>))
+            .Select(static @interface => @interface.GenericTypeArguments[0])
+            .Select(successor => successor.GetCustomAttribute<EventNameAttribute>(inherit: false)?.Name
+                ?? throw new InvalidOperationException(
+                    $"The successor '{successor}' of the retired domain event '{persistedType}' has no [EventName] " +
+                    "and therefore has no persisted name to snapshot."))
+            .Order(StringComparer.Ordinal);
 
     private static string Header(Type persistedType)
     {

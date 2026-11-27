@@ -110,6 +110,23 @@ public sealed class DomainEventEnvelopeSerializerTests
         Assert.IsType<RecipeCreatedAfterRename>(restored);
     }
 
+    [Fact]
+    public void Unwrap_OfARetiredEvent_ReturnsTheCurrentVersion()
+    {
+        var envelope = new DomainEventEnvelope(
+            "upcast-probe-titled-v1",
+            """{"Title":"Pasta"}""",
+            EventId,
+            "recipe",
+            "recipe-1",
+            1,
+            OccurredAt);
+
+        var restored = Serializer.Unwrap(envelope);
+
+        Assert.Equal(new UpcastProbeRenamed("Pasta", Language: null), restored);
+    }
+
     private static DomainEventEnvelope Wrap(IDomainEvent domainEvent) =>
         Serializer.Wrap(domainEvent, EventId, "recipe", "recipe-1", 7, OccurredAt);
 

@@ -56,15 +56,15 @@ public sealed class CommandHandlerSingleStoreAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var repository = compilationContext.Compilation.GetTypeByMetadataName(ThesseraSymbols.RepositoryMetadataName);
+            var repository = compilationContext.Compilation.ResolveType(ThesseraSymbols.RepositoryMetadataName, ThesseraSymbols.ApplicationAssemblyName);
 
             if (repository is null)
             {
                 return;
             }
 
-            var commandHandler = compilationContext.Compilation.GetTypeByMetadataName(ThesseraSymbols.CommandHandlerMetadataName);
-            var commandHandlerWithResult = compilationContext.Compilation.GetTypeByMetadataName(ThesseraSymbols.CommandHandlerWithResultMetadataName);
+            var commandHandler = compilationContext.Compilation.ResolveType(ThesseraSymbols.CommandHandlerMetadataName, ThesseraSymbols.ApplicationAssemblyName);
+            var commandHandlerWithResult = compilationContext.Compilation.ResolveType(ThesseraSymbols.CommandHandlerWithResultMetadataName, ThesseraSymbols.ApplicationAssemblyName);
 
             if (commandHandler is null && commandHandlerWithResult is null)
             {

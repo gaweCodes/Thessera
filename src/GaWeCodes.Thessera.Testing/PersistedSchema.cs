@@ -93,7 +93,8 @@ public static class PersistedSchema
             "not at all. Compare the rendering in " +
             $"'{receivedFilePath}': a field that was only added stays readable, so approve the new snapshot; a field " +
             "that was renamed, removed or retyped does not, so leave the event untouched and introduce a successor " +
-            "under a new [EventName] instead." + Environment.NewLine + Environment.NewLine +
+            "under a new [EventName] instead. Implement IRetiredDomainEvent<TSuccessor> on the retired event, and " +
+            "its stored occurrences are read as the successor." + Environment.NewLine + Environment.NewLine +
             "Approved:" + Environment.NewLine + approved + Environment.NewLine +
             "Rendered:" + Environment.NewLine + actual);
     }

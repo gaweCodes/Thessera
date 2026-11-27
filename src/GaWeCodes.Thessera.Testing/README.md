@@ -49,7 +49,7 @@ public void EveryAggregateFollowsTheConventions() =>
     AggregateConventions.Verify([typeof(Reading).Assembly]);
 ```
 
-`Verify` checks that every aggregate has a parameterless constructor and that it is **not** public,
+`Verify` checks that every aggregate has a parameterless constructor and that it is **private**,
 that every aggregate carries `[AggregateName]`, that every domain event carries `[EventName]`, and
 that child entities keep their constructors internal. It reports **all** violations of a run, not
 just the first.
@@ -99,6 +99,14 @@ domain-event reading-recorded-v1
 On a mismatch it writes `PersistedSchema.received.txt` next to the approved file, so the diff is a
 file comparison and accepting an intended change is a file rename. `Render(assemblies)` gives you
 the same text if you prefer to drive the comparison yourself.
+
+Read a domain-event diff before you accept it. A new block, or lines only added inside an existing
+block, is safe. A changed or removed line inside an existing block means events already stored no
+longer fit their type: give the changed event a new name instead and keep the old one — see
+[ADR 0021](../../docs/architecture/0021-a-stored-domain-event-changes-only-by-addition.md). A
+retired event that implements `IRetiredDomainEvent<TSuccessor>` gains a line such as
+`=> reading-recorded-v2` in its block, so declaring an upcast is an added line too — see
+[ADR 0022](../../docs/architecture/0022-retired-domain-events-are-upcast-when-read.md).
 
 ## Limits
 

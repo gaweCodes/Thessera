@@ -106,6 +106,39 @@ public sealed class EventSourcedReadModelRebuildRunnerTests(PostgreSqlFixture fi
         await host.StopAsync(TestContext.Current.CancellationToken);
     }
 
+    [Fact]
+    public async Task Rebuild_ReadsARetiredEventAsItsSuccessor()
+    {
+        Assert.SkipUnless(fixture.Available, fixture.SkipReason);
+
+        using var host = await StartHostAsync(withRebuilder: true);
+        var id = await SeedRetiredStreamAsync(host, "Pasta");
+
+        await RunRebuildAsync(host);
+
+        var probe = host.Services.GetRequiredService<EventSourcedRebuildLog>().Rebuilt.Single(entry => entry.Id == id);
+
+        Assert.Equal("Pasta", probe.Name);
+        Assert.Equal(2, ((IStateOwner)probe).Version);
+
+        await host.StopAsync(TestContext.Current.CancellationToken);
+    }
+
+    internal static async Task<RebuildProbeId> SeedRetiredStreamAsync(IHost host, string title)
+    {
+        using var scope = host.Services.CreateScope();
+        var store = scope.ServiceProvider.GetRequiredService<IDocumentStore>();
+        await using var session = store.LightweightSession();
+        var id = new RebuildProbeId(Guid.NewGuid());
+        var streamKey = EntityKeyFormatter.GetStreamKey(
+            EntityKeyFormatter.GetAggregateName(typeof(RebuildProbe)),
+            EntityKeyFormatter.GetKeyValue(id));
+
+        session.Events.StartStream(streamKey, new RebuildProbeStarted(id), new RebuildProbeRetitled(id, title));
+        await session.SaveChangesAsync(TestContext.Current.CancellationToken);
+        return id;
+    }
+
     private static async Task SeedStreamsAsync(IHost host, int count)
     {
         using var scope = host.Services.CreateScope();
@@ -260,6 +293,13 @@ public sealed record RebuildProbeStarted(RebuildProbeId ProbeId) : DomainEvent;
 
 [EventName("rebuild-probe-renamed-v1")]
 public sealed record RebuildProbeRenamed(RebuildProbeId ProbeId, string Name) : DomainEvent;
+
+[EventName("rebuild-probe-retitled-v1")]
+public sealed record RebuildProbeRetitled(RebuildProbeId ProbeId, string Title)
+    : DomainEvent, IRetiredDomainEvent<RebuildProbeRenamed>
+{
+    public RebuildProbeRenamed Upcast() => new(ProbeId, Title);
+}
 
 [EventName("rebuild-neighbour-started-v1")]
 public sealed record RebuildNeighbourStarted(RebuildProbeId ProbeId) : DomainEvent;

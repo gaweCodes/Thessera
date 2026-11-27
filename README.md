@@ -19,7 +19,9 @@ example, and its limits.
 - [`GaWeCodes.Thessera.Application`](src/GaWeCodes.Thessera.Application) — CQRS, persistence and
   integration-event contracts, `Result`/`Failure`. Contracts only, no runtime.
 - [`GaWeCodes.Thessera.Core`](src/GaWeCodes.Thessera.Core) — composition root, dispatcher,
-  projections, startup checks. No Wolverine.
+  projections, startup checks. No Wolverine. Despite its name it is not the bottom layer: it is
+  the runtime core that implements the two contract packages listed before it, and depends on
+  them — see [the architecture overview](docs/architecture/README.md).
 - [`GaWeCodes.Thessera.Wolverine`](src/GaWeCodes.Thessera.Wolverine) — the runtime that owns the
   outbox. Arrives with either store.
 - [`GaWeCodes.Thessera.Persistence.EfCore.Postgres`](src/GaWeCodes.Thessera.Persistence.EfCore.Postgres) —
@@ -35,7 +37,7 @@ example, and its limits.
 - [`GaWeCodes.Thessera.Testing`](src/GaWeCodes.Thessera.Testing) — convention checks and test
   helpers for all of the above.
 - [`GaWeCodes.Thessera.Analyzers`](src/GaWeCodes.Thessera.Analyzers) — the compile-time twin of
-  the compile-time twin of those conventions, in every host.
+  those conventions, in every host.
 
 ## Get started
 

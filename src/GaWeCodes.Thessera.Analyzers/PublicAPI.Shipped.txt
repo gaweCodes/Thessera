@@ -7,6 +7,7 @@ const GaWeCodes.Thessera.Analyzers.ChildEntityStateSelfBindingAnalyzer.Diagnosti
 const GaWeCodes.Thessera.Analyzers.CommandHandlerRawSessionAnalyzer.DiagnosticId = "THSS0008" -> string!
 const GaWeCodes.Thessera.Analyzers.CommandHandlerSingleStoreAnalyzer.DiagnosticId = "THSS0007" -> string!
 const GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer.DiagnosticId = "THSS0002" -> string!
+const GaWeCodes.Thessera.Analyzers.RetiredDomainEventRaisedAnalyzer.DiagnosticId = "THSS0009" -> string!
 GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer
 GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer.AggregateConstructorAnalyzer() -> void
 GaWeCodes.Thessera.Analyzers.AggregateNameAnalyzer
@@ -23,6 +24,8 @@ GaWeCodes.Thessera.Analyzers.CommandHandlerSingleStoreAnalyzer
 GaWeCodes.Thessera.Analyzers.CommandHandlerSingleStoreAnalyzer.CommandHandlerSingleStoreAnalyzer() -> void
 GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer
 GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer.DomainEventNameAnalyzer() -> void
+GaWeCodes.Thessera.Analyzers.RetiredDomainEventRaisedAnalyzer
+GaWeCodes.Thessera.Analyzers.RetiredDomainEventRaisedAnalyzer.RetiredDomainEventRaisedAnalyzer() -> void
 override GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
 override GaWeCodes.Thessera.Analyzers.AggregateConstructorAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
 override GaWeCodes.Thessera.Analyzers.AggregateNameAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
@@ -39,3 +42,5 @@ override GaWeCodes.Thessera.Analyzers.CommandHandlerSingleStoreAnalyzer.Initiali
 override GaWeCodes.Thessera.Analyzers.CommandHandlerSingleStoreAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
 override GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
 override GaWeCodes.Thessera.Analyzers.DomainEventNameAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+override GaWeCodes.Thessera.Analyzers.RetiredDomainEventRaisedAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override GaWeCodes.Thessera.Analyzers.RetiredDomainEventRaisedAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

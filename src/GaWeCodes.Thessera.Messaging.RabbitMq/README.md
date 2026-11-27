@@ -121,7 +121,9 @@ actually there rather than letting the host start against a broker that will dro
 
 - A **durable topic exchange**, quorum queues, persistent messages and publisher confirms.
 - The **durable outbox**: an integration event is committed with the aggregate that caused it, then
-  sent. Delivery is at-least-once — consumers must be idempotent.
+  sent. Delivery is at-least-once — consumers must be idempotent; an integration event's `EventId`
+  is the key to deduplicate on, and a mapper that carries the domain event's `EventId` over keeps
+  it stable across redeliveries.
 - The publishing context in the `thessera.source-context` header.
 
 ## Limits

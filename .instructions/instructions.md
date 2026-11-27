@@ -25,13 +25,25 @@ no Docker daemon is reachable; the workflows always set it.
 
 The SDK pin in `global.json` is the only version number kept outside `Directory.Packages.props`,
 which carries every dependency version — a `.csproj` therefore writes
-`<PackageReference Include="..." />` with no `Version`.
+`<PackageReference Include="..." />` with no `Version`. This holds for `Thessera.slnx`. `Examples/`
+deliberately opts out of central package management: its projects consume Thessera like any
+outside consumer would, pinning the Thessera family to `ThesseraVersion` in
+`Examples/Directory.Build.props` and writing every third-party version literally in the project.
 
 `Directory.Build.props` is authoritative for the solution-wide compiler and analyzer settings; read
 it rather than trusting a summary. What matters when working here is that the build is strict:
-warnings are errors, analysis runs at the highest level, and a rule is only ever relaxed in a
-scoped `.editorconfig` — one under `tests/`, and one in the `Domain` package. No other project
-under `src` overrides anything.
+warnings are errors, analysis runs at the highest level, and a rule is relaxed for a whole scope
+only in a scoped `.editorconfig` — one under `tests/`, and one in the `Domain` package. No other
+project under `src` overrides anything.
+
+Beyond that, code under `src` carries a few suppressions, each scoped to a single type or member
+and each with a written justification: `CA1812` in a package's `GlobalSuppressions.cs` for an
+internal type only ever instantiated through DI or reflection, `IDE0130` on the entry-point
+extension files that deliberately live in the root `GaWeCodes.Thessera` namespace, and `CA2225`
+on the `Result<TResult>` conversion operators. These are **absolute exceptions**, not a pattern to
+follow: each stays only because removing it would break the public surface or trade one
+suppression for another. Before adding a new one, try to fix the code instead — and see rule 11
+under "When contributing".
 
 `CS1591` (missing XML documentation) is **not** relaxed anywhere. Every package under `src`
 generates a documentation file, and warnings-as-errors turns an undocumented public member into a
@@ -95,8 +107,14 @@ follows is only what you have to *do*.
   intentionally do **not** carry the family prefix. A test enforces all of this
   ([ADR 0009](../docs/architecture/0009-project-names-are-tested.md)).
 - **The public surface is tracked.** Every package under `src` carries `PublicAPI.Shipped.txt` and
-  `PublicAPI.Unshipped.txt`; a new public member goes into the unshipped file in the same change.
-  ([ADR 0008](../docs/architecture/0008-public-surface-is-a-tracked-file.md))
+  `PublicAPI.Unshipped.txt`; a new public member goes into `PublicAPI.Unshipped.txt` in the same
+  change, and a removed or changed one becomes a `*REMOVED*` line there — never edit
+  `PublicAPI.Shipped.txt` between releases. A new or changed analyzer rule goes into
+  `AnalyzerReleases.Unshipped.md`. Only a stable release promotes the unshipped files into the
+  shipped ones, and `release.yml` refuses a stable tag whose number does not fit what changed — a
+  new or raised analyzer rule of severity `Error` counts as breaking.
+  ([ADR 0008](../docs/architecture/0008-public-surface-is-a-tracked-file.md),
+  [ADR 0025](../docs/architecture/0025-a-stable-release-promotes-the-public-surface.md))
 - **No `InternalsVisibleTo`.** Tests assert through the public surface only.
   ([ADR 0007](../docs/architecture/0007-no-internals-visible-to.md))
 - **No assertion library.** Test projects use xUnit v3 built-in asserts.
@@ -107,6 +125,15 @@ follows is only what you have to *do*.
   one major version. ([ADR 0013](../docs/architecture/0013-tests-run-on-mtp-mode.md))
 - **Central package management**, transitive pinning included.
   ([ADR 0011](../docs/architecture/0011-central-package-management.md))
+- **.NET-aligned dependencies follow LTS releases only.** `Microsoft.Extensions.*`, EF Core,
+  Npgsql and SourceLink stay on the current LTS major; Dependabot ignores their major updates, and
+  the step to the next LTS is made by hand.
+  ([ADR 0023](../docs/architecture/0023-dotnet-aligned-dependencies-follow-lts-only.md))
+- **Roslyn never outruns the pinned SDK.** The `Microsoft.CodeAnalysis.*` family shares one
+  version, never newer than the compiler of the SDK in `global.json`; Dependabot proposes patches
+  only, and a minor or major step is made by hand together with the SDK pin. A newer Roslyn does not
+  fail the build — the analyzer simply stops loading (`CS9057`).
+  ([ADR 0024](../docs/architecture/0024-roslyn-never-outruns-the-pinned-sdk-compiler.md))
 - **One version, from Git tags.** No version number is written in the repository; MinVer derives
   it, and `release.yml` is the only path to nuget.org — see [`RELEASING.md`](../RELEASING.md).
   ([ADR 0010](../docs/architecture/0010-one-version-from-git-tags.md))

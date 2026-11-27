@@ -10,6 +10,8 @@ internal static class ThesseraSymbols
 
     internal const string DomainEventInterfaceMetadataName = "GaWeCodes.Thessera.Domain.Events.IDomainEvent";
 
+    internal const string RetiredDomainEventMetadataName = "GaWeCodes.Thessera.Domain.Events.IRetiredDomainEvent`1";
+
     internal const string AggregateNameAttributeMetadataName = "GaWeCodes.Thessera.Domain.Naming.AggregateNameAttribute";
 
     internal const string EventNameAttributeMetadataName = "GaWeCodes.Thessera.Domain.Naming.EventNameAttribute";
@@ -23,6 +25,32 @@ internal static class ThesseraSymbols
     internal const string CommandHandlerWithResultMetadataName = "GaWeCodes.Thessera.Application.Cqrs.ICommandHandler`2";
 
     internal const string RepositoryMetadataName = "GaWeCodes.Thessera.Application.Persistence.IRepository`2";
+
+    internal const string DomainAssemblyName = "GaWeCodes.Thessera.Domain";
+
+    internal const string ApplicationAssemblyName = "GaWeCodes.Thessera.Application";
+
+    internal static INamedTypeSymbol? ResolveType(this Compilation compilation, string metadataName, string assemblyName)
+    {
+        INamedTypeSymbol? resolved = null;
+
+        foreach (var candidate in compilation.GetTypesByMetadataName(metadataName))
+        {
+            var assembly = candidate.ContainingAssembly.Identity;
+
+            if (assembly.Name != assemblyName)
+            {
+                continue;
+            }
+
+            if (resolved is null || assembly.Version > resolved.ContainingAssembly.Identity.Version)
+            {
+                resolved = candidate;
+            }
+        }
+
+        return resolved;
+    }
 
     internal static bool DerivesFromOpenGeneric(this ITypeSymbol? type, INamedTypeSymbol openGenericBase)
     {

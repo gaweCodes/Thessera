@@ -24,9 +24,9 @@ public sealed record ReadingState(
             IsDeleted = false,
             DeletedAt = null,
         },
-        ReadingUpdated updated => this with
+        ReadingUpdatedV2 updated => this with
         {
-            Value = updated.Value,
+            Value = updated.NewValue,
             UpdatedAt = updated.OccurredAt,
         },
         ReadingDeleted deleted => this with

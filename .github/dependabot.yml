@@ -6,9 +6,27 @@ updates:
       interval: weekly
     open-pull-requests-limit: 10
     groups:
+      roslyn:
+        patterns:
+          - "Microsoft.CodeAnalysis*"
       thessera-dependencies:
         patterns:
           - "*"
+    # Packages released in step with .NET move only to the next LTS major, by hand - see
+    # docs/architecture/0023-dotnet-aligned-dependencies-follow-lts-only.md. Roslyn takes patches
+    # only and is raised by hand with the SDK pin - see
+    # docs/architecture/0024-roslyn-never-outruns-the-pinned-sdk-compiler.md.
+    ignore:
+      - dependency-name: "Microsoft.CodeAnalysis*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Npgsql*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.SourceLink.*"
+        update-types: ["version-update:semver-major"]
 
   # Examples/*.csproj pin third-party packages (EF Core, Hosting, Marten, RabbitMQ.Client, ...)
   # literally, separate from Directory.Packages.props, because Examples deliberately does not use
@@ -30,6 +48,14 @@ updates:
           - "*"
     ignore:
       - dependency-name: "GaWeCodes.Thessera.*"
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Npgsql*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.SourceLink.*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: "/"

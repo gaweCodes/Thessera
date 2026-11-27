@@ -60,25 +60,6 @@ public sealed class PublicApiFilesTests
                 && item.Attribute("PrivateAssets")?.Value is "All" or "all");
     }
 
-    [Fact]
-    public void NoUnshippedFile_StillCarriesAPendingEntry()
-    {
-        var offenders = SourceProjects()
-            .Select(path => Path.Combine(Path.GetDirectoryName(path)!, UnshippedFileName))
-            .Where(File.Exists)
-            .Where(path => File.ReadLines(path).Skip(1).Any(line => !string.IsNullOrWhiteSpace(line)))
-            .Select(Relative)
-            .ToArray();
-
-        Assert.True(
-            offenders.Length == 0,
-            Describe(
-                "An entry left in 'PublicAPI.Unshipped.txt' after a release marks a surface that was declared "
-                + "but never promoted to 'PublicAPI.Shipped.txt'; every alpha release promotes its additions "
-                + "before the next one starts.",
-                offenders));
-    }
-
     private static string[] SourceProjects()
     {
         var projects = ThesseraLayout.ProjectFiles(Path.Combine(ThesseraLayout.Root, "src"));

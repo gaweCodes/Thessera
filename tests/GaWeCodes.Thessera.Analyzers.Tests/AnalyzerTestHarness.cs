@@ -19,7 +19,9 @@ internal static class AnalyzerTestHarness
         string source,
         bool referenceDomain = true,
         bool referenceApplication = false,
-        bool referenceStores = false)
+        bool referenceStores = false,
+        IEnumerable<MetadataReference>? additionalReferences = null,
+        string? domainAlias = null)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(source);
 
@@ -29,10 +31,16 @@ internal static class AnalyzerTestHarness
                 ? ReferencesWithApplication.Value
                 : referenceDomain ? ReferencesWithDomain.Value : ReferencesWithoutDomain.Value;
 
+        if (domainAlias is not null)
+        {
+            var domainLocation = typeof(GaWeCodes.Thessera.Domain.IClock).Assembly.Location;
+            references = [.. references.Select(reference => reference.Display == domainLocation ? reference.WithAliases([domainAlias]) : reference)];
+        }
+
         var compilation = CSharpCompilation.Create(
             assemblyName: "GaWeCodes.Thessera.Analyzers.Tests.Snippet",
             syntaxTrees: [syntaxTree],
-            references: references,
+            references: [.. references, .. additionalReferences ?? []],
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         var compilationDiagnostics = compilation.GetDiagnostics();
@@ -46,6 +54,23 @@ internal static class AnalyzerTestHarness
 
         var withAnalyzers = compilation.WithAnalyzers([analyzer]);
         return await withAnalyzers.GetAnalyzerDiagnosticsAsync();
+    }
+
+    internal static MetadataReference CompileReference(string assemblyName, string source)
+    {
+        var compilation = CSharpCompilation.Create(
+            assemblyName: assemblyName,
+            syntaxTrees: [CSharpSyntaxTree.ParseText(source)],
+            references: ReferencesWithoutDomain.Value,
+            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        using var image = new MemoryStream();
+        var result = compilation.Emit(image);
+
+        return result.Success
+            ? MetadataReference.CreateFromImage(image.ToArray())
+            : throw new InvalidOperationException(
+                $"The reference snippet does not compile: {string.Join(Environment.NewLine, result.Diagnostics)}");
     }
 
     private static ImmutableArray<MetadataReference> BuildReferences(bool includeDomain, bool includeApplication, bool includeStores)

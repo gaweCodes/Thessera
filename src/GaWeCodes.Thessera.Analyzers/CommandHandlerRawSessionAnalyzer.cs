@@ -39,6 +39,8 @@ public sealed class CommandHandlerRawSessionAnalyzer : DiagnosticAnalyzer
 
     private const string DbContextMetadataName = "Microsoft.EntityFrameworkCore.DbContext";
     private const string MartenDocumentSessionMetadataName = "Marten.IDocumentSession";
+    private const string EfCoreAssemblyName = "Microsoft.EntityFrameworkCore";
+    private const string MartenAssemblyName = "Marten";
 
     private static readonly DiagnosticDescriptor Rule = new(
         DiagnosticId,
@@ -72,16 +74,16 @@ public sealed class CommandHandlerRawSessionAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var commandHandler = compilationContext.Compilation.GetTypeByMetadataName(ThesseraSymbols.CommandHandlerMetadataName);
-            var commandHandlerWithResult = compilationContext.Compilation.GetTypeByMetadataName(ThesseraSymbols.CommandHandlerWithResultMetadataName);
+            var commandHandler = compilationContext.Compilation.ResolveType(ThesseraSymbols.CommandHandlerMetadataName, ThesseraSymbols.ApplicationAssemblyName);
+            var commandHandlerWithResult = compilationContext.Compilation.ResolveType(ThesseraSymbols.CommandHandlerWithResultMetadataName, ThesseraSymbols.ApplicationAssemblyName);
 
             if (commandHandler is null && commandHandlerWithResult is null)
             {
                 return;
             }
 
-            var dbContext = compilationContext.Compilation.GetTypeByMetadataName(DbContextMetadataName);
-            var documentSession = compilationContext.Compilation.GetTypeByMetadataName(MartenDocumentSessionMetadataName);
+            var dbContext = compilationContext.Compilation.ResolveType(DbContextMetadataName, EfCoreAssemblyName);
+            var documentSession = compilationContext.Compilation.ResolveType(MartenDocumentSessionMetadataName, MartenAssemblyName);
 
             if (dbContext is null && documentSession is null)
             {

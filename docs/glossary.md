@@ -99,6 +99,20 @@ holds the catalogue built by `AddDomainEventsFrom`, maps a type to its name when
 resolves an incoming name back to a type when reading. Renaming a CLR type is free; changing an
 `[EventName]` orphans everything already stored under the old one.
 
+An event name also fixes the shape stored under it. Adding a property is the only change made in
+place; anything else gets a new name with the next version, and the *retired* type keeps the old
+name and stays readable — see
+[0021](architecture/0021-a-stored-domain-event-changes-only-by-addition.md).
+
+### Retired domain event, successor, upcast
+
+A *retired* domain event is a type kept only so that its stored occurrences can still be read. It
+implements `IRetiredDomainEvent<TSuccessor>`, naming its *successor* — the version that replaced it —
+and converting itself into it in `Upcast()`. *Upcasting* is that conversion while reading:
+`DomainEventTypeRegistry.Upcast` follows the chain to the current version on every envelope and
+every replayed stream, so the domain never sees a retired type. A retired event cannot be raised —
+see [0022](architecture/0022-retired-domain-events-are-upcast-when-read.md).
+
 ### Stream key
 
 The text that addresses one aggregate's event stream, in the form `<aggregate-name>/<key-value>`
@@ -281,13 +295,15 @@ to those.
 
 A check that turns silent misconfiguration into a message at boot: `IStartupCheck`, or
 `SynchronousStartupCheck` when nothing needs awaiting, running in one of two phases —
-`BeforeHostedServicesStart` or `AfterHostedServicesStarted`. Five ship with the core: every command
+`BeforeHostedServicesStart` or `AfterHostedServicesStarted`. The core ships these: every command
 and query has exactly one handler, the aggregate style matches the store, an aggregate state names
-itself, every integration-event mapper is reachable, and a unit of work exists when commands do.
-Each of them is there because the failure it catches is otherwise invisible until production. Six
-conventions move earlier still, into `dotnet build`, via `GaWeCodes.Thessera.Analyzers`: a missing
-`[AggregateName]` or `[EventName]`, an aggregate constructor that is missing or public, a child
-entity with a public constructor, and an aggregate- or entity-state that names the wrong type as
+itself, every integration-event mapper is reachable, a unit of work exists when commands do, and —
+once more than one store is selected — every command handler touches aggregates of a single store
+only. Store and transport packages add their own. Each of them is there because the failure it
+catches is otherwise invisible until production. Some conventions move earlier still, into
+`dotnet build`, via `GaWeCodes.Thessera.Analyzers`: a missing `[AggregateName]` or `[EventName]`,
+an aggregate constructor that is missing or not private, a child entity with a constructor that is not
+internal, and an aggregate- or entity-state that names the wrong type as
 itself — the last of which is also, for the aggregate-state case, the one analyzer rule that is the
 direct compile-time twin of a startup check above rather than an unrelated convention; see
 [ADR 0014](architecture/0014-a-compile-time-analyzer-catches-four-startup-checks.md) and

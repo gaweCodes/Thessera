@@ -53,7 +53,7 @@ public sealed class ChildEntityConstructorAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var entity = compilationContext.Compilation.GetTypeByMetadataName(ThesseraSymbols.EntityMetadataName);
+            var entity = compilationContext.Compilation.ResolveType(ThesseraSymbols.EntityMetadataName, ThesseraSymbols.DomainAssemblyName);
 
             if (entity is null)
             {

@@ -45,6 +45,38 @@ public sealed class AggregateConstructorAnalyzerTests
     }
 
     [Fact]
+    public async Task ALookalikeBaseTypeInAnotherAssembly_DoesNotHideTheThesseraBaseType()
+    {
+        var lookalike = AnalyzerTestHarness.CompileReference(
+            "Lookalike",
+            """
+            namespace GaWeCodes.Thessera.Domain.Aggregates;
+
+            public abstract class AggregateRoot<TId, TState>;
+            """);
+
+        var source = "extern alias thessera;\n"
+            + Prelude.Replace("using GaWeCodes.", "using thessera::GaWeCodes.", StringComparison.Ordinal)
+            + """
+
+            [AggregateName("sample")]
+            public sealed class Sample : AggregateRoot<SampleId, SampleState>
+            {
+                private Sample(SampleState state) : base(state) { }
+            }
+            """;
+
+        var diagnostics = await AnalyzerTestHarness.GetDiagnosticsAsync(
+            new AggregateConstructorAnalyzer(),
+            source,
+            additionalReferences: [lookalike],
+            domainAlias: "thessera");
+
+        var diagnostic = Assert.Single(diagnostics);
+        Assert.Equal(AggregateConstructorAnalyzer.DiagnosticId, diagnostic.Id);
+    }
+
+    [Fact]
     public async Task AnAggregateWithAPublicParameterlessConstructor_IsFlagged()
     {
         var source = Prelude + """
@@ -61,6 +93,29 @@ public sealed class AggregateConstructorAnalyzerTests
         var diagnostic = Assert.Single(diagnostics);
         Assert.Equal(AggregateConstructorAnalyzer.DiagnosticId, diagnostic.Id);
         Assert.Contains("public parameterless constructor", diagnostic.GetMessage(CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("internal")]
+    [InlineData("protected")]
+    [InlineData("protected internal")]
+    [InlineData("private protected")]
+    public async Task AnAggregateWithANonPrivateParameterlessConstructor_IsFlagged(string accessibility)
+    {
+        var source = Prelude + $$"""
+
+            [AggregateName("sample")]
+            public class Sample : AggregateRoot<SampleId, SampleState>
+            {
+                {{accessibility}} Sample() : base(new SampleState(default)) { }
+            }
+            """;
+
+        var diagnostics = await AnalyzerTestHarness.GetDiagnosticsAsync(new AggregateConstructorAnalyzer(), source);
+
+        var diagnostic = Assert.Single(diagnostics);
+        Assert.Equal(AggregateConstructorAnalyzer.DiagnosticId, diagnostic.Id);
+        Assert.Contains($"{accessibility} parameterless constructor", diagnostic.GetMessage(CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]

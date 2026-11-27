@@ -49,7 +49,8 @@ Requires .NET 10 (`net10.0`) and PostgreSQL. Brings `GaWeCodes.Thessera.Persiste
 ### 1. Map the aggregate state, not the aggregate
 
 EF Core sees the state record. Call `ApplyEntityKeyConversions()` last, so typed identifiers persist
-as their bare value, and map `Version` as the concurrency token.
+as their bare value, and map `Version` as the concurrency token — the host refuses to start if it is
+not, because without it a concurrent write is silently overwritten instead of failing as a conflict.
 
 ```csharp
 using GaWeCodes.Thessera.Persistence.EfCore;

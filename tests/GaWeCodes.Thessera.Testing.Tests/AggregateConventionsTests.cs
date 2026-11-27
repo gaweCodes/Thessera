@@ -32,6 +32,16 @@ public sealed class AggregateConventionsTests
     }
 
     [Fact]
+    public void AnAggregateWithANonPrivateParameterlessConstructor_IsReported()
+    {
+        var thrown = Assert.Throws<InvalidOperationException>(
+            () => AggregateConventions.Verify([typeof(LeakyHull).Assembly]));
+
+        Assert.Contains(nameof(LeakyHull), thrown.Message, StringComparison.Ordinal);
+        Assert.Contains("Keep the parameterless constructor private", thrown.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AnAssemblyWithNoAggregateAndNoDomainEvent_IsReportedInsteadOfPassingVacuously()
     {
         var thrown = Assert.Throws<InvalidOperationException>(

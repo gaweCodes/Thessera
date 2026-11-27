@@ -7,15 +7,17 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace GaWeCodes.Thessera.Analyzers;
 
 /// <summary>
-/// Flags an aggregate whose parameterless constructor is missing or public - the compile-time twin
-/// of two things <c>GaWeCodes.Thessera.Testing.AggregateConventions.Verify</c> checks in a test, and
-/// that a store's repository otherwise discovers only when it first tries to reconstitute the type.
+/// Flags an aggregate whose parameterless constructor is missing or not private - the compile-time
+/// twin of two things <c>GaWeCodes.Thessera.Testing.AggregateConventions.Verify</c> checks in a
+/// test, and that a store's repository otherwise discovers only when it first tries to reconstitute
+/// the type.
 /// </summary>
 /// <remarks>
 /// A repository reconstitutes an aggregate through its parameterless constructor before replaying or
-/// restoring its state; without one, no repository can be built for it. A <em>public</em> one is the
-/// opposite problem: it lets the aggregate come into existence without going through the factory
-/// method that checks its rules.
+/// restoring its state; without one, no repository can be built for it. Any accessibility broader
+/// than <em>private</em> is the opposite problem: it lets code other than the aggregate itself create
+/// it without going through the factory method that checks its rules. The repository reaches a
+/// private constructor through reflection, so nothing needs more.
 /// </remarks>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class AggregateConstructorAnalyzer : DiagnosticAnalyzer
@@ -30,8 +32,8 @@ public sealed class AggregateConstructorAnalyzer : DiagnosticAnalyzer
         category: "Thessera.Design",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
-        description: "An aggregate needs exactly one parameterless constructor, and it must not be " +
-            "public: a repository reconstitutes an empty hull through it, while callers go through a " +
+        description: "An aggregate needs exactly one parameterless constructor, and it must be " +
+            "private: a repository reconstitutes an empty hull through it, while callers go through a " +
             "named factory method instead.");
 
     /// <inheritdoc/>
@@ -51,8 +53,8 @@ public sealed class AggregateConstructorAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var aggregateRoot = compilationContext.Compilation.GetTypeByMetadataName(
-                ThesseraSymbols.AggregateRootMetadataName);
+            var aggregateRoot = compilationContext.Compilation.ResolveType(
+                ThesseraSymbols.AggregateRootMetadataName, ThesseraSymbols.DomainAssemblyName);
 
             if (aggregateRoot is null)
             {
@@ -91,13 +93,23 @@ public sealed class AggregateConstructorAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (parameterless.DeclaredAccessibility == Accessibility.Public)
+        if (parameterless.DeclaredAccessibility != Accessibility.Private)
         {
             context.ReportDiagnostic(Diagnostic.Create(
                 Rule,
                 parameterless.Locations.IsEmpty ? type.Locations.FirstOrDefault() ?? Location.None : parameterless.Locations[0],
-                $"Aggregate '{type.Name}' exposes a public parameterless constructor, so it can be " +
-                    "created without going through its factory. Make it private."));
+                $"Aggregate '{type.Name}' exposes a {Keyword(parameterless.DeclaredAccessibility)} parameterless " +
+                    "constructor, so it can be created without going through its factory. Make it private."));
         }
     }
+
+    private static string Keyword(Accessibility accessibility) => accessibility switch
+    {
+        Accessibility.Public => "public",
+        Accessibility.Internal => "internal",
+        Accessibility.Protected => "protected",
+        Accessibility.ProtectedOrInternal => "protected internal",
+        Accessibility.ProtectedAndInternal => "private protected",
+        _ => "non-private",
+    };
 }

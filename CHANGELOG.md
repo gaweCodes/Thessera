@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc.1] - 2026-11-27
+
+### Added
+
+- A retired domain event can now declare its successor by implementing
+  `IRetiredDomainEvent<TSuccessor>`. Every stored occurrence is read as the successor — through
+  `DomainEventEnvelopeSerializer.Unwrap` on both stores, and on Marten replay and read-model rebuild —
+  following a chain to its current version, so `Apply`, projection handlers and integration-event
+  mappers no longer need to handle old versions. `DomainEventTypeRegistry.Upcast` is public. The
+  catalogue refuses at startup a successor that is not registered, more than one successor and a
+  cycle; `RaiseEvent` throws for a retired event, and the new analyzer rule `THSS0009` makes that a
+  build error. `PersistedSchema` renders the successor as a `=> <event name>` line. See
+  [ADR 0022](docs/architecture/0022-retired-domain-events-are-upcast-when-read.md).
+
+### Changed
+
+- The EF Core state store now refuses to start when an aggregate state's `Version` is not mapped as
+  the concurrency token (`IsConcurrencyToken()`). Until now the optimistic-concurrency guard existed
+  only if the consumer remembered to configure it; without it, the later of two concurrent writers
+  silently overwrote the earlier one instead of failing with `persistence.concurrency_conflict`. A
+  host that already maps the token is unaffected. See
+  [ADR 0019](docs/architecture/0019-version-must-be-the-concurrency-token.md).
+- `THSS0003` and `AggregateConventions.Verify` now reject an aggregate's parameterless constructor
+  unless it is `private`. Until now only a `public` one was rejected, so an `internal` or
+  `protected` constructor let code outside the aggregate bypass its factory method. An aggregate
+  that declares anything other than `private` now fails the build and the convention test; making
+  the constructor `private` is the whole fix. See
+  [ADR 0020](docs/architecture/0020-aggregate-parameterless-constructor-must-be-private.md).
+
+### Fixed
+
+- The analyzers in `GaWeCodes.Thessera.Analyzers` now resolve each Thessera, EF Core and Marten type
+  from the assembly it belongs to. Until now a same-named type in another referenced assembly could
+  make a rule check against the wrong type, or find none and stay silent. That happened for
+  example when Thessera was referenced through an `extern alias`.
+
 ## [1.0.0-preview.4] - 2026-09-04
 
 ### Added
@@ -43,7 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NoPublishOnFailedCommitTests`, proving for both stores that a command whose commit fails (loses a
   concurrency race) never publishes that command's domain event — the unit of work's one-transaction
   guarantee held empirically, not just by reading `CommitAsync`.
-- All `Examples/` projects now demonstrate the read-model-rebuild feature: each list query reads
+- All `Examples/` projects that persist through a store (tiers 3-6 and both `MixedPersistence`
+  examples) now demonstrate the read-model-rebuild feature: each list query reads
   a small in-memory read model instead of the write store directly, kept in sync by an
   `IReadModelRebuilder<TAggregate, TKey>` and its store's rebuild runner
   (`StateStoredReadModelRebuildRunner<TContext>` or `EventSourcedReadModelRebuildRunner`), rebuilt
@@ -211,7 +248,8 @@ prints at startup, and the lower bounds of the dependencies the packages declare
 
 - No `InternalsVisibleTo` is used by any package.
 
-[Unreleased]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.4...main
+[Unreleased]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-rc.1...main
+[1.0.0-rc.1]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.4...v1.0.0-rc.1
 [1.0.0-preview.4]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.3...v1.0.0-preview.4
 [1.0.0-preview.3]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.2...v1.0.0-preview.3
 [1.0.0-preview.2]: https://github.com/GaWeCodes/Thessera/compare/v1.0.0-preview.1...v1.0.0-preview.2

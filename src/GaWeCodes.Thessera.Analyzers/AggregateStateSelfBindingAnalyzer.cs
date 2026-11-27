@@ -59,8 +59,8 @@ public sealed class AggregateStateSelfBindingAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var aggregateState = compilationContext.Compilation.GetTypeByMetadataName(
-                ThesseraSymbols.AggregateStateMetadataName);
+            var aggregateState = compilationContext.Compilation.ResolveType(
+                ThesseraSymbols.AggregateStateMetadataName, ThesseraSymbols.DomainAssemblyName);
 
             if (aggregateState is null)
             {

@@ -32,6 +32,11 @@ internal sealed class HandlerRegistrar(IServiceCollection services, PipelineBeha
 
     public void AddFrom(Assembly assembly)
     {
+        if (_scannedAssemblies.Contains(assembly))
+        {
+            return;
+        }
+
         Type[] types;
         try
         {

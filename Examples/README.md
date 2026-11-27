@@ -5,7 +5,7 @@ These examples form an adoption ladder for Thessera.
 - [DomainOnly](DomainOnly/README.md) is a plain console CRUD app with a hand-written domain object and an in-memory dictionary.
 - [DomainApplication](DomainApplication/README.md) keeps the in-memory approach but adopts Thessera's application and domain contracts.
 - [StateStored](StateStored/README.md) moves persistence to PostgreSQL through `GaWeCodes.Thessera.Persistence.EfCore.Postgres`.
-- [EventSourced](EventSourced/README.md) swaps the state store for Marten-backed event sourcing.
+- [EventSourced](EventSourced/README.md) swaps the state store for Marten-backed event sourcing, and retires a stored event version that is upcast when read.
 - [StateStoredWithMessaging](StateStoredWithMessaging/README.md) adds RabbitMQ publishing plus a background listener that writes `received-events.log`.
 - [EventSourcedWithMessaging](EventSourcedWithMessaging/README.md) combines Marten event sourcing with the same RabbitMQ round-trip logging.
 
@@ -28,6 +28,13 @@ repository, and a command handler that bypasses the unit of work by injecting a 
 message the first affected host prints at boot, or in the state-naming case, instead of an
 `InvalidCastException` on the first applied event. It applies regardless of which store or broker a
 tier picks.
+
+Tiers 3-6 and both MixedPersistence examples also show a read model kept apart from the write
+store: list queries read a small in-memory read model, filled by an
+`IReadModelRebuilder<TAggregate, TKey>` and its store's rebuild runner
+(`StateStoredReadModelRebuildRunner<TContext>` or `EventSourcedReadModelRebuildRunner`). It is
+rebuilt at startup, after every successful mutation and on demand from the console menu. The two
+MixedPersistence examples rebuild one read model per aggregate, each through its own store's runner.
 
 Build tiers 2-6 and both MixedPersistence examples only after refreshing the local package feed:
 
