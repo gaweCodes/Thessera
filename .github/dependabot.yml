@@ -9,6 +9,9 @@ updates:
       roslyn:
         patterns:
           - "Microsoft.CodeAnalysis*"
+      xunit:
+        patterns:
+          - "xunit*"
       thessera-dependencies:
         patterns:
           - "*"

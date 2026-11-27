@@ -49,9 +49,9 @@
     <PackageVersion Include="WolverineFx.RabbitMQ" Version="[6.32.0, 7.0.0)" />
     <PackageVersion Include="WolverineFx.RuntimeCompilation" Version="[6.32.0, 7.0.0)" />
     <PackageVersion Include="WolverineFx.Sqlite" Version="6.32.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
-    <PackageVersion Include="xunit.v3" Version="4.0.0" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
+    <PackageVersion Include="xunit.v3" Version="4.0.3" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.3" />
   </ItemGroup>
 
 </Project>
