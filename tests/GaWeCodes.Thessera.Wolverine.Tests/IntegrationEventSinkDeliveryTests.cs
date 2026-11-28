@@ -50,10 +50,10 @@ public sealed class IntegrationEventSinkDeliveryTests
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(WrapProbeEvent("crash"));
 
-        var tripped = await Task.WhenAny(
-                crashSwitch.Tripped,
-                Task.Delay(TrackingTimeout, TestContext.Current.CancellationToken))
-            .ConfigureAwait(true) == crashSwitch.Tripped;
+        var finished = await Task.WhenAny(
+            crashSwitch.Tripped,
+            Task.Delay(TrackingTimeout, TestContext.Current.CancellationToken));
+        var tripped = finished == crashSwitch.Tripped;
 
         Assert.True(
             tripped,

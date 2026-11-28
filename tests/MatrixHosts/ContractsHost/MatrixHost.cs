@@ -11,18 +11,15 @@ public static class MatrixHost
         var readings = new InMemoryReadings();
 
         var recorded = await new RecordReadingHandler(readings)
-            .HandleAsync(new RecordReading(72), cancellationToken)
-            .ConfigureAwait(false);
+            .HandleAsync(new RecordReading(72), cancellationToken);
 
         return await new ReadingByIdHandler(readings)
-            .HandleAsync(new ReadingById(recorded.Value), cancellationToken)
-            .ConfigureAwait(false);
+            .HandleAsync(new ReadingById(recorded.Value), cancellationToken);
     }
 
     public static async Task<Result<int>> ProbeMissingAsync(CancellationToken cancellationToken) =>
         await new ReadingByIdHandler(new InMemoryReadings())
-            .HandleAsync(new ReadingById(ReadingId.New()), cancellationToken)
-            .ConfigureAwait(false);
+            .HandleAsync(new ReadingById(ReadingId.New()), cancellationToken);
 
     public static async Task<IReadOnlyList<ReadingSummary>> ProbeProjectionAsync(
         CancellationToken cancellationToken)
@@ -47,10 +44,10 @@ public static class MatrixHost
             switch (domainEvent)
             {
                 case ReadingRecorded recorded:
-                    await projection.HandleAsync(recorded, metadata, cancellationToken).ConfigureAwait(false);
+                    await projection.HandleAsync(recorded, metadata, cancellationToken);
                     break;
                 case ReadingCorrected corrected:
-                    await projection.HandleAsync(corrected, metadata, cancellationToken).ConfigureAwait(false);
+                    await projection.HandleAsync(corrected, metadata, cancellationToken);
                     break;
                 default:
                     throw new InvalidOperationException(

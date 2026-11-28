@@ -181,8 +181,7 @@ internal sealed class MartenStreamCounter(Marten.IDocumentStore store) : IStored
     public async Task<long> CountAsync(string streamKey, CancellationToken cancellationToken)
     {
         await using var session = store.LightweightSession();
-        var stream = await session.Events.FetchStreamAsync(streamKey, token: cancellationToken)
-            .ConfigureAwait(false);
+        var stream = await session.Events.FetchStreamAsync(streamKey, token: cancellationToken);
 
         return stream.Count;
     }

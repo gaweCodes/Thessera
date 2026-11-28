@@ -14,7 +14,7 @@ public sealed class RecordReadingHandler(IRepository<Reading, ReadingId> reading
         ArgumentNullException.ThrowIfNull(command);
 
         var reading = Reading.Record(ReadingId.New(), command.Value);
-        await readings.AddAsync(reading, cancellationToken).ConfigureAwait(false);
+        await readings.AddAsync(reading, cancellationToken);
 
         return reading.Id;
     }
@@ -29,7 +29,7 @@ public sealed class ReadingByIdHandler(IRepository<Reading, ReadingId> readings)
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        var reading = await readings.GetByIdAsync(query.ReadingId, cancellationToken).ConfigureAwait(false);
+        var reading = await readings.GetByIdAsync(query.ReadingId, cancellationToken);
 
         return reading is null
             ? Failure.NotFound("reading.not-found", "No reading exists for the requested identity.")

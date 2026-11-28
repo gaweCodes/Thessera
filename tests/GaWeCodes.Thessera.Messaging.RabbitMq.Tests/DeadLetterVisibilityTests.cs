@@ -158,11 +158,11 @@ public sealed class DeadLetterVisibilityTests(PostgreSqlFixture postgres, Rabbit
     {
         var dataSource = NpgsqlDataSource.Create(postgres.ConnectionString);
 
-        await using (dataSource.ConfigureAwait(false))
+        await using (dataSource)
         {
             var command = dataSource.CreateCommand("delete from wolverine_dead_letters");
 
-            await using (command.ConfigureAwait(false))
+            await using (command)
             {
                 await command.ExecuteNonQueryAsync(TestContext.Current.CancellationToken);
             }

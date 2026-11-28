@@ -52,7 +52,9 @@ on the `Result<TResult>` conversion operators, `CA1040` on the empty marker cont
 only because removing it would break the public surface or trade one suppression for another.
 Before adding a new one, try to fix the code instead — and see rule 11 under "When contributing".
 Under `tests/`, the equality tests of the `Domain` package suppress `CA1508` on the test methods
-that compare with `null`, because that comparison is exactly what they verify.
+that compare with `null`, because that comparison is exactly what they verify. Code under `tests/`
+never calls `ConfigureAwait`: `CA2007` is off there because xUnit runs tests on its own
+`SynchronizationContext` and warns against leaving it (`xUnit1030`).
 
 `CS1591` (missing XML documentation) is **not** relaxed anywhere. Every package under `src`
 generates a documentation file, and warnings-as-errors turns an undocumented public member into a

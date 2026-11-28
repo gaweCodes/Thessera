@@ -171,7 +171,7 @@ public sealed class PartitionRecorder(int expected)
         {
             if (DwellTime > TimeSpan.Zero)
             {
-                await Task.Delay(DwellTime, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(DwellTime, cancellationToken);
             }
         }
         finally

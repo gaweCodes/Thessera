@@ -132,7 +132,7 @@ public sealed class FailureTranslationTests
         using var provider = services.BuildServiceProvider();
         var sender = provider.GetRequiredService<ISender>();
 
-        var result = await sender.SendAsync(new ThrowingCommand(), CancellationToken.None).ConfigureAwait(false);
+        var result = await sender.SendAsync(new ThrowingCommand(), CancellationToken.None);
         return result;
     }
 
