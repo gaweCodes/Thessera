@@ -78,7 +78,7 @@ public sealed record CrateState(CrateId Id) : AggregateState<CrateState, CrateId
         _ => this,
     };
 
-    private IReadOnlyCollection<CrateItem> MapItem(CrateItemId itemId, Func<CrateItem, CrateItem> map) =>
+    private List<CrateItem> MapItem(CrateItemId itemId, Func<CrateItem, CrateItem> map) =>
         Items.Select(item => item.Id == itemId ? map(item) : item).ToList();
 }
 

@@ -21,9 +21,8 @@ public sealed class KafkaFixture : IAsyncLifetime
             BootstrapServers = _container.GetBootstrapAddress().Replace("PLAINTEXT://", string.Empty, StringComparison.Ordinal);
             Available = true;
         }
-        catch (Exception exception)
+        catch (Exception exception) when (!ContainerRequirement.ContainersRequired)
         {
-            ContainerRequirement.ThrowIfRequired("Kafka", exception);
             Available = false;
             SkipReason = $"Kafka Testcontainer could not be started (Docker required): {exception.Message}";
         }

@@ -167,6 +167,9 @@ What the picture is trying to make obvious:
 - [0025 — A stable release promotes the public surface, and its number must match what changed](0025-a-stable-release-promotes-the-public-surface.md).
   What separates the shipped from the unshipped tracking file after 1.0, and how a breaking change
   is kept from going out as a minor or patch release.
+- [0026 — A relaxed rule is scoped to its cause](0026-a-relaxed-rule-is-scoped-to-its-cause.md).
+  Where an analyzer exception belongs — a scope's `.editorconfig` or the member itself — and why
+  MSBuild's own warnings fail the build on CI only.
 
 ## Format
 

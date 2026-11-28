@@ -10,7 +10,7 @@ using Wolverine.Postgresql;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(PostgreSqlCollection.Name)]
+[Collection(PostgreSqlCollectionDefinition.Name)]
 public sealed class DomainEventPartitioningBehaviourTests(PostgreSqlFixture postgres)
 {
     private const string QueueName = "partitioning-probe";

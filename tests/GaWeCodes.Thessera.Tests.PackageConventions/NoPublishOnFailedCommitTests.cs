@@ -12,7 +12,7 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(PostgreSqlCollection.Name)]
+[Collection(PostgreSqlCollectionDefinition.Name)]
 public sealed class NoPublishOnFailedCommitTests(PostgreSqlFixture fixture)
 {
     private static readonly TimeSpan DeliveryTimeout = TimeSpan.FromSeconds(10);

@@ -238,8 +238,3 @@ dotnet_naming_rule.static_readonly_fields_pascal_case.style = pascal_case
 dotnet_naming_rule.private_fields_underscore.severity = error
 dotnet_naming_rule.private_fields_underscore.symbols = private_fields
 dotnet_naming_rule.private_fields_underscore.style = camel_case_underscore
-
-#### Analyzer severities ####
-
-dotnet_diagnostic.CA1030.severity = none
-dotnet_diagnostic.CA1040.severity = none

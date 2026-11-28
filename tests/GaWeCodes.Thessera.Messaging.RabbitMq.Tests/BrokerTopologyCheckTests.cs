@@ -7,7 +7,7 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(BrokerAndDatabaseCollection.Name)]
+[Collection(BrokerAndDatabaseCollectionDefinition.Name)]
 public sealed class BrokerTopologyCheckTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
 {
     [Fact]

@@ -10,7 +10,7 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(PostgreSqlCollection.Name)]
+[Collection(PostgreSqlCollectionDefinition.Name)]
 public sealed class OutboxFlushOnCommitTests(PostgreSqlFixture fixture)
 {
     private static readonly TimeSpan DeliveryTimeout = TimeSpan.FromSeconds(30);

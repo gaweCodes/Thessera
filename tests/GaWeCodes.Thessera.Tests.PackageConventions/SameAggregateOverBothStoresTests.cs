@@ -15,7 +15,7 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(PostgreSqlCollection.Name)]
+[Collection(PostgreSqlCollectionDefinition.Name)]
 public sealed class SameAggregateOverBothStoresTests(PostgreSqlFixture fixture)
 {
     [Fact]

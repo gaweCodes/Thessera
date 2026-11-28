@@ -9,7 +9,7 @@ using Wolverine.Runtime;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(BrokerAndDatabaseCollection.Name)]
+[Collection(BrokerAndDatabaseCollectionDefinition.Name)]
 public sealed class IntegrationEventRoutingTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
 {
     private readonly string _probeQueueName = TestMessaging.UniqueQueueName("integration-event-routing-probe");

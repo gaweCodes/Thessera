@@ -8,7 +8,7 @@ using Wolverine.RabbitMQ;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(BrokerAndDatabaseCollection.Name)]
+[Collection(BrokerAndDatabaseCollectionDefinition.Name)]
 public sealed class InboxDeduplicationTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
 {
     private static readonly TimeSpan Grace = TimeSpan.FromSeconds(30);

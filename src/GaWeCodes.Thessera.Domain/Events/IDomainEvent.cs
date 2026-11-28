@@ -10,4 +10,9 @@ namespace GaWeCodes.Thessera.Domain.Events;
 /// the name in it is written into every persisted event and every envelope, so it is a persistence
 /// contract rather than a detail of the CLR type.
 /// </remarks>
+[System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Design",
+    "CA1040:Avoid empty interfaces",
+    Justification = "Being a domain event is the whole meaning of the type, and aggregates, handlers, " +
+        "mappers and stores bind against it as a generic constraint, which an attribute cannot serve.")]
 public interface IDomainEvent;

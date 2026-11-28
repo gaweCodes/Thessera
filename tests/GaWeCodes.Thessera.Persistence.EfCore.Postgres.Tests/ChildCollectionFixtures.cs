@@ -262,7 +262,7 @@ public sealed record CartState(CartId Id) : AggregateState<CartState, CartId>
         _ => this,
     };
 
-    private IReadOnlyCollection<CartLine> MapLine(CartLineId lineId, Func<CartLine, CartLine> map) =>
+    private List<CartLine> MapLine(CartLineId lineId, Func<CartLine, CartLine> map) =>
         Lines.Select(line => line.Id == lineId ? map(line) : line).ToList();
 }
 

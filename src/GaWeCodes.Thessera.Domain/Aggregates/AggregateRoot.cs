@@ -82,6 +82,11 @@ public abstract class AggregateRoot<TKey, TState> : EntityBase<TKey>, IAggregate
     /// <c>Apply</c> is not the place to refuse one — an aggregate that refused its own history
     /// could not be replayed.
     /// </remarks>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Design",
+        "CA1030:Use events where appropriate",
+        Justification = "Raising a domain event is the vocabulary of the domain model, not a .NET event: " +
+            "the event is applied to the state and recorded, never subscribed to.")]
     protected void RaiseEvent(IDomainEvent domainEvent)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);

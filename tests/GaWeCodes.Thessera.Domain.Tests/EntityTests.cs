@@ -3,7 +3,6 @@ using GaWeCodes.Thessera.Tests.TestDoubles;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Need to check if the overwritten equality operator handles null correctly")]
 public sealed class EntityTests
 {
     [Fact]
@@ -57,6 +56,7 @@ public sealed class EntityTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Comparing with null is what this test verifies about the overloaded equality.")]
     public void Equals_WithNull_ReturnsFalse()
     {
         var a = new TestEntity(new TestId(1));
@@ -74,6 +74,7 @@ public sealed class EntityTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Comparing with null is what this test verifies about the overloaded equality.")]
     public void EqualityOperator_BothNull_AreEqual()
     {
         TestEntity? a = null;
@@ -84,6 +85,7 @@ public sealed class EntityTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Comparing with null is what this test verifies about the overloaded equality.")]
     public void EqualityOperator_OneNull_AreNotEqual()
     {
         var a = new TestEntity(new TestId(1));

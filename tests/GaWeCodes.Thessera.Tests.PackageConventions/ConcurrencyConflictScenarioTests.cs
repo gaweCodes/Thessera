@@ -15,7 +15,7 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(PostgreSqlCollection.Name)]
+[Collection(PostgreSqlCollectionDefinition.Name)]
 public sealed class ConcurrencyConflictScenarioTests(PostgreSqlFixture fixture)
 {
     private const int InsideTheUnitOfWork = ThesseraOptions.UnitOfWorkBehaviorOrder + 100;

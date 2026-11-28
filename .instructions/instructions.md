@@ -33,17 +33,26 @@ outside consumer would, pinning the Thessera family to `ThesseraVersion` in
 `Directory.Build.props` is authoritative for the solution-wide compiler and analyzer settings; read
 it rather than trusting a summary. What matters when working here is that the build is strict:
 warnings are errors, analysis runs at the highest level, and a rule is relaxed for a whole scope
-only in a scoped `.editorconfig` — one under `tests/`, and one in the `Domain` package. No other
-project under `src` overrides anything.
+only in a scoped `.editorconfig` — one under `tests/`, and one in the `Domain` package. The root
+`.editorconfig` relaxes no rule, and no other project under `src` overrides anything. Where an
+exception belongs is decided in
+[ADR 0026](../docs/architecture/0026-a-relaxed-rule-is-scoped-to-its-cause.md), which also lists
+each one and its reason. Warnings that MSBuild and package targets raise themselves
+(`MSBxxxx`, `NETSDKxxxx`, SourceLink, MinVer) become errors only on CI, where `GITHUB_ACTIONS` is
+set: SourceLink warns without a code when the Git remote is an SSH host alias it does not
+recognise as GitHub, so a local build stays green while CI, which clones over HTTPS, keeps the full strictness.
 
 Beyond that, code under `src` carries a few suppressions, each scoped to a single type or member
 and each with a written justification: `CA1812` in a package's `GlobalSuppressions.cs` for an
 internal type only ever instantiated through DI or reflection, `IDE0130` on the entry-point
-extension files that deliberately live in the root `GaWeCodes.Thessera` namespace, and `CA2225`
-on the `Result<TResult>` conversion operators. These are **absolute exceptions**, not a pattern to
-follow: each stays only because removing it would break the public surface or trade one
-suppression for another. Before adding a new one, try to fix the code instead — and see rule 11
-under "When contributing".
+extension files that deliberately live in the root `GaWeCodes.Thessera` namespace, `CA2225`
+on the `Result<TResult>` conversion operators, `CA1040` on the empty marker contracts `ICommand`,
+`ICommand<TResult>`, `IQuery<TResult>` and `IDomainEvent`, and `CA1030` on `RaiseEvent` and
+`IDomainEventRaiser.Raise`. These are **absolute exceptions**, not a pattern to follow: each stays
+only because removing it would break the public surface or trade one suppression for another.
+Before adding a new one, try to fix the code instead — and see rule 11 under "When contributing".
+Under `tests/`, the equality tests of the `Domain` package suppress `CA1508` on the test methods
+that compare with `null`, because that comparison is exactly what they verify.
 
 `CS1591` (missing XML documentation) is **not** relaxed anywhere. Every package under `src`
 generates a documentation file, and warnings-as-errors turns an undocumented public member into a
@@ -115,6 +124,10 @@ follows is only what you have to *do*.
   new or raised analyzer rule of severity `Error` counts as breaking.
   ([ADR 0008](../docs/architecture/0008-public-surface-is-a-tracked-file.md),
   [ADR 0025](../docs/architecture/0025-a-stable-release-promotes-the-public-surface.md))
+- **A relaxed rule is scoped to its cause.** Fix the hit if you can. If the reason holds for every
+  file of a scope, relax the rule in that scope's `.editorconfig`, never through `NoWarn`. If it
+  holds for specific members, suppress it on them with a `Justification`.
+  ([ADR 0026](../docs/architecture/0026-a-relaxed-rule-is-scoped-to-its-cause.md))
 - **No `InternalsVisibleTo`.** Tests assert through the public surface only.
   ([ADR 0007](../docs/architecture/0007-no-internals-visible-to.md))
 - **No assertion library.** Test projects use xUnit v3 built-in asserts.

@@ -10,7 +10,7 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(BrokerAndDatabaseCollection.Name)]
+[Collection(BrokerAndDatabaseCollectionDefinition.Name)]
 public sealed class DeadLetterVisibilityTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
 {
     private const string CheckName = "thessera-dead-letters";

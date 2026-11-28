@@ -207,7 +207,7 @@ public sealed class DomainEventTypeRegistryTests
         return type.CreateType();
     }
 
-    private static Assembly AssemblyWithDomainEvents(params (string TypeName, string? EventName)[] events)
+    private static AssemblyBuilder AssemblyWithDomainEvents(params (string TypeName, string? EventName)[] events)
     {
         var assemblyName = new AssemblyName("GeneratedDomainEvents" + Guid.NewGuid().ToString("N")[..8]);
         var assembly = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);

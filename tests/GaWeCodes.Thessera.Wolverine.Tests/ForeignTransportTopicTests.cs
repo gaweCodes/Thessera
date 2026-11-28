@@ -9,7 +9,7 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(KafkaAndDatabaseCollection.Name)]
+[Collection(KafkaAndDatabaseCollectionDefinition.Name)]
 public sealed class ForeignTransportTopicTests(PostgreSqlFixture postgres, KafkaFixture kafka)
 {
     private const string DeclaredTopic = "probe.foreign-transport-probe";

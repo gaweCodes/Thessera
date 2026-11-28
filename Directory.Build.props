@@ -11,6 +11,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <MSBuildTreatWarningsAsErrors Condition="'$(GITHUB_ACTIONS)' == 'true'">true</MSBuildTreatWarningsAsErrors>
     <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
 

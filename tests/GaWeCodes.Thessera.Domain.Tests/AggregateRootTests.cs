@@ -5,8 +5,6 @@ using GaWeCodes.Thessera.Tests.TestDoubles;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Need to check if the overwritten equality operator handles null correctly")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Assertions", "xUnit2024:Do not use boolean asserts for simple equality tests", Justification = "Need to check if the overwritten equality operator handles null correctly")]
 public sealed class AggregateRootTests
 {
     [Fact]
@@ -28,7 +26,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_AppliesEventToStateAndRecordsIt()
+    public void RaisingAnEvent_AppliesEventToStateAndRecordsIt()
     {
         var aggregate = new TestAggregate(new TestId(1));
 
@@ -40,7 +38,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_Null_ThrowsArgumentNullException()
+    public void RaisingAnEvent_Null_ThrowsArgumentNullException()
     {
         var aggregate = new TestAggregate(new TestId(1));
 
@@ -48,7 +46,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_ARetiredEvent_ThrowsAndNeitherAppliesNorRecordsIt()
+    public void RaisingAnEvent_ARetiredEvent_ThrowsAndNeitherAppliesNorRecordsIt()
     {
         var aggregate = new TestAggregate(new TestId(1));
 
@@ -60,7 +58,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_SurfacesEventsInOrder()
+    public void RaisingAnEvent_SurfacesEventsInOrder()
     {
         var aggregate = new TestAggregate(new TestId(1));
         var first = new TestDomainEvent(1);
@@ -73,7 +71,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_WhenAppliedStateLeavesIdEmpty_ThrowsDomainValidationException()
+    public void RaisingAnEvent_WhenAppliedStateLeavesIdEmpty_ThrowsDomainValidationException()
     {
         var aggregate = new NeverIdentifiedAggregate();
 
@@ -127,6 +125,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Comparing with null is what this test verifies about the overloaded equality.")]
     public void EqualityOperator_BothNull_AreEqual()
     {
         TestAggregate? a = null;
@@ -136,6 +135,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Comparing with null is what this test verifies about the overloaded equality.")]
     public void EqualityOperator_OneNull_AreNotEqual()
     {
         var a = new TestAggregate(new TestId(1));
@@ -183,7 +183,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_WhenTheStateReturnsNull_NamesTheStateAndTheEventInsteadOfDereferencingIt()
+    public void RaisingAnEvent_WhenTheStateReturnsNull_NamesTheStateAndTheEventInsteadOfDereferencingIt()
     {
         var aggregate = new NullApplyAggregate();
 
@@ -196,7 +196,7 @@ public sealed class AggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_WhenTheStateReturnsItselfForAnUnhandledEvent_IsAccepted()
+    public void RaisingAnEvent_WhenTheStateReturnsItselfForAnUnhandledEvent_IsAccepted()
     {
         var aggregate = new TestEventSourcedAggregate();
         aggregate.Raise(new TestDomainEvent(1));

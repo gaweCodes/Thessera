@@ -5,7 +5,7 @@ using Npgsql;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(PostgreSqlCollection.Name)]
+[Collection(PostgreSqlCollectionDefinition.Name)]
 public sealed class EntityKeyEventStreamFormatTests(PostgreSqlFixture fixture)
 {
     [Fact]

@@ -3,15 +3,13 @@ namespace GaWeCodes.Thessera.Tests;
 public sealed class ContainerRequirementTests
 {
     [Fact]
-    public void ThrowsWhenTheVariableIsSet()
+    public void IsRequiredWhenTheVariableIsSet()
     {
         Environment.SetEnvironmentVariable(ContainerRequirement.EnvironmentVariable, "1");
 
         try
         {
             Assert.True(ContainerRequirement.ContainersRequired);
-            Assert.Throws<InvalidOperationException>(
-                () => ContainerRequirement.ThrowIfRequired("Postgres", new InvalidOperationException("boom")));
         }
         finally
         {
@@ -33,7 +31,6 @@ public sealed class ContainerRequirementTests
         try
         {
             Assert.False(ContainerRequirement.ContainersRequired);
-            ContainerRequirement.ThrowIfRequired("Postgres", new InvalidOperationException("boom"));
         }
         finally
         {

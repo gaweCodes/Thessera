@@ -9,7 +9,7 @@ using Wolverine.RabbitMQ;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(BrokerAndDatabaseCollection.Name)]
+[Collection(BrokerAndDatabaseCollectionDefinition.Name)]
 public sealed class DeadLetterTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
 {
     private const string DeadLetterQueueName = "wolverine-dead-letter-queue";
@@ -225,7 +225,7 @@ public sealed class DeadLetterTests(PostgreSqlFixture postgres, RabbitMqFixture 
 }
 
 [CollectionDefinition(Name)]
-public sealed class BrokerAndDatabaseCollection
+public sealed class BrokerAndDatabaseCollectionDefinition
     : ICollectionFixture<PostgreSqlFixture>, ICollectionFixture<RabbitMqFixture>
 {
     public const string Name = "BrokerAndDatabase";

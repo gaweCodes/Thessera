@@ -15,5 +15,10 @@ public interface IDomainEventRaiser
     /// Applies the event to the aggregate's state and records it as uncommitted.
     /// </summary>
     /// <param name="domainEvent">The event to raise. Never <see langword="null"/>.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Design",
+        "CA1030:Use events where appropriate",
+        Justification = "Raising a domain event is the vocabulary of the domain model, not a .NET event: " +
+            "the event is applied to the state and recorded, never subscribed to.")]
     void Raise(IDomainEvent domainEvent);
 }

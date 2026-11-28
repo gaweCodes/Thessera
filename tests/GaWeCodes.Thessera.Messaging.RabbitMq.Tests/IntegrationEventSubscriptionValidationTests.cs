@@ -8,7 +8,7 @@ using Wolverine.RabbitMQ;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(BrokerAndDatabaseCollection.Name)]
+[Collection(BrokerAndDatabaseCollectionDefinition.Name)]
 public sealed class IntegrationEventSubscriptionValidationTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
 {
     private const string UpstreamTopic = "upstream.always-fails";

@@ -109,7 +109,7 @@ public sealed class IntegrationEventSinkDeliveryTests
                 options.LocalQueue("sink-probe-domain-events").BufferedInMemory();
                 options.LocalQueue("sink-probe-projections").BufferedInMemory();
 
-                options.Discovery.IncludeType(typeof(SinkProbeIntegrationEventHandler));
+                options.Discovery.IncludeType(typeof(SinkProbeIntegrationEventConsumer));
                 options.PublishMessage<SinkProbeIntegrationEvent>().ToLocalQueue("sink-probe-integration");
             })
             .StartAsync();
@@ -209,7 +209,7 @@ public sealed class ProbeIntegrationEventSink(IMessageEmitter emitter, string so
     }
 }
 
-public static class SinkProbeIntegrationEventHandler
+public static class SinkProbeIntegrationEventConsumer
 {
     public static void Handle(SinkProbeIntegrationEvent message, Envelope envelope, SinkProbeRecorder recorder)
     {

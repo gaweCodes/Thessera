@@ -11,7 +11,7 @@ using Wolverine.Runtime;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(BrokerAndDatabaseCollection.Name)]
+[Collection(BrokerAndDatabaseCollectionDefinition.Name)]
 public sealed class IntegrationEventDurabilityTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
 {
     private readonly string _subscriberQueueName = TestMessaging.UniqueQueueName("durability-subscriber");

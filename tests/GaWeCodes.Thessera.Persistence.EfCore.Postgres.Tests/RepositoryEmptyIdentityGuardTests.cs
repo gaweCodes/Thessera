@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(PostgreSqlCollection.Name)]
+[Collection(PostgreSqlCollectionDefinition.Name)]
 public sealed class RepositoryEmptyIdentityGuardTests(PostgreSqlFixture fixture)
 {
     [Fact]
@@ -49,7 +49,8 @@ public sealed class RepositoryEmptyIdentityGuardTests(PostgreSqlFixture fixture)
 
         builder.AddThessera(options => options
             .AddDomainEventsFrom(typeof(CounterCreated).Assembly)
-            .UseEfCoreStateStore<GuardProbeContext>(fixture.ConnectionString));
+            .UseEfCoreStateStore<GuardProbeContext>(fixture.ConnectionString)
+                .ProvisionInfrastructure(InfrastructureProvisioning.AtStartup));
 
         var host = builder.Build();
         await host.StartAsync(TestContext.Current.CancellationToken);

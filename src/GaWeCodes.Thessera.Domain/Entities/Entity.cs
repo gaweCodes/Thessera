@@ -75,6 +75,11 @@ public abstract class Entity<TKey, TState> : EntityBase<TKey>
     /// <exception cref="InvalidOperationException">
     /// The event is an <see cref="IRetiredDomainEvent{TSuccessor}"/>, which is only ever read.
     /// </exception>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Design",
+        "CA1030:Use events where appropriate",
+        Justification = "Raising a domain event is the vocabulary of the domain model, not a .NET event: " +
+            "the event is applied to the state and recorded, never subscribed to.")]
     protected void RaiseEvent(IDomainEvent domainEvent)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);

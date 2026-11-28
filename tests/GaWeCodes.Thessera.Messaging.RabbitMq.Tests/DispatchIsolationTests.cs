@@ -15,7 +15,7 @@ using Wolverine;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[Collection(BrokerAndDatabaseCollection.Name)]
+[Collection(BrokerAndDatabaseCollectionDefinition.Name)]
 public sealed class DispatchIsolationTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(60);

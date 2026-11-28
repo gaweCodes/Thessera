@@ -4,11 +4,10 @@ using GaWeCodes.Thessera.Tests.TestDoubles;
 
 namespace GaWeCodes.Thessera.Tests;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Need to check if the overwritten equality operator handles null correctly")]
 public sealed class EventSourcedAggregateRootTests
 {
     [Fact]
-    public void RaiseEvent_AppliesStateAppendsEventAndIncrementsVersion()
+    public void RaisingAnEvent_AppliesStateAppendsEventAndIncrementsVersion()
     {
         var aggregate = new TestEventSourcedAggregate();
 
@@ -21,7 +20,7 @@ public sealed class EventSourcedAggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_WithNonDomainEventImplementation_IsAccepted()
+    public void RaisingAnEvent_WithNonDomainEventImplementation_IsAccepted()
     {
         var aggregate = new TestEventSourcedAggregate();
 
@@ -31,7 +30,7 @@ public sealed class EventSourcedAggregateRootTests
     }
 
     [Fact]
-    public void RaiseEvent_MultipleTimes_TracksVersionAndEvents()
+    public void RaisingAnEvent_MultipleTimes_TracksVersionAndEvents()
     {
         var aggregate = new TestEventSourcedAggregate();
 
@@ -128,6 +127,7 @@ public sealed class EventSourcedAggregateRootTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Comparing with null is what this test verifies about the overloaded equality.")]
     public void EqualityOperator_BothNull_AreEqual()
     {
         TestEventSourcedAggregate? a = null;

@@ -41,7 +41,7 @@ public sealed class TransientIdentityTests
     }
 
     [Fact]
-    public void RaiseEvent_ThatLeavesTheIdentityEmpty_Throws()
+    public void RaisingAnEvent_ThatLeavesTheIdentityEmpty_Throws()
     {
         var aggregate = new NeverIdentifiedAggregate();
 
